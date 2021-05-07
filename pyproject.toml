@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "meilisearch-fastapi"
+version = "0.1.0"
+description = "MeiliSearch integration with FastAPI"
+authors = ["Paul Sanders <psanders1@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+async-search-client = "^0.4.0"
+fastapi = "^0.64.0"
+
+[tool.poetry.dev-dependencies]
+black = "^21.5b0"
+flake8 = "^3.9.1"
+isort = "^5.8.0"
+mypy = "^0.812"
+pre-commit = "^2.12.1"
+pytest = "^6.2.4"
+pytest-cov = "^2.11.1"
+tox = "^3.23.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.egg
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.nox
+  | \.tox
+  | \.venv
+  | \venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | setup.py
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+src_paths = ["meilisearch_fastapi", "tests"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--cov=meilisearch_fastapi"
