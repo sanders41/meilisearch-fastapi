@@ -17,11 +17,11 @@ async def search(
     async with Client(url=config.url, api_key=config.api_key) as client:
         index = client.index(search_parameters.uid)
 
-        return index.search(
+        return await index.search(
             search_parameters.query,
             search_parameters.offset,
             search_parameters.limit,
-            search_parameters.facet_filters,
+            search_parameters.filters,
             search_parameters.facet_filters,
             search_parameters.facets_distribution,
             search_parameters.attributes_to_retrieve,

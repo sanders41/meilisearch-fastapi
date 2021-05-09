@@ -7,8 +7,9 @@ class DistinctAttribute(CamelBase):
     attribute: Optional[str] = None
 
 
-class DistinctAttributeWithUID(DistinctAttribute):
+class DistinctAttributeWithUID(CamelBase):
     uid: str
+    attribute: str
 
 
 class IndexUpdate(CamelBase):

@@ -33,7 +33,7 @@ async def create_index(
 async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> int:
     async with Client(config.url, api_key=config.api_key) as client:
         index = client.index(uid)
-        return await index.delete(uid)
+        return await index.delete()
 
 
 @router.delete("/ranking-rules/{uid}", response_model=UpdateId)
@@ -168,7 +168,7 @@ async def update_ranking_rules(
     async with Client(url=config.url, api_key=config.api_key) as client:
         index = client.index(ranking_rules.uid)
 
-        ranking_rules = MeiliSearchSettings(
+        ranking_rules_update = MeiliSearchSettings(
             synonyms=ranking_rules.synonyms,
             stop_words=ranking_rules.stop_words,
             ranking_rules=ranking_rules.ranking_rules,
@@ -178,4 +178,4 @@ async def update_ranking_rules(
             displayed_attributes=ranking_rules.displayed_attributes,
         )
 
-        return await index.update_ranking_rules(ranking_rules)
+        return await index.update_ranking_rules(ranking_rules_update)
