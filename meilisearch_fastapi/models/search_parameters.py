@@ -10,7 +10,7 @@ class SearchParameters(CamelBase):
     limit: int = 20
     filters: Optional[str] = None
     facet_filters: Optional[List[str]] = None
-    facets_distribution: Optional[list[str]] = None
+    facets_distribution: Optional[List[str]] = None
     attributes_to_retrieve: List[str] = ["*"]
     attributes_to_crop: Optional[List[str]] = None
     crop_length: int = 200

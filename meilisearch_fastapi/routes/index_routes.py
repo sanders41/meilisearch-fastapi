@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import List
+
 from async_search_client import Client
 from async_search_client.errors import MeiliSearchApiError
 from async_search_client.models import IndexInfo, IndexStats, MeiliSearchSettings, UpdateId
@@ -107,7 +109,7 @@ async def get_stats(uid: str, config: MeiliSearchConfig = Depends(get_config)) -
         return await index.get_stats()
 
 
-@router.get("/", response_model=list[IndexInfo])
+@router.get("/", response_model=List[IndexInfo])
 async def get_indexes(
     config: MeiliSearchConfig = Depends(get_config),
 ) -> list[IndexInfo]:

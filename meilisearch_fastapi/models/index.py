@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from camel_converter.pydantic_base import CamelBase
 
@@ -18,7 +18,7 @@ class IndexUpdate(CamelBase):
 
 
 class RankingRules(CamelBase):
-    ranking_rules: list[str]
+    ranking_rules: List[str]
 
 
 class PrimaryKey(CamelBase):

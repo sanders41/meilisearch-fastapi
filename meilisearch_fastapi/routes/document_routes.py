@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Dict, List
+
 from async_search_client import Client
 from async_search_client.models import UpdateId
 from fastapi import APIRouter, Depends, HTTPException
@@ -60,7 +62,7 @@ async def get_document(
         return await index.get_document(document_id)
 
 
-@router.get("/{uid}", response_model=list[dict])
+@router.get("/{uid}", response_model=List[Dict])
 async def get_documents(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> list[dict]:
     async with Client(url=config.url, api_key=config.api_key) as client:
         index = client.index(uid)
