@@ -15,7 +15,7 @@ def default_settings():
 
 
 @pytest.mark.asyncio
-async def test_settings_get(default_settings, index_uid, indexes_sample, test_client, event_loop):
+async def test_settings_get(default_settings, index_uid, indexes_sample, test_client):
     response = await test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
@@ -23,9 +23,7 @@ async def test_settings_get(default_settings, index_uid, indexes_sample, test_cl
 
 
 @pytest.mark.asyncio
-async def test_settings_update_and_delete(
-    default_settings, index_uid, indexes_sample, test_client, event_loop
-):
+async def test_settings_update_and_delete(default_settings, index_uid, indexes_sample, test_client):
     update_settings = {
         "uid": index_uid,
         "synonyms": {"wolverine": ["logan", "xmen"], "logan": ["wolverine", "xmen"]},

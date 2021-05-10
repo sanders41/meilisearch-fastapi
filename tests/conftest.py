@@ -1,4 +1,6 @@
 import asyncio
+import json
+from pathlib import Path
 
 import pytest
 from async_search_client import Client
@@ -12,6 +14,9 @@ from meilisearch_fastapi.routes import (
     search_routes,
     setting_routes,
 )
+
+ROOT_PATH = Path().absolute()
+SMALL_MOVIES_PATH = ROOT_PATH / "tests" / "assets" / "small_movies.json"
 
 MASTER_KEY = "masterKey"
 MEILISEARCH_URL = "http://localhost:7700"
@@ -31,9 +36,21 @@ def env_vars(monkeypatch):
     monkeypatch.setenv("MEILISEARCH_URL", MEILISEARCH_URL)
     monkeypatch.setenv("MEILISEARCH_API_KEY", MASTER_KEY)
     yield
+    monkeypatch.delenv("MEILISEARCH_URL", raising=False)
+    monkeypatch.delenv("MEILISEARCH_API_KEY", raising=False)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
+def meilisearch_url():
+    return MEILISEARCH_URL
+
+
+@pytest.fixture
+def master_key():
+    return MASTER_KEY
+
+
+@pytest.fixture(scope="session", autouse=True)
 def event_loop():
     loop = asyncio.get_event_loop()
     yield loop
@@ -101,3 +118,31 @@ async def indexes_sample(test_client):
             indexes.append(index)
 
     yield indexes
+
+
+@pytest.mark.asyncio
+@pytest.fixture
+async def empty_index():
+    async with Client(MEILISEARCH_URL, MASTER_KEY) as client:
+        index = await client.create_index(uid=INDEX_UID)
+        yield INDEX_UID, index
+
+
+@pytest.fixture(scope="session")
+def small_movies():
+    """
+    Runs once per session. Provides the content of small_movies.json.
+    """
+
+    with open(SMALL_MOVIES_PATH, "r") as movie_file:
+        yield json.loads(movie_file.read())
+
+
+@pytest.mark.asyncio
+@pytest.fixture
+async def index_with_documents(empty_index, small_movies):
+    uid, index = empty_index
+    response = await index.add_documents(small_movies)
+    await index.wait_for_pending_update(response.update_id)
+
+    yield uid, index

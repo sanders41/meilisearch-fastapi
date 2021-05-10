@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_get_keys(test_client, event_loop):
+async def test_get_keys(test_client):
     response = await test_client.get("/meilisearch/keys")
 
     assert response.status_code == 200
@@ -11,7 +11,7 @@ async def test_get_keys(test_client, event_loop):
 
 
 @pytest.mark.asyncio
-async def test_get_stats(test_client, event_loop):
+async def test_get_stats(test_client):
     response = await test_client.get("meilisearch/stats")
 
     assert response.status_code == 200
@@ -21,7 +21,7 @@ async def test_get_stats(test_client, event_loop):
 
 
 @pytest.mark.asyncio
-async def test_get_version(test_client, event_loop):
+async def test_get_version(test_client):
     response = await test_client.get("meilisearch/version")
 
     assert response.status_code == 200
