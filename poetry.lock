@@ -625,11 +625,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-<<<<<<< HEAD
-content-hash = "cb705b02ea2976d2d833dc703dca98d50036cabb4b04319bb0b080a65459b50d"
-=======
-content-hash = "e7c4eeb221af99cef4af7f7cf523bf823339cd0ac2ffad2a121ade6919d690c3"
->>>>>>> bfc3f42 (Setting up routes)
+content-hash = "0d21a8259a1520455dbb4ce1325dc1fcc7215ba39462dcfa242a3a6a4630eb09"
 
 [metadata.files]
 aiofiles = [
