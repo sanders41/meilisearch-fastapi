@@ -33,18 +33,36 @@ async def test_add_documents_with_primary_key(empty_index, test_client, small_mo
 
 
 @pytest.mark.asyncio
-async def test_delete_all_documents(test_client):
-    ...
+async def test_delete_document(test_client, index_with_documents):
+    uid, index = index_with_documents
+    response = await test_client.delete(f"/documents/{uid}/500682")
+    await index.wait_for_pending_update(response.json()["updateId"])
+    with pytest.raises(MeiliSearchApiError):
+        await test_client.get(f"/documents/{uid}/500682")
 
 
 @pytest.mark.asyncio
-async def test_delete_document(test_client):
-    ...
+async def test_delete_documents(test_client, index_with_documents):
+    to_delete = ["522681", "450465", "329996"]
+    uid, index = index_with_documents
+    delete_info = {
+        "uid": uid,
+        "document_ids": to_delete,
+    }
+    response = await test_client.post("/documents/delete", json=delete_info)
+    await index.wait_for_pending_update(response.json()["updateId"])
+    documents = await test_client.get(f"/documents/{uid}")
+    ids = [x["id"] for x in documents.json()]
+    assert to_delete not in ids
 
 
 @pytest.mark.asyncio
-async def test_delete_documents(test_client):
-    ...
+async def test_delete_all_documents(test_client, index_with_documents):
+    uid, index = index_with_documents
+    response = await test_client.delete(f"/documents/{uid}")
+    await index.wait_for_pending_update(response.json()["updateId"])
+    response = await test_client.get(f"/documents/{uid}")
+    assert response.status_code == 204
 
 
 @pytest.mark.asyncio

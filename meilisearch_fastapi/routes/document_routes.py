@@ -22,7 +22,7 @@ async def add_documents(
         return await index.add_documents(document_info.documents, document_info.primary_key)
 
 
-@router.delete("/delete/{uid}", response_model=UpdateId)
+@router.delete("/{uid}", response_model=UpdateId)
 async def delete_all_documents(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
