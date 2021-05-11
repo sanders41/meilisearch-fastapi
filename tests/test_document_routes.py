@@ -6,7 +6,7 @@ from async_search_client.errors import MeiliSearchApiError
 async def test_get_documents_none(empty_index, test_client):
     uid, _ = empty_index
     response = await test_client.get(f"/documents/{uid}")
-    assert response.status_code == 204
+    assert response.status_code == 404
 
 
 @pytest.mark.asyncio
@@ -62,7 +62,7 @@ async def test_delete_all_documents(test_client, index_with_documents):
     response = await test_client.delete(f"/documents/{uid}")
     await index.wait_for_pending_update(response.json()["updateId"])
     response = await test_client.get(f"/documents/{uid}")
-    assert response.status_code == 204
+    assert response.status_code == 404
 
 
 @pytest.mark.asyncio
@@ -93,14 +93,14 @@ async def test_update_documents(test_client, index_with_documents, small_movies)
     response_docs = response.json()
     response_docs[0]["title"] = "Some title"
     update_body = {"uid": uid, "documents": response_docs}
-    update = await test_client.put("documents", json=update_body)
+    update = await test_client.put("/documents", json=update_body)
     await index.wait_for_pending_update(update.json()["updateId"])
-    response = await test_client.get(f"documents/{uid}")
+    response = await test_client.get(f"/documents/{uid}")
     assert response.json()[0]["title"] == "Some title"
     update_body = {"uid": uid, "documents": small_movies}
-    update = await test_client.put("documents", json=update_body)
+    update = await test_client.put("/documents", json=update_body)
     await index.wait_for_pending_update(update.json()["updateId"])
-    response = await test_client.get(f"documents/{uid}")
+    response = await test_client.get(f"/documents/{uid}")
     assert response.json()[0]["title"] != "Some title"
 
 

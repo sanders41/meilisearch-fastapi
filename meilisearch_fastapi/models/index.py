@@ -37,6 +37,10 @@ class RankingRules(CamelBase):
     ranking_rules: List[str]
 
 
+class RankingRulesWithUID(RankingRules):
+    uid: str
+
+
 class PrimaryKey(CamelBase):
     primary_key: Optional[str] = None
 

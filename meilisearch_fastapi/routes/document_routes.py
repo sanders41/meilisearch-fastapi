@@ -12,7 +12,7 @@ from meilisearch_fastapi.models.document_info import DocumentDelete, DocumentInf
 router = APIRouter()
 
 
-@router.post("/", response_model=UpdateId)
+@router.post("/", response_model=UpdateId, status_code=202)
 async def add_documents(
     document_info: DocumentInfo, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -22,7 +22,7 @@ async def add_documents(
         return await index.add_documents(document_info.documents, document_info.primary_key)
 
 
-@router.delete("/{uid}", response_model=UpdateId)
+@router.delete("/{uid}", response_model=UpdateId, status_code=202)
 async def delete_all_documents(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -32,7 +32,7 @@ async def delete_all_documents(
         return await index.delete_all_documents()
 
 
-@router.delete("/{uid}/{document_id}", response_model=UpdateId)
+@router.delete("/{uid}/{document_id}", response_model=UpdateId, status_code=202)
 async def delete_document(
     uid: str, document_id: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -42,7 +42,7 @@ async def delete_document(
         return await index.delete_document(document_id)
 
 
-@router.post("/delete", response_model=UpdateId)
+@router.post("/delete", response_model=UpdateId, status_code=202)
 async def delete_documents(
     documents: DocumentDelete, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -69,12 +69,12 @@ async def get_documents(uid: str, config: MeiliSearchConfig = Depends(get_config
         documents = await index.get_documents()
 
         if documents is None:
-            raise HTTPException(204, "No documents found")
+            raise HTTPException(404, "No documents found")
 
         return documents
 
 
-@router.put("/", response_model=UpdateId)
+@router.put("/", response_model=UpdateId, status_code=202)
 async def update_documents(
     document_info: DocumentInfo, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:

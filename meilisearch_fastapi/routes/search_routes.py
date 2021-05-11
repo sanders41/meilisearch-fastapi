@@ -18,15 +18,15 @@ async def search(
         index = client.index(search_parameters.uid)
 
         return await index.search(
-            search_parameters.query,
-            search_parameters.offset,
-            search_parameters.limit,
-            search_parameters.filters,
-            search_parameters.facet_filters,
-            search_parameters.facets_distribution,
-            search_parameters.attributes_to_retrieve,
-            search_parameters.attributes_to_crop,
-            search_parameters.crop_length,
-            search_parameters.attributes_to_highlight,
-            search_parameters.matches,
+            query=search_parameters.query,
+            offset=search_parameters.offset,
+            limit=search_parameters.limit,
+            filters=search_parameters.filters,
+            facet_filters=search_parameters.facet_filters,
+            facets_distribution=search_parameters.facets_distribution,
+            attributes_to_retrieve=search_parameters.attributes_to_retrieve,
+            attributes_to_crop=search_parameters.attributes_to_crop,
+            crop_length=search_parameters.crop_length,
+            attributes_to_highlight=search_parameters.attributes_to_highlight,
+            matches=search_parameters.matches,
         )

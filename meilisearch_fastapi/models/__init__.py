@@ -9,6 +9,7 @@ from meilisearch_fastapi.models.index import (  # noqa: F401
     IndexUpdate,
     PrimaryKey,
     RankingRules,
+    RankingRulesWithUID,
     SearchableAttributes,
     SearchableAttributesWithUID,
     StopWords,

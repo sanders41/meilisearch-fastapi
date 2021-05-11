@@ -4,7 +4,7 @@ from typing import List
 
 from async_search_client import Client
 from async_search_client.errors import MeiliSearchApiError
-from async_search_client.models import IndexInfo, IndexStats, MeiliSearchSettings, UpdateId
+from async_search_client.models import IndexBase, IndexInfo, IndexStats, UpdateId
 from fastapi import APIRouter, Depends, HTTPException
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
@@ -18,6 +18,7 @@ from meilisearch_fastapi.models.index import (
     IndexUpdate,
     PrimaryKey,
     RankingRules,
+    RankingRulesWithUID,
     SearchableAttributes,
     SearchableAttributesWithUID,
     StopWords,
@@ -25,23 +26,27 @@ from meilisearch_fastapi.models.index import (
     Synonyms,
     SynonymsWithUID,
 )
-from meilisearch_fastapi.models.meili_message import MeiliSearchMessage
-from meilisearch_fastapi.models.settings import MeiliSearchIndexSettings
 
 router = APIRouter()
 
 
-@router.post("/", response_model=MeiliSearchMessage)
+@router.post("/", response_model=IndexInfo, status_code=201)
 async def create_index(
-    uid: str, config: MeiliSearchConfig = Depends(get_config)
-) -> MeiliSearchMessage:
+    index_info: IndexBase, config: MeiliSearchConfig = Depends(get_config)
+) -> IndexInfo:
     async with Client(config.url, api_key=config.api_key) as client:
-        index = await client.create_index(uid, config.api_key)
+        index = await client.create_index(index_info.uid, index_info.primary_key)
+        index = await client.get_index(index_info.uid)
 
-        return MeiliSearchMessage(msg=f"Index {index.uid} created")
+        return IndexInfo(
+            uid=index.uid,
+            primary_key=index.primary_key,
+            created_at=index.created_at,
+            updated_at=index.updated_at,
+        )
 
 
-@router.delete("/attributes-for-faceting/{uid}", response_model=UpdateId)
+@router.delete("/attributes-for-faceting/{uid}", response_model=UpdateId, status_code=202)
 async def delete_attributes_for_faceting(
     uid: str,
     config: MeiliSearchConfig = Depends(get_config),
@@ -52,7 +57,7 @@ async def delete_attributes_for_faceting(
         return await index.reset_attributes_for_faceting()
 
 
-@router.delete("/displayed-attribues/{uid}", response_model=UpdateId)
+@router.delete("/displayed-attributes/{uid}", response_model=UpdateId, status_code=202)
 async def delete_displayed_attributes(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -62,7 +67,7 @@ async def delete_displayed_attributes(
         return await index.reset_displayed_attributes()
 
 
-@router.delete("/attributes/uniquie/{uid}", response_model=UpdateId)
+@router.delete("/attributes/distinct/{uid}", response_model=UpdateId, status_code=202)
 async def delete_distinct_attribute(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -72,14 +77,14 @@ async def delete_distinct_attribute(
         return await index.reset_distinct_attribute()
 
 
-@router.delete("/{uid}", response_model=int)
+@router.delete("/{uid}", status_code=204)
 async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> int:
     async with Client(config.url, api_key=config.api_key) as client:
         index = client.index(uid)
         return await index.delete()
 
 
-@router.delete("/ranking-rules/{uid}", response_model=UpdateId)
+@router.delete("/ranking-rules/{uid}", response_model=UpdateId, status_code=202)
 async def delete_ranking_rules(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -89,7 +94,7 @@ async def delete_ranking_rules(
         return await index.reset_ranking_rules()
 
 
-@router.delete("/searchable-attributes/{uid}", response_model=UpdateId)
+@router.delete("/searchable-attributes/{uid}", response_model=UpdateId, status_code=202)
 async def delete_searchable_attributes(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -99,7 +104,7 @@ async def delete_searchable_attributes(
         return await index.reset_searchable_attributes()
 
 
-@router.delete("/stop-words/{uid}", response_model=UpdateId)
+@router.delete("/stop-words/{uid}", response_model=UpdateId, status_code=202)
 async def delete_stop_words(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> UpdateId:
     async with Client(url=config.url, api_key=config.api_key) as client:
         index = client.index(uid)
@@ -107,12 +112,12 @@ async def delete_stop_words(uid: str, config: MeiliSearchConfig = Depends(get_co
         return await index.reset_stop_words()
 
 
-@router.delete("/synonyms/{uid}", response_model=UpdateId)
+@router.delete("/synonyms/{uid}", response_model=UpdateId, status_code=202)
 async def delete_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> UpdateId:
     async with Client(url=config.url, api_key=config.api_key) as client:
         index = client.index(uid)
 
-        return await index.reset_stop_words()
+        return await index.reset_synonyms()
 
 
 @router.get("/attributes-for-faceting/{uid}", response_model=AttributesForFaceting)
@@ -139,7 +144,7 @@ async def get_displayed_attributes(
 
 
 @router.get("/attributes/distinct/{uid}", response_model=DistinctAttribute)
-async def get_distinct_attributes(
+async def get_distinct_attribute(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> DistinctAttribute:
     async with Client(url=config.url, api_key=config.api_key) as client:
@@ -155,17 +160,18 @@ async def get_index(
     config: MeiliSearchConfig = Depends(get_config),
 ) -> IndexInfo:
     async with Client(url=config.url, api_key=config.api_key) as client:
-        # TODO: The current fetching is a hack until a decision is made as to how to best
-        # handle the get_index method in the client. Once a decision is made there switch this
-        # back to using the get_index from async-search-client
-        # index = await client.get_index(uid)
         try:
-            response = await client._http_requests.get(f"{config.url}/indexes/{uid}")
+            index = await client.get_index(uid)
 
-            return IndexInfo(**response.json())
+            return IndexInfo(
+                uid=index.uid,
+                primary_key=index.primary_key,
+                created_at=index.created_at,
+                updated_at=index.updated_at,
+            )
         except MeiliSearchApiError as e:
-            if e.status_code == 404:
-                raise HTTPException(404, f"Index {uid} not found")
+            if "index_not_found" in e.error_code:
+                raise HTTPException(404, "Index not found")
 
             raise e
 
@@ -197,9 +203,17 @@ async def get_indexes(
         indexes = await client.get_indexes()
 
         if not indexes:
-            raise HTTPException(204)
+            raise HTTPException(404, "No indexes found")
 
-        return indexes
+        return [
+            IndexInfo(
+                uid=x.uid,
+                primary_key=x.primary_key,
+                created_at=x.created_at,
+                updated_at=x.updated_at,
+            )
+            for x in indexes
+        ]
 
 
 @router.get("/primary-key/{uid}", response_model=PrimaryKey)
@@ -240,7 +254,7 @@ async def get_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_config)
         return Synonyms(synonyms=synonyms)
 
 
-@router.put("/attributes-for-faceting", response_model=UpdateId)
+@router.put("/attributes-for-faceting", response_model=UpdateId, status_code=202)
 async def update_attributes_for_faceting(
     attributes_for_faceting: AttribugtesForFacetingWithUID,
     config: MeiliSearchConfig = Depends(get_config),
@@ -252,7 +266,7 @@ async def update_attributes_for_faceting(
         return await index.update_attributes_for_faceting(attributes)
 
 
-@router.put("/displayed-attribues", response_model=UpdateId)
+@router.put("/displayed-attributes", response_model=UpdateId, status_code=202)
 async def update_displayed_attributes(
     displayed_attributes: DisplayedAttributesUID, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -262,7 +276,7 @@ async def update_displayed_attributes(
         return await index.update_displayed_attributes(displayed_attributes.displayed_attributes)
 
 
-@router.put("/attributes/distinct", response_model=UpdateId)
+@router.put("/attributes/distinct", response_model=UpdateId, status_code=202)
 async def update_distinct_attribute(
     attribute_with_uid: DistinctAttributeWithUID, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -277,12 +291,6 @@ async def update_index(
     index_update: IndexUpdate, config: MeiliSearchConfig = Depends(get_config)
 ) -> IndexInfo:
     async with Client(config.url, api_key=config.api_key) as client:
-        # index = client.index(index_update.uid)
-
-        # TODO: The current fetching is a hack until a decision is made as to how to best
-        # handle the get_index method in the client. Once a decision is made there switch this
-        # back to using the get_index from async-search-client
-        # index = await client.get_index(uid)
         payload = {}
         if index_update.primary_key is not None:
             payload["primaryKey"] = index_update.primary_key
@@ -291,30 +299,19 @@ async def update_index(
         )
 
         return IndexInfo(**response.json())
-        # return await index.update(index_update.primary_key)
 
 
-@router.put("/ranking-rules", response_model=UpdateId)
+@router.put("/ranking-rules", response_model=UpdateId, status_code=202)
 async def update_ranking_rules(
-    ranking_rules: MeiliSearchIndexSettings, config: MeiliSearchConfig = Depends(get_config)
+    ranking_rules: RankingRulesWithUID, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
     async with Client(url=config.url, api_key=config.api_key) as client:
         index = client.index(ranking_rules.uid)
 
-        ranking_rules_update = MeiliSearchSettings(
-            synonyms=ranking_rules.synonyms,
-            stop_words=ranking_rules.stop_words,
-            ranking_rules=ranking_rules.ranking_rules,
-            attributes_for_faceting=ranking_rules.attributes_for_faceting,
-            distinct_attribute=ranking_rules.distinct_attribute,
-            searchable_attributes=ranking_rules.searchable_attributes,
-            displayed_attributes=ranking_rules.displayed_attributes,
-        )
-
-        return await index.update_ranking_rules(ranking_rules_update)
+        return await index.update_ranking_rules(ranking_rules.ranking_rules)
 
 
-@router.put("/searchable-attributes", response_model=UpdateId)
+@router.put("/searchable-attributes", response_model=UpdateId, status_code=202)
 async def update_searchable_attributes(
     searchable_attributes: SearchableAttributesWithUID,
     config: MeiliSearchConfig = Depends(get_config),
@@ -325,7 +322,7 @@ async def update_searchable_attributes(
         return await index.update_searchable_attributes(searchable_attributes.searchable_attributes)
 
 
-@router.put("/stop-words", response_model=UpdateId)
+@router.put("/stop-words", response_model=UpdateId, status_code=202)
 async def update_stop_words(
     stop_words: StopWordsWithUID, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -333,10 +330,10 @@ async def update_stop_words(
         index = client.index(stop_words.uid)
         words = stop_words.stop_words or []
 
-        return await index.update_searchable_attributes(words)
+        return await index.update_stop_words(words)
 
 
-@router.put("/synonyms", response_model=UpdateId)
+@router.put("/synonyms", response_model=UpdateId, status_code=202)
 async def update_synonyms(
     synonyms: SynonymsWithUID, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
