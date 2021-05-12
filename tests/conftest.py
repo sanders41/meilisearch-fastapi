@@ -12,7 +12,7 @@ from meilisearch_fastapi.routes import (
     index_routes,
     meilisearch_routes,
     search_routes,
-    setting_routes,
+    settings_routes,
 )
 
 ROOT_PATH = Path().absolute()
@@ -65,7 +65,7 @@ async def test_client():
     api_router.include_router(index_routes.router, prefix="/indexes")
     api_router.include_router(meilisearch_routes.router, prefix="/meilisearch")
     api_router.include_router(search_routes.router, prefix="/search")
-    api_router.include_router(setting_routes.router, prefix="/settings")
+    api_router.include_router(settings_routes.router, prefix="/settings")
 
     app.include_router(api_router)
 
