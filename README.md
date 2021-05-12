@@ -20,7 +20,13 @@ Routes are split in groups so that different dependencies can be injected, and t
 
 ```py
 from fastapi import APIRouter, FastAPI
-from meilisearch_fastapi import routes
+from meilisearch_fastapi.routes import (
+    document_routes,
+    index_routes,
+    meilisearch_routes,
+    search_routes,
+    settings_routes,
+)
 
 app = FastAPI()
 api_router = APIRouter()
@@ -28,7 +34,7 @@ api_router.include_router(document_routes.router, prefix="/documents")
 api_router.include_router(index_routes.router, prefix="/indexes")
 api_router.include_router(meilisearch_routes.router, prefix="/meilisearch")
 api_router.include_router(search_routes.router, prefix="/search")
-api_router.include_router(setting_routes.router, prefix="/settings")
+api_router.include_router(settings_routes.router, prefix="/settings")
 
 app.include_router(api_router)
 ```
@@ -47,7 +53,7 @@ api_router.include_router(document_routes.router, prefix="/documents", dependein
 api_router.include_router(index_routes.router, prefix="/indexes", dependeincies=[Depends(my_authentication)])
 api_router.include_router(meilisearch_routes.router, prefix="/meilisearch", dependeincies=[Depends(my_authentication)])
 api_router.include_router(search_routes.router, prefix="/search", dependeincies=[Depends(my_authentication)])
-api_router.include_router(setting_routes.router, prefix="/settings", dependeincies=[Depends(my_authentication)])
+api_router.include_router(settings_routes.router, prefix="/settings", dependeincies=[Depends(my_authentication)])
 
 app.include_router(api_router)
 ```
