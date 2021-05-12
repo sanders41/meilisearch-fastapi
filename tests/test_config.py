@@ -20,7 +20,6 @@ def test_config_no_key(meilisearch_url, master_key, monkeypatch):
     assert config.url == meilisearch_url
 
     # recreate the environment vairable
-    monkeypatch.setenv("MEILISEARCH_API_KEY", master_key)
 
 
 def test_config_no_url(meilisearch_url, monkeypatch):
@@ -31,4 +30,3 @@ def test_config_no_url(meilisearch_url, monkeypatch):
         get_config()
 
     # recreate the environment vairable
-    monkeypatch.setenv("MEILISEARCH_URL", meilisearch_url)

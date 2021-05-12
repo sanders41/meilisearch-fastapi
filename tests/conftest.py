@@ -31,7 +31,7 @@ INDEX_FIXTURE = [
 ]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(autouse=True)
 def env_vars(monkeypatch):
     monkeypatch.setenv("MEILISEARCH_URL", MEILISEARCH_URL)
     monkeypatch.setenv("MEILISEARCH_API_KEY", MASTER_KEY)
