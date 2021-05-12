@@ -8,7 +8,7 @@ readme = "README.md"
 repository = "https://github.com/sanders41/meilisearch-fastapi"
 homepage = "https://github.com/sanders41/meilisearch-fastapi"
 documentation = "https://github.com/sanders41/meilisearch-fastapi"
-keywords = ["meilisearch", "fastapi"]
+keywords = ["meilisearch", "fastapi", "async", "search"]
 classifiers=[
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
