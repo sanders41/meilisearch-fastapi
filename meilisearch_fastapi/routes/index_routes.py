@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import List
 
 from async_search_client import Client
-from async_search_client.errors import MeiliSearchApiError
 from async_search_client.models import IndexBase, IndexInfo, IndexStats, UpdateId
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -36,7 +35,6 @@ async def create_index(
 ) -> IndexInfo:
     async with Client(config.url, api_key=config.api_key) as client:
         index = await client.create_index(index_info.uid, index_info.primary_key)
-        index = await client.get_index(index_info.uid)
 
         return IndexInfo(
             uid=index.uid,
@@ -160,20 +158,12 @@ async def get_index(
     config: MeiliSearchConfig = Depends(get_config),
 ) -> IndexInfo:
     async with Client(url=config.url, api_key=config.api_key) as client:
-        try:
-            index = await client.get_index(uid)
+        index = await client.get_raw_index(uid)
 
-            return IndexInfo(
-                uid=index.uid,
-                primary_key=index.primary_key,
-                created_at=index.created_at,
-                updated_at=index.updated_at,
-            )
-        except MeiliSearchApiError as e:
-            if "index_not_found" in e.error_code:
-                raise HTTPException(404, "Index not found")
+        if not index:
+            raise HTTPException(404, "Index not found")
 
-            raise e
+        return index
 
 
 @router.get("/ranking-rules/{uid}", response_model=RankingRules)
@@ -200,20 +190,12 @@ async def get_indexes(
     config: MeiliSearchConfig = Depends(get_config),
 ) -> list[IndexInfo]:
     async with Client(url=config.url, api_key=config.api_key) as client:
-        indexes = await client.get_indexes()
+        indexes = await client.get_raw_indexes()
 
         if not indexes:
             raise HTTPException(404, "No indexes found")
 
-        return [
-            IndexInfo(
-                uid=x.uid,
-                primary_key=x.primary_key,
-                created_at=x.created_at,
-                updated_at=x.updated_at,
-            )
-            for x in indexes
-        ]
+        return indexes
 
 
 @router.get("/primary-key/{uid}", response_model=PrimaryKey)
