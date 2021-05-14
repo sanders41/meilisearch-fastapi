@@ -16,7 +16,7 @@ python-versions = "*"
 
 [[package]]
 name = "async-search-client"
-version = "0.5.2"
+version = "0.6.0"
 description = "A Python async client for the MeiliSearch API"
 category = "main"
 optional = false
@@ -625,7 +625,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "e4ca1b6bd9a73ed4fb706bfb187e54d1c6e09c56064960fafff779c84dec5e28"
+content-hash = "65abcf37873477e453297701a906f8932fa4f19f50c83c8522857ebf2f543c2d"
 
 [metadata.files]
 aiofiles = [
@@ -637,8 +637,8 @@ appdirs = [
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
 ]
 async-search-client = [
-    {file = "async-search-client-0.5.2.tar.gz", hash = "sha256:331da29d619cc8c54228381e57c0c3e18125af2a7c65f3fc1598f0fe5c6e13e3"},
-    {file = "async_search_client-0.5.2-py3-none-any.whl", hash = "sha256:9dd719b5cc8de9d04270f83c341b60c89cc57a3511d01bb651589384d098f788"},
+    {file = "async-search-client-0.6.0.tar.gz", hash = "sha256:5cf3979c9b31c0425dd4cae0360b6a8766f7eeafe908bffdd061477f6b3882b6"},
+    {file = "async_search_client-0.6.0-py3-none-any.whl", hash = "sha256:9e636860a55a6d68f297f827c3f4aa617f0a4d50924965a14baaa510f2757393"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},

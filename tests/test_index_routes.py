@@ -96,6 +96,29 @@ async def test_get_index(test_client, index_uid):
 
 
 @pytest.mark.asyncio
+async def test_get_index_none(test_client):
+    response = await test_client.get("/indexes/bad")
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("indexes_sample")
+async def test_get_indexes(test_client, index_uid, index_uid2):
+    response = await test_client.get("/indexes")
+    response_uids = [x["uid"] for x in response.json()]
+
+    assert index_uid in response_uids
+    assert index_uid2 in response_uids
+    assert len(response.json()) == 2
+
+
+@pytest.mark.asyncio
+async def test_get_indexes_none(test_client):
+    response = await test_client.get("/indexes")
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
 async def test_get_primary_key(test_client, index_uid2):
     response = await test_client.get(f"/indexes/primary-key/{index_uid2}")
