@@ -1,3 +1,5 @@
+from math import ceil
+
 import pytest
 from async_search_client.errors import MeiliSearchApiError
 
@@ -10,26 +12,44 @@ async def test_get_documents_none(empty_index, test_client):
 
 
 @pytest.mark.asyncio
-async def test_add_documents(empty_index, small_movies, test_client):
+@pytest.mark.parametrize(
+    "primary_key, expected_primary_key", [("release_date", "release_date"), (None, "id")]
+)
+async def test_add_documents(
+    primary_key, expected_primary_key, empty_index, small_movies, test_client
+):
     uid, index = empty_index
-    document = {"uid": uid, "documents": small_movies}
+    document = {"uid": uid, "documents": small_movies, "primaryKey": primary_key}
     response = await test_client.post("/documents", json=document)
     assert "updateId" in response.json()
     update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert await index.get_primary_key() == "id"
+    assert await index.get_primary_key() == expected_primary_key
     assert update.status == "processed"
 
 
 @pytest.mark.asyncio
-async def test_add_documents_with_primary_key(empty_index, test_client, small_movies):
+@pytest.mark.parametrize(
+    "primary_key, expected_primary_key", [("release_date", "release_date"), (None, "id")]
+)
+@pytest.mark.parametrize("batch_size", [2, 3, 1000])
+async def test_add_documents_in_batches(
+    primary_key, expected_primary_key, batch_size, empty_index, small_movies, test_client
+):
     uid, index = empty_index
-    primary_key = "release_date"
-    document = {"uid": uid, "documents": small_movies, "primary_key": primary_key}
-    response = await test_client.post("/documents", json=document)
-    assert "updateId" in response.json()
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert await index.get_primary_key() == primary_key
-    assert update.status == "processed"
+    document = {
+        "uid": uid,
+        "documents": small_movies,
+        "batch_size": batch_size,
+        "primary_key": primary_key,
+    }
+    response = await test_client.post("/documents/batches", json=document)
+    assert ceil(len(small_movies) / batch_size) == len(response.json())
+
+    for r in response.json():
+        update = await index.wait_for_pending_update(r["updateId"])
+        assert update.status == "processed"
+
+    assert await index.get_primary_key() == expected_primary_key
 
 
 @pytest.mark.asyncio
