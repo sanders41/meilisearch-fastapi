@@ -1,4 +1,8 @@
-from meilisearch_fastapi.models.document_info import DocumentDelete, DocumentInfo  # noqa: F401
+from meilisearch_fastapi.models.document_info import (  # noqa: F401
+    DocumentDelete,
+    DocumentInfo,
+    DocumentInfoBatches,
+)
 from meilisearch_fastapi.models.index import (  # noqa: F401
     AttribugtesForFacetingWithUID,
     AttributesForFaceting,

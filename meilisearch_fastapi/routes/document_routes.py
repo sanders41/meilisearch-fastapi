@@ -7,7 +7,11 @@ from async_search_client.models import UpdateId
 from fastapi import APIRouter, Depends, HTTPException
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
-from meilisearch_fastapi.models.document_info import DocumentDelete, DocumentInfo
+from meilisearch_fastapi.models.document_info import (
+    DocumentDelete,
+    DocumentInfo,
+    DocumentInfoBatches,
+)
 
 router = APIRouter()
 
@@ -20,6 +24,18 @@ async def add_documents(
         index = client.index(document_info.uid)
 
         return await index.add_documents(document_info.documents, document_info.primary_key)
+
+
+@router.post("/batches", response_model=List[UpdateId], status_code=202)
+async def add_documents_in_batches(
+    document_info: DocumentInfoBatches, config: MeiliSearchConfig = Depends(get_config)
+) -> list[UpdateId]:
+    async with Client(url=config.url, api_key=config.api_key) as client:
+        index = client.index(document_info.uid)
+
+        return await index.add_documents_in_batches(
+            document_info.documents, document_info.batch_size, document_info.primary_key
+        )
 
 
 @router.delete("/{uid}", response_model=UpdateId, status_code=202)

@@ -12,3 +12,7 @@ class DocumentInfo(CamelBase):
     uid: str
     documents: List[Dict]
     primary_key: Optional[str] = None
+
+
+class DocumentInfoBatches(DocumentInfo):
+    batch_size: int
