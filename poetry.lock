@@ -16,7 +16,7 @@ python-versions = "*"
 
 [[package]]
 name = "async-search-client"
-version = "0.7.0"
+version = "0.7.1"
 description = "A Python async client for the MeiliSearch API"
 category = "main"
 optional = false
@@ -24,7 +24,7 @@ python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
 aiofiles = ">=0.7.0,<0.8.0"
-camel-converter = ">=0.2.0,<0.3.0"
+camel-converter = ">=1.0.0,<2.0.0"
 httpx = ">=0.17,<0.19"
 pydantic = ">=1.8,<2.0"
 
@@ -75,14 +75,14 @@ python2 = ["typed-ast (>=1.4.2)"]
 
 [[package]]
 name = "camel-converter"
-version = "0.2.0.post1"
+version = "1.0.0"
 description = "Converts a string from snake case to camel case or camel case to snake case"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 
 [package.extras]
-pydantic = ["pydantic[pydantic] (>=1.8.1,<2.0.0)"]
+pydantic = ["pydantic[pydantic] (>=1.8.2,<2.0.0)"]
 
 [[package]]
 name = "certifi"
@@ -628,7 +628,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "36bee858436db67e605e42532412280d90f85e85e6e9023f076570eb362c28b3"
+content-hash = "11d2e8c7d7c5b30def1a836fc366fd0526e1f358568fbd13b7fc238dfeb06dcf"
 
 [metadata.files]
 aiofiles = [
@@ -640,8 +640,8 @@ appdirs = [
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
 ]
 async-search-client = [
-    {file = "async-search-client-0.7.0.tar.gz", hash = "sha256:11e8427b19e1ff8bf07e9af6309849df7d837afa7cc3baaae738f3bd0e23c6a3"},
-    {file = "async_search_client-0.7.0-py3-none-any.whl", hash = "sha256:52b1ab81719635e4b62b5af9f431311b69d2614d8e7cbc871b3b150d77a6da98"},
+    {file = "async-search-client-0.7.1.tar.gz", hash = "sha256:3061cf822336a94bcceca736211746bf9fda94ce798baa8d7aaaf8115975452d"},
+    {file = "async_search_client-0.7.1-py3-none-any.whl", hash = "sha256:64ebb6fbf2a356421bcd2bc4865c76ebe3077751c8e67880dfb7d38832602b0e"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
@@ -656,8 +656,8 @@ black = [
     {file = "black-21.5b1.tar.gz", hash = "sha256:23695358dbcb3deafe7f0a3ad89feee5999a46be5fec21f4f1d108be0bcdb3b1"},
 ]
 camel-converter = [
-    {file = "camel-converter-0.2.0.post1.tar.gz", hash = "sha256:93d70ee3dfe69614cc482640521e68913bf82921af63d4b77b59a9ad2e262ac9"},
-    {file = "camel_converter-0.2.0.post1-py3-none-any.whl", hash = "sha256:adf19f056860e129e21cc5b03d2be964287cf85f5feb110f985ee29765355d16"},
+    {file = "camel-converter-1.0.0.tar.gz", hash = "sha256:2d17e92e268b62410834c5ebb77c4b3ec78fb9e3a981c83cf8cbc0c961688756"},
+    {file = "camel_converter-1.0.0-py3-none-any.whl", hash = "sha256:7a15b0ec98e805411585a8127644b020209f4ed5a5678763622c4abd854ecc14"},
 ]
 certifi = [
     {file = "certifi-2020.12.5-py2.py3-none-any.whl", hash = "sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"},
