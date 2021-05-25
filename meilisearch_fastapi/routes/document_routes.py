@@ -98,3 +98,15 @@ async def update_documents(
         index = client.index(document_info.uid)
 
         return await index.update_documents(document_info.documents, document_info.primary_key)
+
+
+@router.put("/batches", response_model=List[UpdateId], status_code=202)
+async def update_documents_in_batches(
+    document_info: DocumentInfoBatches, config: MeiliSearchConfig = Depends(get_config)
+) -> list[UpdateId]:
+    async with Client(url=config.url, api_key=config.api_key) as client:
+        index = client.index(document_info.uid)
+
+        return await index.update_documents_in_batches(
+            document_info.documents, document_info.batch_size, document_info.primary_key
+        )

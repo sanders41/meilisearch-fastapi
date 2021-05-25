@@ -132,3 +132,27 @@ async def test_update_documents_with_primary_key(test_client, empty_index, small
     update = await test_client.put("/documents", json=document_info)
     await index.wait_for_pending_update(update.json()["updateId"])
     assert await index.get_primary_key() == primary_key
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("batch_size", [2, 3, 1000])
+async def test_update_documents_in_batches(
+    batch_size, test_client, index_with_documents, small_movies
+):
+    uid, index = index_with_documents
+    response = await test_client.get(f"documents/{uid}")
+    response_docs = response.json()
+    response_docs[0]["title"] = "Some title"
+    update_body = {"uid": uid, "documents": response_docs}
+    update = await test_client.put("/documents", json=update_body)
+    await index.wait_for_pending_update(update.json()["updateId"])
+    response = await test_client.get(f"/documents/{uid}")
+    assert response.json()[0]["title"] == "Some title"
+    update_body = {"uid": uid, "batch_size": batch_size, "documents": small_movies}
+    updates = await test_client.put("/documents/batches", json=update_body)
+
+    for update in updates.json():
+        await index.wait_for_pending_update(update["updateId"])
+
+    response = await test_client.get(f"/documents/{uid}")
+    assert response.json()[0]["title"] != "Some title"
