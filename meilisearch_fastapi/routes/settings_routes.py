@@ -14,7 +14,7 @@ router = APIRouter()
 async def get_settings(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> MeiliSearchSettings:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
         return await index.get_settings()
@@ -22,7 +22,7 @@ async def get_settings(
 
 @router.delete("/{uid}", response_model=UpdateId)
 async def delete_settings(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> UpdateId:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
         return await index.reset_settings()
@@ -32,7 +32,7 @@ async def delete_settings(uid: str, config: MeiliSearchConfig = Depends(get_conf
 async def update_settings(
     update_settings: MeiliSearchIndexSettings, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(update_settings.uid)
 
         meili_settings = MeiliSearchSettings(

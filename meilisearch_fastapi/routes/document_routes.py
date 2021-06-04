@@ -20,7 +20,7 @@ router = APIRouter()
 async def add_documents(
     document_info: DocumentInfo, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(document_info.uid)
 
         return await index.add_documents(document_info.documents, document_info.primary_key)
@@ -30,7 +30,7 @@ async def add_documents(
 async def add_documents_in_batches(
     document_info: DocumentInfoBatches, config: MeiliSearchConfig = Depends(get_config)
 ) -> list[UpdateId]:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(document_info.uid)
 
         return await index.add_documents_in_batches(
@@ -42,7 +42,7 @@ async def add_documents_in_batches(
 async def delete_all_documents(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
         return await index.delete_all_documents()
@@ -52,7 +52,7 @@ async def delete_all_documents(
 async def delete_document(
     uid: str, document_id: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
         return await index.delete_document(document_id)
@@ -62,7 +62,7 @@ async def delete_document(
 async def delete_documents(
     documents: DocumentDelete, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(documents.uid)
 
         return await index.delete_documents(documents.document_ids)
@@ -72,7 +72,7 @@ async def delete_documents(
 async def get_document(
     uid: str, document_id: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> dict:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
         return await index.get_document(document_id)
@@ -80,7 +80,7 @@ async def get_document(
 
 @router.get("/{uid}", response_model=List[Dict])
 async def get_documents(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> list[dict]:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
         documents = await index.get_documents()
 
@@ -94,7 +94,7 @@ async def get_documents(uid: str, config: MeiliSearchConfig = Depends(get_config
 async def update_documents(
     document_info: DocumentInfo, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(document_info.uid)
 
         return await index.update_documents(document_info.documents, document_info.primary_key)
@@ -104,7 +104,7 @@ async def update_documents(
 async def update_documents_in_batches(
     document_info: DocumentInfoBatches, config: MeiliSearchConfig = Depends(get_config)
 ) -> list[UpdateId]:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(document_info.uid)
 
         return await index.update_documents_in_batches(

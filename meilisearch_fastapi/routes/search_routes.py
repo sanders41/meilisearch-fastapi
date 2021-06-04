@@ -14,7 +14,7 @@ router = APIRouter()
 async def search(
     search_parameters: SearchParameters, config: MeiliSearchConfig = Depends(get_config)
 ) -> SearchResults:
-    async with Client(url=config.url, api_key=config.api_key) as client:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(search_parameters.uid)
 
         return await index.search(
