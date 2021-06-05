@@ -75,6 +75,14 @@ async def delete_distinct_attribute(
         return await index.reset_distinct_attribute()
 
 
+@router.delete("/delete-if-exists/{uid}", status_code=204)
+async def delete_if_exists(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> int:
+    async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        index = client.index(uid)
+        await index.delete_if_exists()
+        return 204
+
+
 @router.delete("/{uid}", status_code=204)
 async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> int:
     async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
