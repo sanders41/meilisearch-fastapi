@@ -146,6 +146,16 @@ async def test_delete_index(test_client, index_uid, index_uid2):
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
+async def test_delete_if_exists(test_client, index_uid, index_uid2):
+    response = await test_client.delete(f"/indexes/delete-if-exists/{index_uid}")
+    assert response.status_code == 204
+
+    response = await test_client.get(f"/indexes/{index_uid}")
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("indexes_sample")
 async def test_update_index(test_client, index_uid):
     primay_key = "objectID"
     update_data = {"uid": index_uid, "primaryKey": primay_key}
