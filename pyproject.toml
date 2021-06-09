@@ -70,3 +70,6 @@ src_paths = ["meilisearch_fastapi", "tests"]
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "--cov=meilisearch_fastapi"
+
+[tool.mypy]
+disallow_untyped_defs = true
