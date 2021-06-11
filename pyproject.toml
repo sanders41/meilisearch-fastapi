@@ -28,7 +28,7 @@ pydantic = {version = "^1.8.2", extras = ["dotenv"]}
 black = "^21.5b2"
 flake8 = "^3.9.2"
 isort = "^5.8.0"
-mypy = "^0.901"
+mypy = "^0.902"
 pre-commit = "^2.12.1"
 pytest = "^6.2.4"
 pytest-cov = "^2.12.1"
