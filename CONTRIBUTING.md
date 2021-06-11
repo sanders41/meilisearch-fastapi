@@ -47,34 +47,7 @@ This creates the directory meilisearch-fastapi and connects your repository to t
 
 Note: This project uses Poetry to manage dependencies. If you do not already have Poetry installed you will need to install it with the instuctions [here](https://python-poetry.org/docs/#installation)
 
-Once you have cloned your fork of the repository you can create a virtual environment. When using Poetry the step is optional.
-If you create a virtual environment Poetry will use the environment you have activated, or Poetry will create
-and use it's own if you don't create one. If you want to create your own, once you are in the meilisearch-fastapi directory create and activate
-the virtual environment. This step is slightly different for Mac/Linux and Windows.
-
-Mac/Linux
-
-```sh
-# Create the environment
-python3 -m venv venv
-
-# Activate the environment
-. venv/bin/activate
-pip install -U pip
-```
-
-Windows
-
-```powershell
-# Create the environment
-python -m venv venv
-
-#Activate the environment. Use activate.bat for cmd.exe
-venv\Scripts\Activate.ps1
-pip install -U pip
-```
-
-Next the requirements need to be installed.
+First the requirements need to be installed.
 
 ```sh
 poetry install
@@ -107,22 +80,6 @@ meilisearch-fastapi uses [isort](https://pycqa.github.io/isort/),
 [Flake8](https://flake8.pycqa.org/en/latest/), [Black](https://github.com/psf/black), and [mypy](https://mypy.readthedocs.io/en/stable/) to ensure consistant code formmating.
 
 You can run linting on your code at any time with:
-
-```sh
-# Run isort
-isort meilisearch_fastapi tests
-
-# Run black
-black meilisearch_fastapi tests
-
-# Run flake8
-flake8 meilisearch_fastapi test
-
-# Run mypy
-mypy meilisearch_fastapi
-```
-
-* Note if you did not create your own virtual environment and are using the Poetry environment instead you will need to append `poetry run ...` to each command.
 
 ```sh
 # Run isort
@@ -195,22 +152,10 @@ docker run -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=m
 Now with the container running run the test suite
 
 ```sh
-pytest
-```
-
-Or if you are using Poetry's virtual environment
-
-```sh
 poetry run pytest
 ```
 
 If you want to see which lines are missing code coverage run the test with:
-
-```sh
-pytest --cov-report term-missing
-```
-
-or
 
 ```sh
 poetry run pytest --cov-report term-missing
@@ -220,12 +165,6 @@ In additon to mainting the coverage percentage please ensure that all
 tests are passing before submitting a pull request.
 
 tox can be used to run both linting, and run the tests in all versions of Python meilisearch-fastapi supports. Note that you will need to have all the verions of Python installed for this to work.
-
-```sh
-tox
-```
-
-or
 
 ```sh
 poetry run tox
