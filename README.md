@@ -70,7 +70,7 @@ MEILISEARCH_URL=http://localhost:7700  # This is the url for your instance of Me
 MEILISEARCH_API_KEY=masterKey  # This is the API key for your MeiliSearch instance
 ```
 
-Now the MeiliSearch routes will be available in your FastAPI app. Documentation for the routes can be viewed in the OpenAPI documentation of the FastAPI app. To view this start your fast api app and naviate to the docs `http://127.0.0.1:8000/docs` replacing the url with the correct url for your app.
+Now the MeiliSearch routes will be available in your FastAPI app. Documentation for the routes can be viewed in the OpenAPI documentation of the FastAPI app. To view this start your FastAPI app and naviate to the docs `http://localhost:8000/docs` replacing the url with the correct url for your app.
 
 ## Compatibility with MeiliSearch
 
