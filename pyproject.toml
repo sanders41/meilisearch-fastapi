@@ -27,7 +27,7 @@ pydantic = {version = "^1.8.2", extras = ["dotenv"]}
 [tool.poetry.dev-dependencies]
 black = "^21.6b0"
 flake8 = "^3.9.2"
-isort = "^5.8.0"
+isort = "^5.9.1"
 mypy = "^0.902"
 pre-commit = "^2.12.1"
 pytest = "^6.2.4"
