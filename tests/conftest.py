@@ -3,9 +3,9 @@ import json
 from pathlib import Path
 
 import pytest
-from async_search_client import Client
 from fastapi import APIRouter, FastAPI
 from httpx import AsyncClient
+from meilisearch_python_async import Client
 
 from meilisearch_fastapi.routes import (
     document_routes,
