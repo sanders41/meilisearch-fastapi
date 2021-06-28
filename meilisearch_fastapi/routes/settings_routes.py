@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from async_search_client import Client
-from async_search_client.models import MeiliSearchSettings, UpdateId
 from fastapi import APIRouter, Depends
+from meilisearch_python_async import Client
+from meilisearch_python_async.models import MeiliSearchSettings, UpdateId
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.settings import MeiliSearchIndexSettings
