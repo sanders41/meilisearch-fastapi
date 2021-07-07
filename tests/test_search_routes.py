@@ -224,7 +224,6 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
     facet_data = {"uid": uid, "attributesForFaceting": ["genre"]}
     update = await test_client.put("/indexes/attributes-for-faceting", json=facet_data)
     await index.wait_for_pending_update(update.json()["updateId"])
-    await index.wait_for_pending_update(update.json()["updateId"])
     data = {
         "uid": uid,
         "query": "world",
