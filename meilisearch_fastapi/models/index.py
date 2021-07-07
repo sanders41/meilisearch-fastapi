@@ -7,7 +7,7 @@ class AttributesForFaceting(CamelBase):
     attributes_for_faceting: Optional[List[str]] = None
 
 
-class AttribugtesForFacetingWithUID(AttributesForFaceting):
+class AttributesForFacetingWithUID(AttributesForFaceting):
     uid: str
 
 

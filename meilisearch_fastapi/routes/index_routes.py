@@ -8,8 +8,8 @@ from meilisearch_python_async.models import IndexBase, IndexInfo, IndexStats, Up
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.index import (
-    AttribugtesForFacetingWithUID,
     AttributesForFaceting,
+    AttributesForFacetingWithUID,
     DisplayedAttributes,
     DisplayedAttributesUID,
     DistinctAttribute,
@@ -246,7 +246,7 @@ async def get_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_config)
 
 @router.put("/attributes-for-faceting", response_model=UpdateId, status_code=202)
 async def update_attributes_for_faceting(
-    attributes_for_faceting: AttribugtesForFacetingWithUID,
+    attributes_for_faceting: AttributesForFacetingWithUID,
     config: MeiliSearchConfig = Depends(get_config),
 ) -> UpdateId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
