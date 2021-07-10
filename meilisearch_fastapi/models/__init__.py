@@ -5,12 +5,12 @@ from meilisearch_fastapi.models.document_info import (  # noqa: F401
     DocumentInfoBatches,
 )
 from meilisearch_fastapi.models.index import (  # noqa: F401
-    AttributesForFaceting,
-    AttributesForFacetingWithUID,
     DisplayedAttributes,
     DisplayedAttributesUID,
     DistinctAttribute,
     DistinctAttributeWithUID,
+    FilterableAttributes,
+    FilterableAttributesWithUID,
     IndexUpdate,
     PrimaryKey,
     RankingRules,

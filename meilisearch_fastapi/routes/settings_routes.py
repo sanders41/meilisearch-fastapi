@@ -39,7 +39,7 @@ async def update_settings(
             synonyms=update_settings.synonyms,
             stop_words=update_settings.stop_words,
             ranking_rules=update_settings.ranking_rules,
-            attributes_for_faceting=update_settings.attributes_for_faceting,
+            filterable_attributes=update_settings.filterable_attributes,
             distinct_attribute=update_settings.distinct_attribute,
             searchable_attributes=update_settings.searchable_attributes,
             displayed_attributes=update_settings.displayed_attributes,

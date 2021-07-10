@@ -8,12 +8,12 @@ from meilisearch_python_async.models import IndexBase, IndexInfo, IndexStats, Up
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.index import (
-    AttributesForFaceting,
-    AttributesForFacetingWithUID,
     DisplayedAttributes,
     DisplayedAttributesUID,
     DistinctAttribute,
     DistinctAttributeWithUID,
+    FilterableAttributes,
+    FilterableAttributesWithUID,
     IndexUpdate,
     PrimaryKey,
     RankingRules,
@@ -44,15 +44,15 @@ async def create_index(
         )
 
 
-@router.delete("/attributes-for-faceting/{uid}", response_model=UpdateId, status_code=202)
-async def delete_attributes_for_faceting(
+@router.delete("/filterable-attributes/{uid}", response_model=UpdateId, status_code=202)
+async def delete_filterable_attributes(
     uid: str,
     config: MeiliSearchConfig = Depends(get_config),
 ) -> UpdateId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
-        return await index.reset_attributes_for_faceting()
+        return await index.reset_filterable_attributes()
 
 
 @router.delete("/displayed-attributes/{uid}", response_model=UpdateId, status_code=202)
@@ -126,16 +126,16 @@ async def delete_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_conf
         return await index.reset_synonyms()
 
 
-@router.get("/attributes-for-faceting/{uid}", response_model=AttributesForFaceting)
-async def get_attributes_for_faceting(
+@router.get("/filterable-attributes/{uid}", response_model=FilterableAttributes)
+async def get_filterable_attributes(
     uid: str,
     config: MeiliSearchConfig = Depends(get_config),
-) -> AttributesForFaceting:
+) -> FilterableAttributes:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
-        attributes_for_faceting = await index.get_attributes_for_faceting()
+        filterable_attributes = await index.get_filterable_attributes()
 
-        return AttributesForFaceting(attributes_for_faceting=attributes_for_faceting)
+        return FilterableAttributes(filterable_attributes=filterable_attributes)
 
 
 @router.get("/displayed-attributes/{uid}", response_model=DisplayedAttributes)
@@ -244,16 +244,16 @@ async def get_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_config)
         return Synonyms(synonyms=synonyms)
 
 
-@router.put("/attributes-for-faceting", response_model=UpdateId, status_code=202)
-async def update_attributes_for_faceting(
-    attributes_for_faceting: AttributesForFacetingWithUID,
+@router.put("/filterable-attributes", response_model=UpdateId, status_code=202)
+async def update_filterable_attributes(
+    filterable_attributes: FilterableAttributesWithUID,
     config: MeiliSearchConfig = Depends(get_config),
 ) -> UpdateId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
-        index = client.index(attributes_for_faceting.uid)
-        attributes = attributes_for_faceting.attributes_for_faceting or []
+        index = client.index(filterable_attributes.uid)
+        attributes = filterable_attributes.filterable_attributes or []
 
-        return await index.update_attributes_for_faceting(attributes)
+        return await index.update_filterable_attributes(attributes)
 
 
 @router.put("/displayed-attributes", response_model=UpdateId, status_code=202)

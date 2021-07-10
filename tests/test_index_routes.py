@@ -11,7 +11,7 @@ def new_settings():
 
 @pytest.fixture
 def default_ranking_rules():
-    return ["typo", "words", "proximity", "attribute", "wordsPosition", "exactness"]
+    return ["words", "typo", "proximity", "attribute", "exactness"]
 
 
 @pytest.fixture
@@ -50,8 +50,8 @@ def new_synonyms():
 
 
 @pytest.fixture
-def attributes_for_faceting():
-    return ["title", "release_date"]
+def filterable_attributes():
+    return ["release_date", "title"]
 
 
 @pytest.mark.asyncio
@@ -399,32 +399,32 @@ async def test_reset_synonyms(test_client, empty_index, new_synonyms):
 
 
 @pytest.mark.asyncio
-async def test_get_attributes_for_faceting(test_client, empty_index):
+async def test_get_filterable_attributes(test_client, empty_index):
     uid, _ = empty_index
-    response = await test_client.get(f"/indexes/attributes-for-faceting/{uid}")
-    assert response.json()["attributesForFaceting"] is None
+    response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
+    assert response.json()["filterableAttributes"] is None
 
 
 @pytest.mark.asyncio
-async def test_update_attributes_for_faceting(test_client, empty_index, attributes_for_faceting):
+async def test_update_filterable_attributes(test_client, empty_index, filterable_attributes):
     uid, index = empty_index
-    data = {"uid": uid, "attributesForFaceting": attributes_for_faceting}
-    response = await test_client.put("indexes/attributes-for-faceting", json=data)
+    data = {"uid": uid, "filterableAttributes": filterable_attributes}
+    response = await test_client.put("indexes/filterable-attributes", json=data)
     await index.wait_for_pending_update(response.json()["updateId"])
-    response = await test_client.get(f"/indexes/attributes-for-faceting/{uid}")
-    assert response.json()["attributesForFaceting"] == attributes_for_faceting
+    response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
+    assert sorted(response.json()["filterableAttributes"]) == filterable_attributes
 
 
 @pytest.mark.asyncio
-async def test_reset_attributes_for_faceting(test_client, empty_index, attributes_for_faceting):
+async def test_reset_filterable_attributes(test_client, empty_index, filterable_attributes):
     uid, index = empty_index
-    data = {"uid": uid, "attributesForFaceting": attributes_for_faceting}
-    response = await test_client.put("indexes/attributes-for-faceting", json=data)
+    data = {"uid": uid, "filterableAttributes": filterable_attributes}
+    response = await test_client.put("indexes/filterable-attributes", json=data)
     update = await index.wait_for_pending_update(response.json()["updateId"])
     assert update.status == "processed"
-    response = await test_client.get(f"/indexes/attributes-for-faceting/{uid}")
-    assert response.json()["attributesForFaceting"] == attributes_for_faceting
-    response = await test_client.delete(f"/indexes/attributes-for-faceting/{uid}")
+    response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
+    assert sorted(response.json()["filterableAttributes"]) == filterable_attributes
+    response = await test_client.delete(f"/indexes/filterable-attributes/{uid}")
     await index.wait_for_pending_update(response.json()["updateId"])
-    response = await test_client.get(f"/indexes/attributes-for-faceting/{uid}")
-    assert response.json()["attributesForFaceting"] is None
+    response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
+    assert response.json()["filterableAttributes"] is None

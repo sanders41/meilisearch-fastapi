@@ -32,5 +32,5 @@ async def test_get_version(test_client):
 
     assert response.status_code == 200
     assert "commitSha" in response.json()
-    assert "buildDate" in response.json()
+    assert "commitDate" in response.json()
     assert "pkgVersion" in response.json()
