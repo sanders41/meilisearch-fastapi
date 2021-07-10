@@ -8,7 +8,7 @@ class SearchParameters(CamelBase):
     query: str
     offset: int = 0
     limit: int = 20
-    filter: Optional[Union[str, list[Union[str, list[str]]]]] = None
+    filter: Optional[Union[str, List[Union[str, List[str]]]]] = None
     facets_distribution: Optional[List[str]] = None
     attributes_to_retrieve: List[str] = ["*"]
     attributes_to_crop: Optional[List[str]] = None
