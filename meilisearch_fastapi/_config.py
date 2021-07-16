@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Optional
 
 from pydantic import BaseSettings
@@ -11,5 +12,6 @@ class MeiliSearchConfig(BaseSettings):
         env_file = ".env"
 
 
+@lru_cache(maxsize=1)
 def get_config() -> MeiliSearchConfig:
     return MeiliSearchConfig()
