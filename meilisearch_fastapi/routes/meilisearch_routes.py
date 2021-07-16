@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 from meilisearch_python_async import Client
-from meilisearch_python_async.models import ClientStats, Keys, Version  # Health,
+from meilisearch_python_async.models import ClientStats, Health, Keys, Version
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 
 router = APIRouter()
 
 
-# @router.get("/health", resopnse_model=Health)
-# async def get_health(config: MeiliSearchConfig = Depends(get_config)) -> Health:
-#    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
-#        return await client.health()
+@router.get("/health", response_model=Health)
+async def get_health(config: MeiliSearchConfig = Depends(get_config)) -> Health:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        return await client.health()
 
 
 @router.get("/keys", response_model=Keys)
