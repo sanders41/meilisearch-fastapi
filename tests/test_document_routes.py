@@ -107,6 +107,19 @@ async def test_get_documents_populated(test_client, index_with_documents):
 
 
 @pytest.mark.asyncio
+async def test_get_documents_offset_optional_params(test_client, index_with_documents):
+    uid, _ = index_with_documents
+    response = await test_client.get(f"/documents/{uid}")
+    assert len(response.json()) == 20
+
+    response_offset_limit = await test_client.get(
+        f"documents/{uid}?limit=3&offset=1&attributes_to_retrieve=title"
+    )
+    assert len(response_offset_limit.json()) == 3
+    assert response_offset_limit.json()[0]["title"] == response.json()[1]["title"]
+
+
+@pytest.mark.asyncio
 async def test_update_documents(test_client, index_with_documents, small_movies):
     uid, index = index_with_documents
     response = await test_client.get(f"documents/{uid}")
