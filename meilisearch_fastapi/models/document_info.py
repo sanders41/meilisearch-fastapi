@@ -14,5 +14,9 @@ class DocumentInfo(CamelBase):
     primary_key: Optional[str] = None
 
 
+class DocumentInfoAutoBatch(DocumentInfo):
+    max_payload_size: Optional[int] = None
+
+
 class DocumentInfoBatches(DocumentInfo):
     batch_size: int
