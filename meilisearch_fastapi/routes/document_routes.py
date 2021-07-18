@@ -10,6 +10,7 @@ from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.document_info import (
     DocumentDelete,
     DocumentInfo,
+    DocumentInfoAutoBatch,
     DocumentInfoBatches,
 )
 
@@ -24,6 +25,25 @@ async def add_documents(
         index = client.index(document_info.uid)
 
         return await index.add_documents(document_info.documents, document_info.primary_key)
+
+
+@router.post("/auto-batch", response_model=List[UpdateId], status_code=202)
+async def add_documents_auto_batch(
+    document_info: DocumentInfoAutoBatch, config: MeiliSearchConfig = Depends(get_config)
+) -> list[UpdateId]:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        index = client.index(document_info.uid)
+
+        if document_info.max_payload_size:
+            return await index.add_documents_auto_batch(
+                document_info.documents,
+                max_payload_size=document_info.max_payload_size,
+                primary_key=document_info.primary_key,
+            )
+
+        return await index.add_documents_auto_batch(
+            document_info.documents, primary_key=document_info.primary_key
+        )
 
 
 @router.post("/batches", response_model=List[UpdateId], status_code=202)
@@ -109,6 +129,25 @@ async def update_documents(
         index = client.index(document_info.uid)
 
         return await index.update_documents(document_info.documents, document_info.primary_key)
+
+
+@router.put("/auto-batch", response_model=List[UpdateId], status_code=202)
+async def update_documents_auto_batch(
+    document_info: DocumentInfoAutoBatch, config: MeiliSearchConfig = Depends(get_config)
+) -> list[UpdateId]:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        index = client.index(document_info.uid)
+
+        if document_info.max_payload_size:
+            return await index.update_documents_auto_batch(
+                document_info.documents,
+                max_payload_size=document_info.max_payload_size,
+                primary_key=document_info.primary_key,
+            )
+
+        return await index.update_documents_auto_batch(
+            document_info.documents, primary_key=document_info.primary_key
+        )
 
 
 @router.put("/batches", response_model=List[UpdateId], status_code=202)

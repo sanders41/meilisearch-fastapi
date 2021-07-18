@@ -1,6 +1,7 @@
 from meilisearch_fastapi.models.document_info import (  # noqa: F401
     DocumentDelete,
     DocumentInfo,
+    DocumentInfoAutoBatch,
     DocumentInfoBatches,
 )
 from meilisearch_fastapi.models.index import (  # noqa: F401
