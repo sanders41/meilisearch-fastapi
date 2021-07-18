@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
@@ -79,10 +79,21 @@ async def get_document(
 
 
 @router.get("/{uid}", response_model=List[Dict])
-async def get_documents(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> list[dict]:
+async def get_documents(
+    uid: str,
+    limit: int = 20,
+    offset: int = 0,
+    attributes_to_retrieve: Optional[str] = None,
+    config: MeiliSearchConfig = Depends(get_config),
+) -> list[dict]:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
-        documents = await index.get_documents()
+
+        documents = await index.get_documents(
+            offset=offset,
+            limit=limit,
+            attributes_to_retrieve=attributes_to_retrieve,
+        )
 
         if documents is None:
             raise HTTPException(404, "No documents found")
