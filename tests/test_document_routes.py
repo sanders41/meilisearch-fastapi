@@ -46,12 +46,12 @@ async def test_add_documents(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("max_payload, expected_batches", [(None, 1), (3500, 2), (2500, 3)])
+@pytest.mark.parametrize("max_payload", [None, 3500, 2500])
 @pytest.mark.parametrize(
     "primary_key, expected_primary_key", [("pk_test", "pk_test"), (None, "id")]
 )
 async def test_add_documents_auto_batch(
-    empty_index, max_payload, expected_batches, primary_key, expected_primary_key, test_client
+    empty_index, max_payload, primary_key, expected_primary_key, test_client
 ):
     documents = generate_test_movies()
 
@@ -68,13 +68,14 @@ async def test_add_documents_auto_batch(
 
     response = await test_client.post("/documents/auto-batch", json=document)
 
-    assert len(response.json()) == expected_batches
-
     for r in response.json():
         update = await index.wait_for_pending_update(r["updateId"])
         assert update.status == "processed"
 
     assert await index.get_primary_key() == expected_primary_key
+
+    stats = await index.get_stats()
+    assert stats.number_of_documents == len(documents)
 
 
 @pytest.mark.asyncio
@@ -198,8 +199,8 @@ async def test_update_documents_with_primary_key(test_client, empty_index, small
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("max_payload, expected_batches", [(None, 1), (3500, 2), (2500, 3)])
-async def test_update_documents_auto_batch(empty_index, max_payload, expected_batches, test_client):
+@pytest.mark.parametrize("max_payload", [None, 3500, 2500])
+async def test_update_documents_auto_batch(empty_index, max_payload, test_client):
     documents = generate_test_movies()
 
     uid, index = empty_index
@@ -223,11 +224,12 @@ async def test_update_documents_auto_batch(empty_index, max_payload, expected_ba
 
     response = await test_client.put("/documents/auto-batch", json=update_body)
 
-    assert len(response.json()) == expected_batches
-
     for r in response.json():
         update = await index.wait_for_pending_update(r["updateId"])
         assert update.status == "processed"
+
+    stats = await index.get_stats()
+    assert stats.number_of_documents == len(documents)
 
 
 @pytest.mark.asyncio
