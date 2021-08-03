@@ -22,9 +22,6 @@ async def test_settings_get(default_settings, index_uid, indexes_sample, test_cl
     assert response.json() == default_settings
 
 
-@pytest.mark.xfail(
-    reason="Currently there is a bug in filterable attributes and distince attributes together"
-)
 @pytest.mark.asyncio
 async def test_settings_update_and_delete(default_settings, index_uid, indexes_sample, test_client):
     update_settings = {
