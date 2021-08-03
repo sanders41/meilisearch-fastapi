@@ -45,10 +45,10 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
     returned_settings = response.json()
 
     # Filterable attributes come back in random order so sort them to be able to compare
-    returned_settings["filterableAttributes"] = returned_settings["filterableAttributes"].sort()
+    returned_settings["filterableAttributes"] = sorted(returned_settings["filterableAttributes"])
     update_settings.pop("uid")
 
-    assert response.json() == update_settings
+    assert returned_settings == update_settings
 
     response = await test_client.delete(f"/settings/{index_uid}")
 
@@ -60,5 +60,5 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
     returned_settings = response.json()
 
     # Filterable attributes come back in random order so sort them to be able to compare
-    returned_settings["filterableAttributes"] = returned_settings["filterableAttributes"].sort()
+    returned_settings["filterableAttributes"] = sorted(returned_settings["filterableAttributes"])
     assert response.json() == default_settings
