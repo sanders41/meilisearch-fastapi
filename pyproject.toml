@@ -33,7 +33,7 @@ pre-commit = "^2.14.0"
 pytest = "^6.2.4"
 pytest-cov = "^2.12.1"
 tox = "^3.24.1"
-uvicorn = "^0.14.0"
+uvicorn = "^0.15.0"
 pytest-asyncio = "^0.15.1"
 httpx = "^0.18.2"
 
