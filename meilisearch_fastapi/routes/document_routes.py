@@ -54,7 +54,9 @@ async def add_documents_in_batches(
         index = client.index(document_info.uid)
 
         return await index.add_documents_in_batches(
-            document_info.documents, document_info.batch_size, document_info.primary_key
+            document_info.documents,
+            batch_size=document_info.batch_size,
+            primary_key=document_info.primary_key,
         )
 
 
@@ -158,5 +160,7 @@ async def update_documents_in_batches(
         index = client.index(document_info.uid)
 
         return await index.update_documents_in_batches(
-            document_info.documents, document_info.batch_size, document_info.primary_key
+            document_info.documents,
+            batch_size=document_info.batch_size,
+            primary_key=document_info.primary_key,
         )
