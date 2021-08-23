@@ -3,11 +3,11 @@ from typing import Dict, List, Optional
 from camel_converter.pydantic_base import CamelBase
 
 
-class AttributesForFaceting(CamelBase):
-    attributes_for_faceting: Optional[List[str]] = None
+class FilterableAttributes(CamelBase):
+    filterable_attributes: Optional[List[str]] = None
 
 
-class AttributesForFacetingWithUID(AttributesForFaceting):
+class FilterableAttributesWithUID(FilterableAttributes):
     uid: str
 
 

@@ -97,15 +97,15 @@ async def test_custom_search_params_with_string_list(test_client, index_with_doc
     assert "title" in response.json()["hits"][0]
     assert "overview" in response.json()["hits"][0]
     assert "release_date" not in response.json()["hits"][0]
-    assert "title" in response.json()["hits"][0]["_formatted"]
-    assert "overview" not in response.json()["hits"][0]["_formatted"]
+    assert "<em>" in response.json()["hits"][0]["_formatted"]["title"]
+    assert "<em>" not in response.json()["hits"][0]["_formatted"]["overview"]
 
 
 @pytest.mark.asyncio
 async def test_custom_search_params_with_facets_distribution(test_client, index_with_documents):
     uid, index = index_with_documents
-    facet_data = {"uid": uid, "attributesForFaceting": ["genre"]}
-    update = await test_client.put("/indexes/attributes-for-faceting", json=facet_data)
+    facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
+    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
     await index.wait_for_pending_update(update.json()["updateId"])
     data = {
         "uid": uid,
@@ -125,14 +125,15 @@ async def test_custom_search_params_with_facets_distribution(test_client, index_
 @pytest.mark.asyncio
 async def test_custom_search_params_with_facet_filters(test_client, index_with_documents):
     uid, index = index_with_documents
-    facet_data = {"uid": uid, "attributesForFaceting": ["genre"]}
-    update = await test_client.put("/indexes/attributes-for-faceting", json=facet_data)
+    facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
+    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
     await index.wait_for_pending_update(update.json()["updateId"])
     data = {
         "uid": uid,
         "query": "world",
-        "facetFilters": [["genre:action"]],
+        "filter": [["genre = action"]],
     }
+
     response = await test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
     assert response.json()["facetsDistribution"] is None
@@ -142,13 +143,13 @@ async def test_custom_search_params_with_facet_filters(test_client, index_with_d
 @pytest.mark.asyncio
 async def test_custom_search_params_with_multiple_facet_filters(test_client, index_with_documents):
     uid, index = index_with_documents
-    facet_data = {"uid": uid, "attributesForFaceting": ["genre"]}
-    update = await test_client.put("/indexes/attributes-for-faceting", json=facet_data)
+    facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
+    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
     await index.wait_for_pending_update(update.json()["updateId"])
     data = {
         "uid": uid,
         "query": "world",
-        "facetFilters": ["genre:action", ["genre:action", "genre:action"]],
+        "filter": ["genre = action", ["genre = action", "genre = action"]],
     }
     response = await test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
@@ -205,13 +206,13 @@ async def test_custom_search_facet_filters_with_space(test_client, empty_index):
     }
     update = await test_client.post("/documents", json=documents)
     await index.wait_for_pending_update(update.json()["updateId"])
-    facet_data = {"uid": uid, "attributesForFaceting": ["genre"]}
-    update = await test_client.put("/indexes/attributes-for-faceting", json=facet_data)
+    facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
+    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
     await index.wait_for_pending_update(update.json()["updateId"])
     data = {
         "uid": uid,
         "query": "h",
-        "facetFilters": ["genre:sci fi"],
+        "filter": ["genre = 'sci fi'"],
     }
     response = await test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 1
@@ -221,13 +222,13 @@ async def test_custom_search_facet_filters_with_space(test_client, empty_index):
 @pytest.mark.asyncio
 async def test_custom_search_params_with_many_params(test_client, index_with_documents):
     uid, index = index_with_documents
-    facet_data = {"uid": uid, "attributesForFaceting": ["genre"]}
-    update = await test_client.put("/indexes/attributes-for-faceting", json=facet_data)
+    facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
+    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
     await index.wait_for_pending_update(update.json()["updateId"])
     data = {
         "uid": uid,
         "query": "world",
-        "facetFilters": [["genre:action"]],
+        "filter": [["genre = action"]],
         "attributesToRetrieve": ["title", "poster"],
     }
     response = await test_client.post("/search", json=data)
