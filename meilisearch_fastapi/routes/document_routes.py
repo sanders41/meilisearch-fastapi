@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
@@ -105,7 +105,7 @@ async def get_documents(
     uid: str,
     limit: int = 20,
     offset: int = 0,
-    attributes_to_retrieve: Optional[str] = None,
+    attributes_to_retrieve: str | None = None,
     config: MeiliSearchConfig = Depends(get_config),
 ) -> list[dict]:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:

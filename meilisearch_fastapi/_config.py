@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 from functools import lru_cache
-from typing import Optional
 
 from pydantic import BaseSettings
 
 
 class MeiliSearchConfig(BaseSettings):
     meilisearch_url: str
-    meilisearch_api_key: Optional[str] = None
+    meilisearch_api_key: str | None = None
 
     class Config:
         env_file = ".env"
