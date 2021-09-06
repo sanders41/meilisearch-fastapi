@@ -43,6 +43,7 @@ async def update_settings(
             distinct_attribute=update_settings.distinct_attribute,
             searchable_attributes=update_settings.searchable_attributes,
             displayed_attributes=update_settings.displayed_attributes,
+            sortable_attributes=update_settings.sortable_attributes,
         )
 
         return await index.update_settings(meili_settings)

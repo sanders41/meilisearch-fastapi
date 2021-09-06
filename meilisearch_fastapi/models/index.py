@@ -53,6 +53,14 @@ class SearchableAttributesWithUID(SearchableAttributes):
     uid: str
 
 
+class SortableAttributes(CamelBase):
+    sortable_attributes: List[str]
+
+
+class SortableAttributesWithUID(SortableAttributes):
+    uid: str
+
+
 class StopWords(CamelBase):
     stop_words: Optional[List[str]] = None
 

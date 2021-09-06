@@ -11,7 +11,7 @@ def new_settings():
 
 @pytest.fixture
 def default_ranking_rules():
-    return ["words", "typo", "proximity", "attribute", "exactness"]
+    return ["words", "typo", "sort", "proximity", "attribute", "exactness"]
 
 
 @pytest.fixture
@@ -52,6 +52,11 @@ def new_synonyms():
 @pytest.fixture
 def filterable_attributes():
     return ["release_date", "title"]
+
+
+@pytest.fixture
+def sortable_attributes():
+    return ["genre", "title"]
 
 
 @pytest.mark.asyncio
@@ -428,3 +433,35 @@ async def test_reset_filterable_attributes(test_client, empty_index, filterable_
     await index.wait_for_pending_update(response.json()["updateId"])
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert response.json()["filterableAttributes"] is None
+
+
+@pytest.mark.asyncio
+async def test_get_sortable_attributes(test_client, empty_index):
+    uid, _ = empty_index
+    response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
+    assert response.json()["sortableAttributes"] == []
+
+
+@pytest.mark.asyncio
+async def test_update_sortable_attributes(test_client, empty_index, sortable_attributes):
+    uid, index = empty_index
+    data = {"uid": uid, "sortableAttributes": sortable_attributes}
+    response = await test_client.put("indexes/sortable-attributes", json=data)
+    await index.wait_for_pending_update(response.json()["updateId"])
+    response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
+    assert response.json()["sortableAttributes"] == sortable_attributes
+
+
+@pytest.mark.asyncio
+async def test_reset_sortable_attributes(test_client, empty_index, sortable_attributes):
+    uid, index = empty_index
+    data = {"uid": uid, "sortableAttributes": sortable_attributes}
+    response = await test_client.put("indexes/sortable-attributes", json=data)
+    update = await index.wait_for_pending_update(response.json()["updateId"])
+    assert update.status == "processed"
+    response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
+    assert response.json()["sortableAttributes"] == sortable_attributes
+    response = await test_client.delete(f"/indexes/sortable-attributes/{uid}")
+    await index.wait_for_pending_update(response.json()["updateId"])
+    response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
+    assert response.json()["sortableAttributes"] == []

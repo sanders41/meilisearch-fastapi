@@ -6,11 +6,12 @@ def default_settings():
     return {
         "synonyms": {},
         "stopWords": [],
-        "rankingRules": ["words", "typo", "proximity", "attribute", "exactness"],
+        "rankingRules": ["words", "typo", "sort", "proximity", "attribute", "exactness"],
         "filterableAttributes": [],
         "distinctAttribute": None,
         "searchableAttributes": ["*"],
         "displayedAttributes": ["*"],
+        "sortableAttributes": [],
     }
 
 
@@ -33,6 +34,7 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
         "distinctAttribute": "movie_id",
         "searchableAttributes": ["description", "title"],
         "displayedAttributes": ["genre", "title"],
+        "sortableAttributes": ["genre", "title"],
     }
     response = await test_client.post("/settings", json=update_settings)
 
