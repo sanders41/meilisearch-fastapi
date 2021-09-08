@@ -5,7 +5,7 @@ from camel_converter.pydantic_base import CamelBase
 
 class SearchParameters(CamelBase):
     uid: str
-    query: str
+    query: Optional[str] = None
     offset: int = 0
     limit: int = 20
     filter: Optional[Union[str, List[Union[str, List[str]]]]] = None

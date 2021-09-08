@@ -248,11 +248,11 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
     [
         (
             ["title:asc"],
-            ["Dumbo", "Us"],
+            ["After", "Us"],
         ),
         (
             ["title:desc"],
-            ["Us", "Dumbo"],
+            ["Us", "After"],
         ),
     ],
 )
@@ -260,12 +260,16 @@ async def test_search_sort(sort, titles, test_client, index_with_documents):
     uid, index = index_with_documents
     response = await index.update_sortable_attributes(["title"])
     await index.wait_for_pending_update(response.update_id)
+    stats = await index.get_stats()  # get this to get the total document count
+
+    # Using a placeholder search because ranking rules affect sort otherwaise meaning the results
+    # will almost never be in alphabetical order.
     data = {
         "uid": uid,
-        "query": "friend",
         "sort": sort,
+        "limit": stats.number_of_documents,
     }
     response = await test_client.post("/search", json=data)
-    assert len(response.hits) == 6
+
     assert response.hits[0]["title"] == titles[0]
-    assert response.hits[5]["title"] == titles[1]
+    assert response.hits[stats.number_of_documents - 1]["title"] == titles[1]
