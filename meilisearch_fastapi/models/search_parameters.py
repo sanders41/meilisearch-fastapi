@@ -12,6 +12,7 @@ class SearchParameters(CamelBase):
     facets_distribution: Optional[List[str]] = None
     attributes_to_retrieve: List[str] = ["*"]
     attributes_to_crop: Optional[List[str]] = None
+    sort: Optional[List[str]] = None
     crop_length: int = 200
     attributes_to_highlight: Optional[List[str]] = None
     matches: bool = False
