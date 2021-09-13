@@ -12,6 +12,6 @@ class MeiliSearchConfig(BaseSettings):
         env_file = ".env"
 
 
-@lru_cache(maxsize=1)
+@lru_cache()
 def get_config() -> MeiliSearchConfig:
     return MeiliSearchConfig()

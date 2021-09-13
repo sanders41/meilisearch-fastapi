@@ -20,6 +20,8 @@ from meilisearch_fastapi.models.index import (
     RankingRulesWithUID,
     SearchableAttributes,
     SearchableAttributesWithUID,
+    SortableAttributes,
+    SortableAttributesWithUID,
     StopWords,
     StopWordsWithUID,
     Synonyms,
@@ -108,6 +110,16 @@ async def delete_searchable_attributes(
         index = client.index(uid)
 
         return await index.reset_searchable_attributes()
+
+
+@router.delete("/sortable-attributes/{uid}", response_model=UpdateId, status_code=202)
+async def delete_sortable_attributes(
+    uid: str, config: MeiliSearchConfig = Depends(get_config)
+) -> UpdateId:
+    async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        index = client.index(uid)
+
+        return await index.reset_sortable_attributes()
 
 
 @router.delete("/stop-words/{uid}", response_model=UpdateId, status_code=202)
@@ -226,6 +238,17 @@ async def get_searchable_attributes(
         return SearchableAttributes(searchable_attributes=attributes)
 
 
+@router.get("/sortable-attributes/{uid}", response_model=SortableAttributes)
+async def get_sortable_attributes(
+    uid: str, config: MeiliSearchConfig = Depends(get_config)
+) -> SortableAttributes:
+    async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        index = client.index(uid)
+        attributes = await index.get_sortable_attributes()
+
+        return SortableAttributes(sortable_attributes=attributes)
+
+
 @router.get("/stop-words/{uid}", response_model=StopWords)
 async def get_stop_words(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> StopWords:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
@@ -310,6 +333,16 @@ async def update_searchable_attributes(
         index = client.index(searchable_attributes.uid)
 
         return await index.update_searchable_attributes(searchable_attributes.searchable_attributes)
+
+
+@router.put("/sortable-attributes", response_model=UpdateId, status_code=202)
+async def update_sortable_attributes(
+    sortable_attributes: SortableAttributesWithUID, config: MeiliSearchConfig = Depends(get_config)
+) -> UpdateId:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        index = client.index(sortable_attributes.uid)
+
+        return await index.update_sortable_attributes(sortable_attributes.sortable_attributes)
 
 
 @router.put("/stop-words", response_model=UpdateId, status_code=202)

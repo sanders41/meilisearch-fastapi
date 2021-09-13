@@ -25,6 +25,7 @@ async def search(
             facets_distribution=search_parameters.facets_distribution,
             attributes_to_retrieve=search_parameters.attributes_to_retrieve,
             attributes_to_crop=search_parameters.attributes_to_crop,
+            sort=search_parameters.sort,
             crop_length=search_parameters.crop_length,
             attributes_to_highlight=search_parameters.attributes_to_highlight,
             matches=search_parameters.matches,
