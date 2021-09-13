@@ -331,11 +331,7 @@ python-versions = "*"
 
 [[package]]
 name = "meilisearch-python-async"
-<<<<<<< HEAD
-version = "0.14.0"
-=======
 version = "0.16.0"
->>>>>>> 4d4499e (Bump version)
 description = "A Python async client for the MeiliSearch API"
 category = "main"
 optional = false
@@ -719,11 +715,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-<<<<<<< HEAD
-content-hash = "657acc5fb6d730df2ccd93857a49fba41f2988d8aa5b3b9380a8ac778941dcc2"
-=======
-content-hash = "400adf82663c5e2f3d71e60c6c269085ef9f41ce408f198becaff6c07753b6ce"
->>>>>>> 4d4499e (Bump version)
+content-hash = "b6383b0dd558a402d2d850f0e489cb91d059aaeefe83f1c75d5f7cc568e27a25"
 
 [metadata.files]
 aiofiles = [
