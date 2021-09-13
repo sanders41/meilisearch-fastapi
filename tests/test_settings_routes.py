@@ -6,7 +6,7 @@ def default_settings():
     return {
         "synonyms": {},
         "stopWords": [],
-        "rankingRules": ["words", "typo", "sort", "proximity", "attribute", "exactness"],
+        "rankingRules": ["words", "typo", "proximity", "attribute", "sort", "exactness"],
         "filterableAttributes": [],
         "distinctAttribute": None,
         "searchableAttributes": ["*"],

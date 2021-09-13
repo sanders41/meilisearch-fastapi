@@ -271,5 +271,5 @@ async def test_search_sort(sort, titles, test_client, index_with_documents):
     }
     response = await test_client.post("/search", json=data)
 
-    assert response.hits[0]["title"] == titles[0]
-    assert response.hits[stats.number_of_documents - 1]["title"] == titles[1]
+    assert response.json()["hits"][0]["title"] == titles[0]
+    assert response.json()["hits"][stats.number_of_documents - 1]["title"] == titles[1]
