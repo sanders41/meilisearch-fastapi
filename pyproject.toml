@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "meilisearch-fastapi"
-version = "0.9.0"
+version = "0.9.1"
 description = "MeiliSearch integration with FastAPI"
 authors = ["Paul Sanders <psanders1@gmail.com>"]
 license = "MIT"
@@ -13,6 +13,7 @@ classifiers=[
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
