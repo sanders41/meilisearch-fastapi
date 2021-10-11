@@ -334,7 +334,7 @@ python-versions = "*"
 
 [[package]]
 name = "meilisearch-python-async"
-version = "0.16.1"
+version = "0.17.0"
 description = "A Python async client for the MeiliSearch API"
 category = "main"
 optional = false
@@ -721,7 +721,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "f6194c3c732d9a748e3e41fdcd8ffc9082fe6abcd3bd13c0296a401906253466"
+content-hash = "40ae705a1cc1aba298f627851c6d4eb206e1e31aac54c72af020fabbdac278be"
 
 [metadata.files]
 aiofiles = [
@@ -864,8 +864,8 @@ mccabe = [
     {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
 ]
 meilisearch-python-async = [
-    {file = "meilisearch-python-async-0.16.1.tar.gz", hash = "sha256:c576d5455c6f668a8308355fe3aaf17e00501febdb32a4dba77470323a469d0e"},
-    {file = "meilisearch_python_async-0.16.1-py3-none-any.whl", hash = "sha256:b5544a9fd5a3f4bfb67987d32b9c76db11c199562ae0f76e39f709d55dafbc94"},
+    {file = "meilisearch-python-async-0.17.0.tar.gz", hash = "sha256:d873a375e3ac09743edb4f8e7ce616cda07e8c05bad543706c0c4d5f5df0aa8e"},
+    {file = "meilisearch_python_async-0.17.0-py3-none-any.whl", hash = "sha256:3494f95a6fc6da6fc7577857817a786163dbf44f3f9b97784c024a7906d20590"},
 ]
 mypy = [
     {file = "mypy-0.910-cp35-cp35m-macosx_10_9_x86_64.whl", hash = "sha256:a155d80ea6cee511a3694b108c4494a39f42de11ee4e61e72bc424c490e46457"},
