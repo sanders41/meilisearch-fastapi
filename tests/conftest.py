@@ -69,7 +69,7 @@ async def test_client():
 
     app.include_router(api_router)
 
-    async with AsyncClient(app=app, base_url="http://test/") as ac:
+    async with AsyncClient(app=app, base_url="http://test/", follow_redirects=True) as ac:
         yield ac
 
 
