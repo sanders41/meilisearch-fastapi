@@ -17,7 +17,7 @@ from meilisearch_fastapi.models.document_info import (
 router = APIRouter()
 
 
-@router.post("/", response_model=UpdateId, status_code=202)
+@router.post("/", response_model=UpdateId, status_code=202, tags=["MeiliSearch Documents"])
 async def add_documents(
     document_info: DocumentInfo, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -27,7 +27,9 @@ async def add_documents(
         return await index.add_documents(document_info.documents, document_info.primary_key)
 
 
-@router.post("/auto-batch", response_model=List[UpdateId], status_code=202)
+@router.post(
+    "/auto-batch", response_model=List[UpdateId], status_code=202, tags=["MeiliSearch Documents"]
+)
 async def add_documents_auto_batch(
     document_info: DocumentInfoAutoBatch, config: MeiliSearchConfig = Depends(get_config)
 ) -> list[UpdateId]:
@@ -46,7 +48,9 @@ async def add_documents_auto_batch(
         )
 
 
-@router.post("/batches", response_model=List[UpdateId], status_code=202)
+@router.post(
+    "/batches", response_model=List[UpdateId], status_code=202, tags=["MeiliSearch Documents"]
+)
 async def add_documents_in_batches(
     document_info: DocumentInfoBatches, config: MeiliSearchConfig = Depends(get_config)
 ) -> list[UpdateId]:
@@ -60,7 +64,7 @@ async def add_documents_in_batches(
         )
 
 
-@router.delete("/{uid}", response_model=UpdateId, status_code=202)
+@router.delete("/{uid}", response_model=UpdateId, status_code=202, tags=["MeiliSearch Documents"])
 async def delete_all_documents(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -70,7 +74,9 @@ async def delete_all_documents(
         return await index.delete_all_documents()
 
 
-@router.delete("/{uid}/{document_id}", response_model=UpdateId, status_code=202)
+@router.delete(
+    "/{uid}/{document_id}", response_model=UpdateId, status_code=202, tags=["MeiliSearch Documents"]
+)
 async def delete_document(
     uid: str, document_id: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -80,7 +86,7 @@ async def delete_document(
         return await index.delete_document(document_id)
 
 
-@router.post("/delete", response_model=UpdateId, status_code=202)
+@router.post("/delete", response_model=UpdateId, status_code=202, tags=["MeiliSearch Documents"])
 async def delete_documents(
     documents: DocumentDelete, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -90,7 +96,7 @@ async def delete_documents(
         return await index.delete_documents(documents.document_ids)
 
 
-@router.get("/{uid}/{document_id}", response_model=dict)
+@router.get("/{uid}/{document_id}", response_model=dict, tags=["MeiliSearch Documents"])
 async def get_document(
     uid: str, document_id: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> dict:
@@ -100,7 +106,7 @@ async def get_document(
         return await index.get_document(document_id)
 
 
-@router.get("/{uid}", response_model=List[Dict])
+@router.get("/{uid}", response_model=List[Dict], tags=["MeiliSearch Documents"])
 async def get_documents(
     uid: str,
     limit: int = 20,
@@ -123,7 +129,7 @@ async def get_documents(
         return documents
 
 
-@router.put("/", response_model=UpdateId, status_code=202)
+@router.put("/", response_model=UpdateId, status_code=202, tags=["MeiliSearch Documents"])
 async def update_documents(
     document_info: DocumentInfo, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
@@ -133,7 +139,9 @@ async def update_documents(
         return await index.update_documents(document_info.documents, document_info.primary_key)
 
 
-@router.put("/auto-batch", response_model=List[UpdateId], status_code=202)
+@router.put(
+    "/auto-batch", response_model=List[UpdateId], status_code=202, tags=["MeiliSearch Documents"]
+)
 async def update_documents_auto_batch(
     document_info: DocumentInfoAutoBatch, config: MeiliSearchConfig = Depends(get_config)
 ) -> list[UpdateId]:
@@ -152,7 +160,9 @@ async def update_documents_auto_batch(
         )
 
 
-@router.put("/batches", response_model=List[UpdateId], status_code=202)
+@router.put(
+    "/batches", response_model=List[UpdateId], status_code=202, tags=["MeiliSearch Documents"]
+)
 async def update_documents_in_batches(
     document_info: DocumentInfoBatches, config: MeiliSearchConfig = Depends(get_config)
 ) -> list[UpdateId]:
