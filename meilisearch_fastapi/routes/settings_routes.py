@@ -10,7 +10,7 @@ from meilisearch_fastapi.models.settings import MeiliSearchIndexSettings
 router = APIRouter()
 
 
-@router.get("/{uid}", response_model=MeiliSearchSettings)
+@router.get("/{uid}", response_model=MeiliSearchSettings, tags=["MeiliSearch Settings"])
 async def get_settings(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
 ) -> MeiliSearchSettings:
@@ -20,7 +20,7 @@ async def get_settings(
         return await index.get_settings()
 
 
-@router.delete("/{uid}", response_model=UpdateId)
+@router.delete("/{uid}", response_model=UpdateId, tags=["MeiliSearch Settings"])
 async def delete_settings(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> UpdateId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
@@ -28,7 +28,7 @@ async def delete_settings(uid: str, config: MeiliSearchConfig = Depends(get_conf
         return await index.reset_settings()
 
 
-@router.post("/", response_model=UpdateId)
+@router.post("/", response_model=UpdateId, tags=["MeiliSearch Settings"])
 async def update_settings(
     update_settings: MeiliSearchIndexSettings, config: MeiliSearchConfig = Depends(get_config)
 ) -> UpdateId:
