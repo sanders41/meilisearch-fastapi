@@ -28,7 +28,7 @@ meilisearch-python-async = "^0.19.0"
 [tool.poetry.dev-dependencies]
 black = "^21.10b0"
 flake8 = "^4.0.1"
-isort = "^5.10.0"
+isort = "^5.10.1"
 mypy = "^0.910"
 pre-commit = "^2.15.0"
 pytest = "^6.2.4"
