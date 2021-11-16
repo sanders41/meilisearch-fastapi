@@ -1,4 +1,4 @@
-from meilisearch_python_async.models import MeiliSearchSettings
+from meilisearch_python_async.models.settings import MeiliSearchSettings
 
 
 class MeiliSearchIndexSettings(MeiliSearchSettings):

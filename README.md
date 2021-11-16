@@ -74,7 +74,7 @@ Now the MeiliSearch routes will be available in your FastAPI app. Documentation 
 
 ## Compatibility with MeiliSearch
 
-This package only guarantees the compatibility with [version v0.23 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.23.0).
+This package only guarantees the compatibility with [version v0.24 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.24.0).
 
 ## Contributing
 

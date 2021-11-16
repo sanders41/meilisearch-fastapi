@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 from meilisearch_python_async import Client
-from meilisearch_python_async.models import SearchResults
+from meilisearch_python_async.models.search import SearchResults
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.search_parameters import SearchParameters

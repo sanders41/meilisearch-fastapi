@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 from meilisearch_python_async import Client
-from meilisearch_python_async.models import ClientStats, Health, Keys, Version
+from meilisearch_python_async.models.client import ClientStats, Keys
+from meilisearch_python_async.models.health import Health
+from meilisearch_python_async.models.version import Version
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 

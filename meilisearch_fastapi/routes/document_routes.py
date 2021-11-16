@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
-from meilisearch_python_async.models import UpdateId
+from meilisearch_python_async.models.update import UpdateId
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.document_info import (
