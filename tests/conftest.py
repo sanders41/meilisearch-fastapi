@@ -52,7 +52,7 @@ def master_key():
 
 @pytest.fixture(scope="session", autouse=True)
 def event_loop():
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
     yield loop
     loop.close()
 
