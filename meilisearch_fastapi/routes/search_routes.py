@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from fastapi import APIRouter, Depends
 from meilisearch_python_async import Client
 from meilisearch_python_async.models.search import SearchResults

@@ -1,4 +1,5 @@
 import pytest
+from meilisearch_python_async.task import wait_for_task
 
 
 @pytest.mark.asyncio
@@ -106,7 +107,7 @@ async def test_custom_search_params_with_facets_distribution(test_client, index_
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -127,7 +128,7 @@ async def test_custom_search_params_with_facet_filters(test_client, index_with_d
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -145,7 +146,7 @@ async def test_custom_search_params_with_multiple_facet_filters(test_client, ind
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -205,10 +206,10 @@ async def test_custom_search_facet_filters_with_space(test_client, empty_index):
         "documents": dataset,
     }
     update = await test_client.post("/documents", json=documents)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     data = {
         "uid": uid,
         "query": "h",
@@ -224,7 +225,7 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -259,7 +260,7 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
 async def test_search_sort(sort, titles, test_client, index_with_documents):
     uid, index = index_with_documents
     response = await index.update_sortable_attributes(["title"])
-    await index.wait_for_pending_update(response.update_id)
+    await wait_for_task(index.http_client, response.uid)
     stats = await index.get_stats()  # get this to get the total document count
 
     # Using a placeholder search because ranking rules affect sort otherwaise meaning the results

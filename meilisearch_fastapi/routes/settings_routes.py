@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 from fastapi import APIRouter, Depends
 from meilisearch_python_async import Client
 from meilisearch_python_async.models.settings import MeiliSearchSettings
-from meilisearch_python_async.models.update import UpdateId
+from meilisearch_python_async.models.task import TaskId
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.settings import MeiliSearchIndexSettings
@@ -21,18 +19,18 @@ async def get_settings(
         return await index.get_settings()
 
 
-@router.delete("/{uid}", response_model=UpdateId, tags=["MeiliSearch Settings"])
-async def delete_settings(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> UpdateId:
+@router.delete("/{uid}", response_model=TaskId, tags=["MeiliSearch Settings"])
+async def delete_settings(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
         return await index.reset_settings()
 
 
-@router.post("/", response_model=UpdateId, tags=["MeiliSearch Settings"])
+@router.post("/", response_model=TaskId, tags=["MeiliSearch Settings"])
 async def update_settings(
     update_settings: MeiliSearchIndexSettings, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(update_settings.uid)
 

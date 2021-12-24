@@ -6,6 +6,7 @@ import pytest
 from fastapi import APIRouter, FastAPI
 from httpx import AsyncClient
 from meilisearch_python_async import Client
+from meilisearch_python_async.task import wait_for_task
 
 from meilisearch_fastapi.routes import (
     document_routes,
@@ -76,6 +77,13 @@ async def test_client():
         yield ac
 
 
+@pytest.fixture
+@pytest.mark.asyncio
+async def raw_client():
+    async with Client(MEILISEARCH_URL, MASTER_KEY) as client:
+        yield client
+
+
 @pytest.mark.asyncio
 @pytest.fixture(autouse=True)
 async def clear_indexes(test_client):
@@ -88,7 +96,8 @@ async def clear_indexes(test_client):
         indexes = await client.get_indexes()
         if indexes:
             for index in indexes:
-                await client.index(index.uid).delete()
+                response = await client.index(index.uid).delete()
+                await wait_for_task(client.http_client, response.uid)
 
 
 @pytest.fixture
@@ -132,7 +141,7 @@ def small_movies():
 async def index_with_documents(empty_index, small_movies):
     uid, index = empty_index
     response = await index.add_documents(small_movies)
-    await index.wait_for_pending_update(response.update_id)
+    await wait_for_task(index.http_client, response.uid)
 
     yield uid, index
 

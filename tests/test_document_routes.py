@@ -2,6 +2,7 @@ from math import ceil
 
 import pytest
 from meilisearch_python_async.errors import MeiliSearchApiError
+from meilisearch_python_async.task import wait_for_task
 
 
 def generate_test_movies(num_movies=50):
@@ -39,10 +40,9 @@ async def test_add_documents(
     uid, index = empty_index
     document = {"uid": uid, "documents": small_movies, "primaryKey": primary_key}
     response = await test_client.post("/documents", json=document)
-    assert "updateId" in response.json()
-    update = await index.wait_for_pending_update(response.json()["updateId"])
+    update = await wait_for_task(index.http_client, response.json()["uid"])
     assert await index.get_primary_key() == expected_primary_key
-    assert update.status == "processed"
+    assert update.status == "succeeded"
 
 
 @pytest.mark.asyncio
@@ -69,8 +69,8 @@ async def test_add_documents_auto_batch(
     response = await test_client.post("/documents/auto-batch", json=document)
 
     for r in response.json():
-        update = await index.wait_for_pending_update(r["updateId"])
-        assert update.status == "processed"
+        update = await wait_for_task(index.http_client, r["uid"])
+        assert update.status == "succeeded"
 
     assert await index.get_primary_key() == expected_primary_key
 
@@ -97,8 +97,8 @@ async def test_add_documents_in_batches(
     assert ceil(len(small_movies) / batch_size) == len(response.json())
 
     for r in response.json():
-        update = await index.wait_for_pending_update(r["updateId"])
-        assert update.status == "processed"
+        update = await wait_for_task(index.http_client, r["uid"])
+        assert update.status == "succeeded"
 
     assert await index.get_primary_key() == expected_primary_key
 
@@ -107,7 +107,7 @@ async def test_add_documents_in_batches(
 async def test_delete_document(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}/500682")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     with pytest.raises(MeiliSearchApiError):
         await test_client.get(f"/documents/{uid}/500682")
 
@@ -121,7 +121,7 @@ async def test_delete_documents(test_client, index_with_documents):
         "document_ids": to_delete,
     }
     response = await test_client.post("/documents/delete", json=delete_info)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     documents = await test_client.get(f"/documents/{uid}")
     ids = [x["id"] for x in documents.json()]
     assert to_delete not in ids
@@ -131,7 +131,7 @@ async def test_delete_documents(test_client, index_with_documents):
 async def test_delete_all_documents(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/documents/{uid}")
     assert response.status_code == 404
 
@@ -178,12 +178,12 @@ async def test_update_documents(test_client, index_with_documents, small_movies)
     response_docs[0]["title"] = "Some title"
     update_body = {"uid": uid, "documents": response_docs}
     update = await test_client.put("/documents", json=update_body)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     response = await test_client.get(f"/documents/{uid}")
     assert response.json()[0]["title"] == "Some title"
     update_body = {"uid": uid, "documents": small_movies}
     update = await test_client.put("/documents", json=update_body)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     response = await test_client.get(f"/documents/{uid}")
     assert response.json()[0]["title"] != "Some title"
 
@@ -194,7 +194,7 @@ async def test_update_documents_with_primary_key(test_client, empty_index, small
     uid, index = empty_index
     document_info = {"uid": uid, "documents": small_movies, "primaryKey": primary_key}
     update = await test_client.put("/documents", json=document_info)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     assert await index.get_primary_key() == primary_key
 
 
@@ -206,7 +206,7 @@ async def test_update_documents_auto_batch(empty_index, max_payload, test_client
     uid, index = empty_index
     document = {"uid": uid, "documents": documents}
     response = await test_client.post("/documents", json=document)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
 
     response = await test_client.get(f"documents/{uid}?limit={len(documents)}")
     response_docs = response.json()
@@ -225,8 +225,8 @@ async def test_update_documents_auto_batch(empty_index, max_payload, test_client
     response = await test_client.put("/documents/auto-batch", json=update_body)
 
     for r in response.json():
-        update = await index.wait_for_pending_update(r["updateId"])
-        assert update.status == "processed"
+        update = await wait_for_task(index.http_client, r["uid"])
+        assert update.status == "succeeded"
 
     stats = await index.get_stats()
     assert stats.number_of_documents == len(documents)
@@ -243,14 +243,14 @@ async def test_update_documents_in_batches(
     response_docs[0]["title"] = "Some title"
     update_body = {"uid": uid, "documents": response_docs}
     update = await test_client.put("/documents", json=update_body)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     response = await test_client.get(f"/documents/{uid}")
     assert response.json()[0]["title"] == "Some title"
     update_body = {"uid": uid, "batch_size": batch_size, "documents": small_movies}
     updates = await test_client.put("/documents/batches", json=update_body)
 
     for update in updates.json():
-        await index.wait_for_pending_update(update["updateId"])
+        await wait_for_task(index.http_client, update["uid"])
 
     response = await test_client.get(f"/documents/{uid}")
     assert response.json()[0]["title"] != "Some title"
