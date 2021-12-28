@@ -62,12 +62,14 @@ api_router.include_router(settings_routes.router, prefix="/settings", dependeinc
 app.include_router(api_router)
 ```
 
-The url for MeiliSearch and API key are read from environment variables. Putting these into a .env
-file will keep you from having to set these variables each time the terminal is restarted.
+The url for MeiliSearch, weather an https address should be used, and API key are read from
+environment variables. Putting these into a .env file will keep you from having to set these
+variables each time the terminal is restarted.
 
 ```txt
-MEILISEARCH_URL=http://localhost:7700  # This is the url for your instance of MeiliSearch
-MEILISEARCH_API_KEY=masterKey  # This is the API key for your MeiliSearch instance
+MEILI_HTTP_ADDR=localhost:7700  # This is the url for your instance of MeiliSearch
+MEILI_HTTPS_URL=true  # Setting this specifies the address should be https://. If false or not included the address will be http://
+MEILI_MASTER_KEY=masterKey  # This is the API key for your MeiliSearch instance
 ```
 
 Now the MeiliSearch routes will be available in your FastAPI app. Documentation for the routes can be viewed in the OpenAPI documentation of the FastAPI app. To view this start your FastAPI app and naviate to the docs `http://localhost:8000/docs` replacing the url with the correct url for your app.
