@@ -7,6 +7,7 @@ from fastapi import APIRouter, FastAPI
 from httpx import AsyncClient
 from meilisearch_python_async import Client
 
+from meilisearch_fastapi._config import get_config
 from meilisearch_fastapi.routes import (
     document_routes,
     index_routes,
@@ -19,7 +20,7 @@ ROOT_PATH = Path().absolute()
 SMALL_MOVIES_PATH = ROOT_PATH / "tests" / "assets" / "small_movies.json"
 
 MASTER_KEY = "masterKey"
-MEILISEARCH_URL = "http://localhost:7700"
+MEILISEARCH_URL = "localhost:7700"
 INDEX_UID = "indexUID"
 INDEX_UID2 = "indexUID2"
 INDEX_UID3 = "indexUID3"
@@ -33,11 +34,11 @@ INDEX_FIXTURE = [
 
 @pytest.fixture(autouse=True)
 def env_vars(monkeypatch):
-    monkeypatch.setenv("MEILISEARCH_URL", MEILISEARCH_URL)
-    monkeypatch.setenv("MEILISEARCH_API_KEY", MASTER_KEY)
+    monkeypatch.setenv("MEILI_HTTP_ADDR", MEILISEARCH_URL)
+    monkeypatch.setenv("MEILI_MASTER_KEY", MASTER_KEY)
     yield
-    monkeypatch.delenv("MEILISEARCH_URL", raising=False)
-    monkeypatch.delenv("MEILISEARCH_API_KEY", raising=False)
+    monkeypatch.delenv("MEILI_HTTP_ADDR", raising=False)
+    monkeypatch.delenv("MEILI_MASTER_KEY", raising=False)
 
 
 @pytest.fixture
@@ -84,11 +85,17 @@ async def clear_indexes(test_client):
     """
 
     yield
-    async with Client(MEILISEARCH_URL, MASTER_KEY) as client:
+    async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:
         indexes = await client.get_indexes()
         if indexes:
             for index in indexes:
                 await client.index(index.uid).delete()
+
+
+@pytest.fixture(autouse=True)
+def clear_config_cache():
+    yield
+    get_config.cache_clear()
 
 
 @pytest.fixture
@@ -114,7 +121,7 @@ def index_uid4():
 @pytest.mark.asyncio
 @pytest.fixture
 async def empty_index():
-    async with Client(MEILISEARCH_URL, MASTER_KEY) as client:
+    async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:
         index = await client.create_index(uid=INDEX_UID)
         yield INDEX_UID, index
 
@@ -140,7 +147,7 @@ async def index_with_documents(empty_index, small_movies):
 @pytest.mark.asyncio
 @pytest.fixture
 async def indexes_sample():
-    async with Client(MEILISEARCH_URL, MASTER_KEY) as client:
+    async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:
         indexes = []
         for index_args in INDEX_FIXTURE:
             index = await client.create_index(**index_args)

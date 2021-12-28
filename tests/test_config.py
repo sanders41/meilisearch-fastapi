@@ -3,34 +3,33 @@ import pytest
 from meilisearch_fastapi._config import get_config
 
 
-def test_config_with_key(meilisearch_url, master_key):
+@pytest.mark.parametrize("https", ["true", "false"])
+def test_config_with_key(https, meilisearch_url, master_key, monkeypatch):
+    monkeypatch.setenv("MEILI_HTTPS_URL", https)
     config = get_config()
 
     assert config.meilisearch_api_key == master_key
-    assert config.meilisearch_url == meilisearch_url
+    if https == "true":
+        assert config.meilisearch_url == f"https://{meilisearch_url}"
+    else:
+        assert config.meilisearch_url == f"http://{meilisearch_url}"
 
 
-def test_config_no_key(meilisearch_url, master_key, monkeypatch):
+def test_config_no_key(meilisearch_url, monkeypatch):
     # make sure there isn't an environmet vairable present
-    monkeypatch.delenv("MEILISEARCH_API_KEY", raising=False)
-
-    get_config.cache_clear()
+    monkeypatch.delenv("MEILI_MASTER_KEY", raising=False)
 
     config = get_config()
 
     assert config.meilisearch_api_key is None
-    assert config.meilisearch_url == meilisearch_url
-
-    # recreate the environment vairable
+    assert config.meilisearch_url == f"http://{meilisearch_url}"
 
 
-def test_config_no_url(meilisearch_url, monkeypatch):
+def test_config_no_url(monkeypatch):
     # make sure there isn't an environmet vairable present
-    monkeypatch.delenv("MEILISEARCH_URL", raising=False)
+    monkeypatch.delenv("MEILI_HTTP_ADDR", raising=False)
 
     get_config.cache_clear()
 
     with pytest.raises(ValueError):
         get_config()
-
-    # recreate the environment vairable
