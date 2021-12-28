@@ -104,7 +104,7 @@ pre-commit install
 After this pre-commit will automatically run any time you check in code to your branches. You can also run pre-commit at any time with:
 
 ```sh
-pre-commit run --all
+pre-commit run --all-files
 ```
 
 ### Type Hints
