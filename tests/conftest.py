@@ -81,13 +81,13 @@ async def test_client():
 @pytest.fixture
 @pytest.mark.asyncio
 async def raw_client():
-    async with Client(MEILISEARCH_URL, MASTER_KEY) as client:
+    async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:
         yield client
 
 
 @pytest.mark.asyncio
 @pytest.fixture(autouse=True)
-async def clear_indexes(test_client):
+async def clear_indexes():
     """Auto-clears the indexes after each test function run.
     Makes all the test functions independent.
     """
