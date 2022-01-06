@@ -253,7 +253,7 @@ http2 = ["h2 (>=3,<5)"]
 
 [[package]]
 name = "httpx"
-version = "0.21.1"
+version = "0.21.2"
 description = "The next generation HTTP client."
 category = "main"
 optional = false
@@ -720,7 +720,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "cc37f30db29bb8eaf23cc3be4518b62614092a24e5403a34d3ad46eace752e80"
+content-hash = "99405590b7dbef9f2e012ccc29363f218c49560a9724dfa808cca01bb9f8c5bc"
 
 [metadata.files]
 aiofiles = [
@@ -849,8 +849,8 @@ httpcore = [
     {file = "httpcore-0.14.2.tar.gz", hash = "sha256:ff8f8b9434ec4823f95a30596fbe78039913e706d3e598b0b8955b1e1828e093"},
 ]
 httpx = [
-    {file = "httpx-0.21.1-py3-none-any.whl", hash = "sha256:208e5ef2ad4d105213463cfd541898ed9d11851b346473539a8425e644bb7c66"},
-    {file = "httpx-0.21.1.tar.gz", hash = "sha256:02af20df486b78892a614a7ccd4e4e86a5409ec4981ab0e422c579a887acad83"},
+    {file = "httpx-0.21.2-py3-none-any.whl", hash = "sha256:6d88b1208f0996ee99c7a1e38fcfbdc66891c8fc583673337152681ac23585f6"},
+    {file = "httpx-0.21.2.tar.gz", hash = "sha256:c7c71345faa8983a094bbd24b5b5cc6f4bd274aadcb072a25b312cb209167aef"},
 ]
 identify = [
     {file = "identify-2.3.1-py2.py3-none-any.whl", hash = "sha256:5a5000bd3293950d992843c0ef3d82b90a582de2161557bda7f493c8c8864f26"},
