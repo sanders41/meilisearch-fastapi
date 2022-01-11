@@ -23,8 +23,7 @@ include = ["meilisearch_fastapi/py.typed"]
 python = "^3.7"
 fastapi = ">=0.65.1,<0.72.0"
 pydantic = {version = "^1.8.2", extras = ["dotenv"]}
-# meilisearch-python-async = "^0.20.0"
-meilisearch-python-async = { git = "https://github.com/sanders41/meilisearch-python-async.git", branch = "meilisearch-v0.25.0" }
+meilisearch-python-async = "^0.21.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
