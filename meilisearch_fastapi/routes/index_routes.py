@@ -99,7 +99,7 @@ async def delete_if_exists(uid: str, config: MeiliSearchConfig = Depends(get_con
         return 204
 
 
-@router.delete("/{uid}", response_model=TaskStatus, status_code=204, tags=["MeiliSearch Index"])
+@router.delete("/{uid}", response_model=TaskStatus, tags=["MeiliSearch Index"])
 async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> TaskStatus:
     async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
