@@ -133,15 +133,15 @@ async def test_get_primary_key(test_client, index_uid2):
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
-async def test_delete_index(test_client, index_uid, index_uid2):
+async def test_delete_index(test_client, index_uid, index_uid2, raw_client):
     response = await test_client.delete(f"indexes/{index_uid}")
-    assert response.status_code == 204
+    await wait_for_task(raw_client.http_client, response.json()["uid"])
 
     response = await test_client.get(f"/indexes/{index_uid}")
     assert response.status_code == 404
 
     response = await test_client.delete(f"indexes/{index_uid2}")
-    assert response.status_code == 204
+    await wait_for_task(raw_client.http_client, response.json()["uid"])
 
     response = await test_client.get(f"/indexes/{index_uid2}")
     assert response.status_code == 404
