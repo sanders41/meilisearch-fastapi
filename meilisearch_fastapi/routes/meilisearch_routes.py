@@ -1,8 +1,8 @@
-from __future__ import annotations
+from typing import List
 
 from fastapi import APIRouter, Depends
 from meilisearch_python_async import Client
-from meilisearch_python_async.models.client import ClientStats, Keys
+from meilisearch_python_async.models.client import ClientStats, Key, KeyCreate, KeyUpdate
 from meilisearch_python_async.models.health import Health
 from meilisearch_python_async.models.version import Version
 
@@ -17,10 +17,36 @@ async def get_health(config: MeiliSearchConfig = Depends(get_config)) -> Health:
         return await client.health()
 
 
-@router.get("/keys", response_model=Keys, tags=["MeiliSearch"])
-async def get_keys(config: MeiliSearchConfig = Depends(get_config)) -> Keys:
+@router.post("/keys", response_model=Key, tags=["MeiliSearch"])
+async def create_key(key: KeyCreate, config: MeiliSearchConfig = Depends(get_config)) -> Key:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        return await client.create_key(key)
+
+
+@router.delete("/keys/{key}", status_code=204, tags=["MeiliSearch"])
+async def delete_key(key: str, config: MeiliSearchConfig = Depends(get_config)) -> int:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        return await client.delete_key(key)
+
+
+@router.get("/keys", response_model=List[Key], tags=["MeiliSearch"])
+async def get_keys(config: MeiliSearchConfig = Depends(get_config)) -> List[Key]:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         return await client.get_keys()
+
+
+@router.get("/keys/{key}", response_model=Key, tags=["MeiliSearch"])
+async def get_key(key: str, config: MeiliSearchConfig = Depends(get_config)) -> Key:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        return await client.get_key(key)
+
+
+@router.patch("/keys/{key}", response_model=Key, tags=["MeiliSearch"])
+async def update_key(
+    key: str, update_key: KeyUpdate, config: MeiliSearchConfig = Depends(get_config)
+) -> Key:
+    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+        return await client.update_key(update_key)
 
 
 @router.get("/stats", response_model=ClientStats, tags=["MeiliSearch"])

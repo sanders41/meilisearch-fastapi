@@ -15,14 +15,16 @@ def default_settings():
     }
 
 
+@pytest.mark.usefixtures("indexes_sample")
 @pytest.mark.asyncio
-async def test_settings_get(default_settings, index_uid, indexes_sample, test_client):
+async def test_settings_get(default_settings, index_uid, test_client):
     response = await test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
     assert response.json() == default_settings
 
 
+@pytest.mark.usefixtures("indexes_sample")
 @pytest.mark.asyncio
 async def test_settings_update_and_delete(default_settings, index_uid, test_client):
     update_settings = {

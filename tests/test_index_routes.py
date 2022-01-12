@@ -1,5 +1,6 @@
 import pytest
 from meilisearch_python_async.models.settings import MeiliSearchSettings
+from meilisearch_python_async.task import wait_for_task
 
 
 @pytest.fixture
@@ -132,15 +133,15 @@ async def test_get_primary_key(test_client, index_uid2):
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
-async def test_delete_index(test_client, index_uid, index_uid2):
+async def test_delete_index(test_client, index_uid, index_uid2, raw_client):
     response = await test_client.delete(f"indexes/{index_uid}")
-    assert response.status_code == 204
+    await wait_for_task(raw_client.http_client, response.json()["uid"])
 
     response = await test_client.get(f"/indexes/{index_uid}")
     assert response.status_code == 404
 
     response = await test_client.delete(f"indexes/{index_uid2}")
-    assert response.status_code == 204
+    await wait_for_task(raw_client.http_client, response.json()["uid"])
 
     response = await test_client.get(f"/indexes/{index_uid2}")
     assert response.status_code == 404
@@ -162,10 +163,12 @@ async def test_delete_if_exists(test_client, test_uid):
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
-async def test_update_index(test_client, index_uid):
+async def test_update_index(test_client, index_uid, raw_client):
     primay_key = "objectID"
     update_data = {"uid": index_uid, "primaryKey": primay_key}
-    response = await test_client.put("/indexes", json=update_data)
+    update = await test_client.put("/indexes", json=update_data)
+    await wait_for_task(raw_client.http_client, update.json()["uid"])
+    response = await test_client.get(f"/indexes/{index_uid}")
     response_primary_key = response.json()["primaryKey"]
 
     assert response_primary_key == primay_key
@@ -176,7 +179,7 @@ async def test_get_stats(test_client, empty_index, small_movies):
     uid, index = empty_index
     data = {"uid": uid, "documents": small_movies}
     update = await test_client.put("/documents", json=data)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     response = await test_client.get(f"/indexes/stats/{uid}")
 
     assert response.json()["numberOfDocuments"] == 30
@@ -195,7 +198,7 @@ async def test_update_ranking_rules(test_client, empty_index, new_ranking_rules)
     uid, index = empty_index
     data = {"uid": uid, "rankingRules": new_ranking_rules}
     response = await test_client.put("/indexes/ranking-rules", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/ranking-rules/{uid}")
     ranking_rules = response.json()["rankingRules"]
     assert ranking_rules == new_ranking_rules
@@ -208,12 +211,12 @@ async def test_reset_ranking_rules(
     uid, index = empty_index
     data = {"uid": uid, "rankingRules": new_ranking_rules}
     response = await test_client.put("/indexes/ranking-rules", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/ranking-rules/{uid}")
     ranking_rules = response.json()["rankingRules"]
     assert ranking_rules == new_ranking_rules
     response = await test_client.delete(f"/indexes/ranking-rules/{uid}")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/ranking-rules/{uid}")
     ranking_rules = response.json()["rankingRules"]
     assert ranking_rules == default_ranking_rules
@@ -231,7 +234,7 @@ async def test_update_distinct_attribute(test_client, empty_index, new_distinct_
     uid, index = empty_index
     data = {"uid": uid, "attribute": new_distinct_attribute}
     response = await test_client.put("/indexes/attributes/distinct", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/attributes/distinct/{uid}")
     assert response.json()["attribute"] == new_distinct_attribute
 
@@ -243,12 +246,12 @@ async def test_reset_distinct_attribute(
     uid, index = empty_index
     data = {"uid": uid, "attribute": new_distinct_attribute}
     response = await test_client.put("/indexes/attributes/distinct", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/attributes/distinct/{uid}")
     assert response.json()["attribute"] == new_distinct_attribute
     response = await test_client.delete(f"/indexes/attributes/distinct/{uid}")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/attributes/distinct/{uid}")
     assert response.json()["attribute"] == default_distinct_attribute
 
@@ -260,7 +263,7 @@ async def test_get_searchable_attributes(test_client, empty_index, small_movies)
     assert response.json()["searchableAttributes"] == ["*"]
     data = {"uid": uid, "documents": small_movies, "primaryKey": "id"}
     response = await test_client.put("/documents", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == ["*"]
 
@@ -270,7 +273,7 @@ async def test_update_searchable_attributes(test_client, empty_index, new_search
     uid, index = empty_index
     data = {"uid": uid, "searchableAttributes": new_searchable_attributes}
     response = await test_client.put("/indexes/searchable-attributes", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == new_searchable_attributes
 
@@ -280,12 +283,12 @@ async def test_reset_searchable_attributes(test_client, empty_index, new_searcha
     uid, index = empty_index
     data = {"uid": uid, "searchableAttributes": new_searchable_attributes}
     response = await test_client.put("/indexes/searchable-attributes", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == new_searchable_attributes
     response = await test_client.delete(f"/indexes/searchable-attributes/{uid}")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == ["*"]
 
@@ -297,7 +300,7 @@ async def test_get_displayed_attributes(test_client, empty_index, small_movies):
     assert response.json()["displayedAttributes"] == ["*"]
     data = {"uid": uid, "documents": small_movies}
     update = await test_client.put("/documents", json=data)
-    await index.wait_for_pending_update(update.json()["updateId"])
+    await wait_for_task(index.http_client, update.json()["uid"])
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert response.json()["displayedAttributes"] == ["*"]
 
@@ -307,7 +310,7 @@ async def test_update_displayed_attributes(test_client, empty_index, displayed_a
     uid, index = empty_index
     data = {"uid": uid, "displayedAttributes": displayed_attributes}
     response = await test_client.put("/indexes/displayed-attributes", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert sorted(response.json()["displayedAttributes"]) == sorted(displayed_attributes)
 
@@ -317,12 +320,12 @@ async def test_reset_displayed_attributes(test_client, empty_index, displayed_at
     uid, index = empty_index
     data = {"uid": uid, "displayedAttributes": displayed_attributes}
     response = await test_client.put("/indexes/displayed-attributes", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert sorted(response.json()["displayedAttributes"]) == sorted(displayed_attributes)
     response = await test_client.delete(f"/indexes/displayed-attributes/{uid}")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert response.json()["displayedAttributes"] == ["*"]
 
@@ -339,8 +342,8 @@ async def test_update_stop_words(test_client, empty_index, new_stop_words):
     uid, index = empty_index
     data = {"uid": uid, "stopWords": new_stop_words}
     response = await test_client.put("/indexes/stop-words", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"indexes/stop-words/{uid}")
     assert sorted(response.json()["stopWords"]) == sorted(new_stop_words)
 
@@ -350,13 +353,13 @@ async def test_reset_stop_words(test_client, empty_index, new_stop_words):
     uid, index = empty_index
     data = {"uid": uid, "stopWords": new_stop_words}
     response = await test_client.put("/indexes/stop-words", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"indexes/stop-words/{uid}")
     assert sorted(response.json()["stopWords"]) == sorted(new_stop_words)
     response = await test_client.delete(f"indexes/stop-words/{uid}")
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"indexes/stop-words/{uid}")
     assert response.json()["stopWords"] is None
 
@@ -373,8 +376,8 @@ async def test_update_synonyms(test_client, empty_index, new_synonyms):
     uid, index = empty_index
     data = {"uid": uid, "synonyms": new_synonyms}
     response = await test_client.put("/indexes/synonyms", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] == new_synonyms
 
@@ -392,13 +395,13 @@ async def test_reset_synonyms(test_client, empty_index, new_synonyms):
     uid, index = empty_index
     data = {"uid": uid, "synonyms": new_synonyms}
     response = await test_client.put("/indexes/synonyms", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] == new_synonyms
     response = await test_client.delete(f"/indexes/synonyms/{uid}")
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] is None
 
@@ -415,7 +418,7 @@ async def test_update_filterable_attributes(test_client, empty_index, filterable
     uid, index = empty_index
     data = {"uid": uid, "filterableAttributes": filterable_attributes}
     response = await test_client.put("indexes/filterable-attributes", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert sorted(response.json()["filterableAttributes"]) == filterable_attributes
 
@@ -425,12 +428,12 @@ async def test_reset_filterable_attributes(test_client, empty_index, filterable_
     uid, index = empty_index
     data = {"uid": uid, "filterableAttributes": filterable_attributes}
     response = await test_client.put("indexes/filterable-attributes", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert sorted(response.json()["filterableAttributes"]) == filterable_attributes
     response = await test_client.delete(f"/indexes/filterable-attributes/{uid}")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert response.json()["filterableAttributes"] is None
 
@@ -447,7 +450,7 @@ async def test_update_sortable_attributes(test_client, empty_index, sortable_att
     uid, index = empty_index
     data = {"uid": uid, "sortableAttributes": sortable_attributes}
     response = await test_client.put("indexes/sortable-attributes", json=data)
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == sortable_attributes
 
@@ -457,11 +460,11 @@ async def test_reset_sortable_attributes(test_client, empty_index, sortable_attr
     uid, index = empty_index
     data = {"uid": uid, "sortableAttributes": sortable_attributes}
     response = await test_client.put("indexes/sortable-attributes", json=data)
-    update = await index.wait_for_pending_update(response.json()["updateId"])
-    assert update.status == "processed"
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == sortable_attributes
     response = await test_client.delete(f"/indexes/sortable-attributes/{uid}")
-    await index.wait_for_pending_update(response.json()["updateId"])
+    await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == []

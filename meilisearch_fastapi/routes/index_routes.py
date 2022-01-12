@@ -1,11 +1,9 @@
-from __future__ import annotations
-
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
 from meilisearch_python_async.models.index import IndexBase, IndexInfo, IndexStats
-from meilisearch_python_async.models.update import UpdateId
+from meilisearch_python_async.models.task import TaskId, TaskStatus
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.index import (
@@ -49,14 +47,14 @@ async def create_index(
 
 @router.delete(
     "/filterable-attributes/{uid}",
-    response_model=UpdateId,
+    response_model=TaskId,
     status_code=202,
     tags=["MeiliSearch Index"],
 )
 async def delete_filterable_attributes(
     uid: str,
     config: MeiliSearchConfig = Depends(get_config),
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -65,13 +63,13 @@ async def delete_filterable_attributes(
 
 @router.delete(
     "/displayed-attributes/{uid}",
-    response_model=UpdateId,
+    response_model=TaskId,
     status_code=202,
     tags=["MeiliSearch Index"],
 )
 async def delete_displayed_attributes(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -80,13 +78,13 @@ async def delete_displayed_attributes(
 
 @router.delete(
     "/attributes/distinct/{uid}",
-    response_model=UpdateId,
+    response_model=TaskId,
     status_code=202,
     tags=["MeiliSearch Index"],
 )
 async def delete_distinct_attribute(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -101,19 +99,17 @@ async def delete_if_exists(uid: str, config: MeiliSearchConfig = Depends(get_con
         return 204
 
 
-@router.delete("/{uid}", status_code=204, tags=["MeiliSearch Index"])
-async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> int:
+@router.delete("/{uid}", response_model=TaskStatus, tags=["MeiliSearch Index"])
+async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> TaskStatus:
     async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
         return await index.delete()
 
 
 @router.delete(
-    "/ranking-rules/{uid}", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/ranking-rules/{uid}", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
-async def delete_ranking_rules(
-    uid: str, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+async def delete_ranking_rules(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -122,13 +118,13 @@ async def delete_ranking_rules(
 
 @router.delete(
     "/searchable-attributes/{uid}",
-    response_model=UpdateId,
+    response_model=TaskId,
     status_code=202,
     tags=["MeiliSearch Index"],
 )
 async def delete_searchable_attributes(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -137,13 +133,13 @@ async def delete_searchable_attributes(
 
 @router.delete(
     "/sortable-attributes/{uid}",
-    response_model=UpdateId,
+    response_model=TaskId,
     status_code=202,
     tags=["MeiliSearch Index"],
 )
 async def delete_sortable_attributes(
     uid: str, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -151,9 +147,9 @@ async def delete_sortable_attributes(
 
 
 @router.delete(
-    "/stop-words/{uid}", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/stop-words/{uid}", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
-async def delete_stop_words(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> UpdateId:
+async def delete_stop_words(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -161,9 +157,9 @@ async def delete_stop_words(uid: str, config: MeiliSearchConfig = Depends(get_co
 
 
 @router.delete(
-    "/synonyms/{uid}", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/synonyms/{uid}", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
-async def delete_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> UpdateId:
+async def delete_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
@@ -246,7 +242,7 @@ async def get_stats(uid: str, config: MeiliSearchConfig = Depends(get_config)) -
 @router.get("/", response_model=List[IndexInfo], tags=["MeiliSearch Index"])
 async def get_indexes(
     config: MeiliSearchConfig = Depends(get_config),
-) -> list[IndexInfo]:
+) -> List[IndexInfo]:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         indexes = await client.get_raw_indexes()
 
@@ -310,12 +306,12 @@ async def get_synonyms(uid: str, config: MeiliSearchConfig = Depends(get_config)
 
 
 @router.put(
-    "/filterable-attributes", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/filterable-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
 async def update_filterable_attributes(
     filterable_attributes: FilterableAttributesWithUID,
     config: MeiliSearchConfig = Depends(get_config),
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(filterable_attributes.uid)
         attributes = filterable_attributes.filterable_attributes or []
@@ -324,11 +320,11 @@ async def update_filterable_attributes(
 
 
 @router.put(
-    "/displayed-attributes", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/displayed-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
 async def update_displayed_attributes(
     displayed_attributes: DisplayedAttributesUID, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(displayed_attributes.uid)
 
@@ -336,21 +332,21 @@ async def update_displayed_attributes(
 
 
 @router.put(
-    "/attributes/distinct", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/attributes/distinct", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
 async def update_distinct_attribute(
     attribute_with_uid: DistinctAttributeWithUID, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(attribute_with_uid.uid)
 
         return await index.update_distinct_attribute(attribute_with_uid.attribute)
 
 
-@router.put("/", response_model=IndexInfo, tags=["MeiliSearch Index"])
+@router.put("/", response_model=TaskId, tags=["MeiliSearch Index"])
 async def update_index(
     index_update: IndexUpdate, config: MeiliSearchConfig = Depends(get_config)
-) -> IndexInfo:
+) -> TaskId:
     async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         payload = {}
         if index_update.primary_key is not None:
@@ -359,13 +355,13 @@ async def update_index(
             f"{config.meilisearch_url}/indexes/{index_update.uid}", payload
         )
 
-        return IndexInfo(**response.json())
+        return TaskId(**response.json())
 
 
-@router.put("/ranking-rules", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"])
+@router.put("/ranking-rules", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"])
 async def update_ranking_rules(
     ranking_rules: RankingRulesWithUID, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(ranking_rules.uid)
 
@@ -373,12 +369,12 @@ async def update_ranking_rules(
 
 
 @router.put(
-    "/searchable-attributes", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/searchable-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
 async def update_searchable_attributes(
     searchable_attributes: SearchableAttributesWithUID,
     config: MeiliSearchConfig = Depends(get_config),
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(searchable_attributes.uid)
 
@@ -386,21 +382,21 @@ async def update_searchable_attributes(
 
 
 @router.put(
-    "/sortable-attributes", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"]
+    "/sortable-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
 )
 async def update_sortable_attributes(
     sortable_attributes: SortableAttributesWithUID, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(sortable_attributes.uid)
 
         return await index.update_sortable_attributes(sortable_attributes.sortable_attributes)
 
 
-@router.put("/stop-words", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"])
+@router.put("/stop-words", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"])
 async def update_stop_words(
     stop_words: StopWordsWithUID, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(stop_words.uid)
         words = stop_words.stop_words or []
@@ -408,10 +404,10 @@ async def update_stop_words(
         return await index.update_stop_words(words)
 
 
-@router.put("/synonyms", response_model=UpdateId, status_code=202, tags=["MeiliSearch Index"])
+@router.put("/synonyms", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"])
 async def update_synonyms(
     synonyms: SynonymsWithUID, config: MeiliSearchConfig = Depends(get_config)
-) -> UpdateId:
+) -> TaskId:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(synonyms.uid)
 
