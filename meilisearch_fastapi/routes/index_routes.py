@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
 from meilisearch_python_async.models.index import IndexBase, IndexInfo, IndexStats
-from meilisearch_python_async.models.task import TaskId
+from meilisearch_python_async.models.task import TaskId, TaskStatus
 
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
 from meilisearch_fastapi.models.index import (
@@ -99,8 +99,8 @@ async def delete_if_exists(uid: str, config: MeiliSearchConfig = Depends(get_con
         return 204
 
 
-@router.delete("/{uid}", status_code=204, tags=["MeiliSearch Index"])
-async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> int:
+@router.delete("/{uid}", response_model=TaskStatus, status_code=204, tags=["MeiliSearch Index"])
+async def delete_index(uid: str, config: MeiliSearchConfig = Depends(get_config)) -> TaskStatus:
     async with Client(config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
         return await index.delete()
