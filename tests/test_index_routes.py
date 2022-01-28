@@ -366,7 +366,7 @@ async def test_reset_stop_words(test_client, empty_index, new_stop_words):
 
 @pytest.mark.asyncio
 async def test_get_synonyms_default(test_client, empty_index):
-    uid, index = empty_index
+    uid, _ = empty_index
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] is None
 
@@ -383,7 +383,7 @@ async def test_update_synonyms(test_client, empty_index, new_synonyms):
 
 
 @pytest.mark.asyncio
-async def test_update_synonyms_none_provided(test_client, empty_index, new_synonyms):
+async def test_update_synonyms_none_provided(test_client, empty_index):
     uid, _ = empty_index
     data = {"uid": uid}
     response = await test_client.put("/indexes/synonyms", json=data)
