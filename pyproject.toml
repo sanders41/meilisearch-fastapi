@@ -36,7 +36,7 @@ pytest-cov = "^3.0.0"
 tox = "^3.24.5"
 uvicorn = "^0.17.1"
 pytest-asyncio = "^0.17.0"
-httpx = "^0.21.3"
+httpx = "^0.22.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
