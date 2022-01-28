@@ -107,7 +107,7 @@ async def get_documents(
     uid: str,
     limit: int = 20,
     offset: int = 0,
-    attributes_to_retrieve: Optional[str] = None,
+    attributes_to_retrieve: Optional[List[str]] = None,
     config: MeiliSearchConfig = Depends(get_config),
 ) -> List[dict]:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:

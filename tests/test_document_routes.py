@@ -161,13 +161,17 @@ async def test_get_documents_populated(test_client, index_with_documents):
 async def test_get_documents_offset_optional_params(test_client, index_with_documents):
     uid, _ = index_with_documents
     response = await test_client.get(f"/documents/{uid}")
-    assert len(response.json()) == 20
+    response_json = response.json()
+    assert len(response_json) == 20
 
     response_offset_limit = await test_client.get(
-        f"documents/{uid}?limit=3&offset=1&attributes_to_retrieve=title"
+        f"documents/{uid}?limit=3&offset=1&attributes_to_retrieve=title,overview"
     )
-    assert len(response_offset_limit.json()) == 3
-    assert response_offset_limit.json()[0]["title"] == response.json()[1]["title"]
+    response_offset_json = response_offset_limit.json()
+
+    assert len(response_offset_json) == 3
+    assert response_offset_json[0]["title"] == response_json[1]["title"]
+    assert response_offset_json[0]["overview"] == response_json[1]["overview"]
 
 
 @pytest.mark.asyncio
