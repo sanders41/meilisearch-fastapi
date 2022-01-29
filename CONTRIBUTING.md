@@ -142,7 +142,7 @@ You can view the current coverage level in the codecov badge on the
 [main github page](https://github.com/sanders41/meilisearch-fastapi). You can run tests and see the
 code coverage by running:
 
-Before running the tests start a Docker container running MeiliSearch.
+Before running the tests start a Docker container running Meilisearch.
 
 ```sh
 docker pull getmeili/meilisearch:latest
