@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "meilisearch-fastapi"
 version = "0.13.0"
-description = "MeiliSearch integration with FastAPI"
+description = "Meilisearch integration with FastAPI"
 authors = ["Paul Sanders <psanders1@gmail.com>"]
 license = "MIT"
 readme = "README.md"
