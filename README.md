@@ -1,4 +1,4 @@
-# MeiliSearch FastAPI
+# Meilisearch FastAPI
 
 ![CI Status](https://github.com/sanders41/meilisearch-fastapi/workflows/CI/badge.svg?branch=main&event=push)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sanders41/meilisearch-fastapi/main.svg)](https://results.pre-commit.ci/latest/github/sanders41/meilisearch-fastapi/main)
@@ -6,7 +6,7 @@
 [![PyPI version](https://badge.fury.io/py/meilisearch-fastapi.svg)](https://badge.fury.io/py/meilisearch-fastapi)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/meilisearch-fastapi?color=5cc141)](https://github.com/sanders41/meilisearch-fastapi)
 
-MeiliSearch FastAPI provides [FastAPI](https://fastapi.tiangolo.com/) routes for interacting with [MeiliSearch](https://www.meilisearch.com/).
+Meilisearch FastAPI provides [FastAPI](https://fastapi.tiangolo.com/) routes for interacting with [Meilisearch](https://www.meilisearch.com/).
 
 ## Installation
 
@@ -62,21 +62,21 @@ api_router.include_router(settings_routes.router, prefix="/settings", dependeinc
 app.include_router(api_router)
 ```
 
-The url for MeiliSearch, weather an https address should be used, and API key are read from
+The url for Meilisearch, weather an https address should be used, and API key are read from
 environment variables. Putting these into a .env file will keep you from having to set these
 variables each time the terminal is restarted.
 
 ```txt
-MEILI_HTTP_ADDR=localhost:7700  # This is the url for your instance of MeiliSearch
+MEILI_HTTP_ADDR=localhost:7700  # This is the url for your instance of Meilisearch
 MEILI_HTTPS_URL=true  # Setting this specifies the address should be https://. If false or not included the address will be http://
-MEILI_MASTER_KEY=masterKey  # This is the API key for your MeiliSearch instance
+MEILI_MASTER_KEY=masterKey  # This is the API key for your Meilisearch instance
 ```
 
-Now the MeiliSearch routes will be available in your FastAPI app. Documentation for the routes can be viewed in the OpenAPI documentation of the FastAPI app. To view this start your FastAPI app and naviate to the docs `http://localhost:8000/docs` replacing the url with the correct url for your app.
+Now the Meilisearch routes will be available in your FastAPI app. Documentation for the routes can be viewed in the OpenAPI documentation of the FastAPI app. To view this start your FastAPI app and naviate to the docs `http://localhost:8000/docs` replacing the url with the correct url for your app.
 
-## Compatibility with MeiliSearch
+## Compatibility with Meilisearch
 
-This package only guarantees the compatibility with [version v0.25 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.25.0).
+This package only guarantees the compatibility with [version v0.25 of Meilisearch](https://github.com/meilisearch/meilisearch/releases/tag/v0.25.0).
 
 ## Contributing
 
