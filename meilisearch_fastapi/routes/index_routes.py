@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from meilisearch_python_async import Client
 from meilisearch_python_async.models.index import IndexBase, IndexInfo, IndexStats
 from meilisearch_python_async.models.task import TaskId, TaskStatus
@@ -92,7 +92,7 @@ async def delete_distinct_attribute(
 async def delete_if_exists(uid: str, client: Client = Depends(meilisearch_client)) -> int:
     index = client.index(uid)
     await index.delete_if_exists()
-    return 204
+    return status.HTTP_204_NO_CONTENT
 
 
 @router.delete("/{uid}", response_model=TaskStatus, tags=["MeiliSearch Index"])
