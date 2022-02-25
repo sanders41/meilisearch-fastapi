@@ -162,3 +162,11 @@ async def indexes_sample():
             index = await client.create_index(**index_args)
             indexes.append(index)
         yield indexes
+
+
+@pytest.fixture
+async def default_search_key(raw_client):
+    keys = await raw_client.get_keys()
+    for key in keys:
+        if "Default Search API Key" in key.description:
+            return key

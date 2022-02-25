@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import jwt
 import pytest
 from meilisearch_python_async.errors import MeiliSearchApiError
 from meilisearch_python_async.models.client import KeyCreate
@@ -32,6 +33,72 @@ async def test_key_info(raw_client):
         await raw_client.delete_key(key.key)
     except MeiliSearchApiError:
         pass
+
+
+async def test_generate_tenant_token(test_client, default_search_key):
+    search_rules = {"test": "value"}
+    expected = {"searchRules": search_rules}
+    expected["apiKeyPrefix"] = default_search_key.key[:8]
+    api_key = default_search_key.dict()
+    api_key["created_at"] = api_key["created_at"].isoformat()
+    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    payload = {
+        "search_rules": search_rules,
+        "api_key": api_key,
+    }
+    response = await test_client.post("/meilisearch/generate-tenant-token", json=payload)
+    token = response.json()["tenantToken"]
+
+    assert expected == jwt.decode(jwt=token, key=default_search_key.key, algorithms=["HS256"])
+
+
+async def test_generate_tenant_token_expires(test_client, default_search_key):
+    search_rules = {"test": "value"}
+    expires_at = datetime.utcnow() + timedelta(days=1)
+    expected = {"searchRules": search_rules}
+    expected["apiKeyPrefix"] = default_search_key.key[:8]
+    expected["exp"] = int(datetime.timestamp(expires_at))  # type: ignore
+    api_key = default_search_key.dict()
+    api_key["created_at"] = api_key["created_at"].isoformat()
+    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    payload = {
+        "search_rules": search_rules,
+        "api_key": api_key,
+        "expires_at": expires_at.isoformat(),
+    }
+    response = await test_client.post("/meilisearch/generate-tenant-token", json=payload)
+    token = response.json()["tenantToken"]
+
+    assert expected == jwt.decode(jwt=token, key=default_search_key.key, algorithms=["HS256"])
+
+
+async def test_generate_tenant_token_default_key_expires_past(test_client, default_search_key):
+    search_rules = {"test": "value"}
+    expires_at = datetime.utcnow() + timedelta(days=-1)
+    api_key = default_search_key.dict()
+    api_key["created_at"] = api_key["created_at"].isoformat()
+    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    payload = {
+        "search_rules": search_rules,
+        "api_key": api_key,
+        "expires_at": expires_at.isoformat(),
+    }
+    response = await test_client.post("/meilisearch/generate-tenant-token", json=payload)
+
+    assert response.status_code == 400
+
+
+async def test_generate_tenant_token_invalid_restriction(test_key_info, test_client, raw_client):
+    test_key_info.indexes = ["good"]
+    key = await raw_client.create_key(test_key_info)
+    api_key = key.dict()
+    api_key["created_at"] = api_key["created_at"].isoformat()
+    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    payload = {"search_rules": {"indexes": ["bad"]}, "api_key": api_key}
+
+    response = await test_client.post("/meilisearch/generate-tenant-token", json=payload)
+
+    assert response.status_code == 400
 
 
 @pytest.mark.asyncio

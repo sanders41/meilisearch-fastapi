@@ -1,14 +1,34 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
+from meilisearch_python_async.errors import InvalidRestriction
 from meilisearch_python_async.models.client import ClientStats, Key, KeyCreate, KeyUpdate
 from meilisearch_python_async.models.health import Health
 from meilisearch_python_async.models.version import Version
 
 from meilisearch_fastapi._client import meilisearch_client
+from meilisearch_fastapi.models.tenant_token import TenantToken, TenantTokenSettings
 
 router = APIRouter()
+
+
+@router.post("/generate-tenant-token", response_model=TenantToken, tags=["MeiliSearch"])
+async def generate_tenant_token(
+    tenant_token_settings: TenantTokenSettings, client: Client = Depends(meilisearch_client)
+) -> TenantToken:
+    try:
+        token = client.generate_tenant_token(
+            tenant_token_settings.search_rules,
+            api_key=tenant_token_settings.api_key,
+            expires_at=tenant_token_settings.expires_at,
+        )
+    except InvalidRestriction as e:
+        raise HTTPException(400, str(e))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+    return TenantToken(tenant_token=token)
 
 
 @router.get("/health", response_model=Health, tags=["MeiliSearch"])
