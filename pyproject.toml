@@ -35,7 +35,7 @@ pytest = "^7.0.1"
 pytest-cov = "^3.0.0"
 tox = "^3.24.5"
 uvicorn = "^0.17.5"
-pytest-asyncio = "^0.18.1"
+pytest-asyncio = "^0.18.2"
 httpx = "^0.22.0"
 
 [build-system]
