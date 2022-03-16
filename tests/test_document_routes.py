@@ -23,12 +23,10 @@ def generate_test_movies(num_movies=50):
     return movies
 
 
-
 async def test_get_documents_none(empty_index, test_client):
     uid, _ = empty_index
     response = await test_client.get(f"/documents/{uid}")
     assert response.status_code == 404
-
 
 
 @pytest.mark.parametrize(
@@ -43,7 +41,6 @@ async def test_add_documents(
     update = await wait_for_task(index.http_client, response.json()["uid"])
     assert await index.get_primary_key() == expected_primary_key
     assert update.status == "succeeded"
-
 
 
 @pytest.mark.parametrize("max_payload", [None, 3500, 2500])
@@ -78,7 +75,6 @@ async def test_add_documents_auto_batch(
     assert stats.number_of_documents == len(documents)
 
 
-
 @pytest.mark.parametrize(
     "primary_key, expected_primary_key", [("release_date", "release_date"), (None, "id")]
 )
@@ -103,14 +99,12 @@ async def test_add_documents_in_batches(
     assert await index.get_primary_key() == expected_primary_key
 
 
-
 async def test_delete_document(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}/500682")
     await wait_for_task(index.http_client, response.json()["uid"])
     with pytest.raises(MeiliSearchApiError):
         await test_client.get(f"/documents/{uid}/500682")
-
 
 
 async def test_delete_documents(test_client, index_with_documents):
@@ -127,7 +121,6 @@ async def test_delete_documents(test_client, index_with_documents):
     assert to_delete not in ids
 
 
-
 async def test_delete_all_documents(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}")
@@ -136,12 +129,10 @@ async def test_delete_all_documents(test_client, index_with_documents):
     assert response.status_code == 404
 
 
-
 async def test_get_document(test_client, index_with_documents):
     uid, _ = index_with_documents
     response = await test_client.get(f"documents/{uid}/500682")
     assert response.json()["title"] == "The Highwaymen"
-
 
 
 async def test_get_document_nonexistent(test_client, empty_index):
@@ -150,12 +141,10 @@ async def test_get_document_nonexistent(test_client, empty_index):
         await test_client.get(f"documents/{uid}/123")
 
 
-
 async def test_get_documents_populated(test_client, index_with_documents):
     uid, _ = index_with_documents
     response = await test_client.get(f"documents/{uid}")
     assert len(response.json()) == 20
-
 
 
 async def test_get_documents_offset_optional_params(test_client, index_with_documents):
@@ -172,7 +161,6 @@ async def test_get_documents_offset_optional_params(test_client, index_with_docu
     assert len(response_offset_json) == 3
     assert response_offset_json[0]["title"] == response_json[1]["title"]
     assert response_offset_json[0]["overview"] == response_json[1]["overview"]
-
 
 
 async def test_update_documents(test_client, index_with_documents, small_movies):
@@ -192,7 +180,6 @@ async def test_update_documents(test_client, index_with_documents, small_movies)
     assert response.json()[0]["title"] != "Some title"
 
 
-
 async def test_update_documents_with_primary_key(test_client, empty_index, small_movies):
     primary_key = "release_date"
     uid, index = empty_index
@@ -200,7 +187,6 @@ async def test_update_documents_with_primary_key(test_client, empty_index, small
     update = await test_client.put("/documents", json=document_info)
     await wait_for_task(index.http_client, update.json()["uid"])
     assert await index.get_primary_key() == primary_key
-
 
 
 @pytest.mark.parametrize("max_payload", [None, 3500, 2500])
