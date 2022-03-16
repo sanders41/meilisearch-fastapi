@@ -16,7 +16,6 @@ def default_settings():
 
 
 @pytest.mark.usefixtures("indexes_sample")
-@pytest.mark.asyncio
 async def test_settings_get(default_settings, index_uid, test_client):
     response = await test_client.get(f"/settings/{index_uid}")
 
@@ -25,7 +24,6 @@ async def test_settings_get(default_settings, index_uid, test_client):
 
 
 @pytest.mark.usefixtures("indexes_sample")
-@pytest.mark.asyncio
 async def test_settings_update_and_delete(default_settings, index_uid, test_client):
     update_settings = {
         "uid": index_uid,

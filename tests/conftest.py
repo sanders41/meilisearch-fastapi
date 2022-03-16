@@ -79,13 +79,11 @@ async def test_client():
 
 
 @pytest.fixture
-@pytest.mark.asyncio
 async def raw_client():
     async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:
         yield client
 
 
-@pytest.mark.asyncio
 @pytest.fixture(autouse=True)
 async def clear_indexes():
     """Auto-clears the indexes after each test function run.
@@ -127,7 +125,6 @@ def index_uid4():
     return INDEX_UID4
 
 
-@pytest.mark.asyncio
 @pytest.fixture
 async def empty_index():
     async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:
@@ -143,7 +140,6 @@ def small_movies():
         yield json.loads(movie_file.read())
 
 
-@pytest.mark.asyncio
 @pytest.fixture
 async def index_with_documents(empty_index, small_movies):
     uid, index = empty_index
@@ -153,7 +149,6 @@ async def index_with_documents(empty_index, small_movies):
     yield uid, index
 
 
-@pytest.mark.asyncio
 @pytest.fixture
 async def indexes_sample():
     async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:

@@ -60,7 +60,6 @@ def sortable_attributes():
     return ["genre", "title"]
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "data, expected",
     [
@@ -94,20 +93,17 @@ async def test_create_index(test_client, data, expected):
     assert "updatedAt" in index.json()
 
 
-@pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
 async def test_get_index(test_client, index_uid):
     response = await test_client.get(f"/indexes/{index_uid}")
     assert response.json()["uid"] == index_uid
 
 
-@pytest.mark.asyncio
 async def test_get_index_none(test_client):
     response = await test_client.get("/indexes/bad")
     assert response.status_code == 404
 
 
-@pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
 async def test_get_indexes(test_client, index_uid, index_uid2):
     response = await test_client.get("/indexes")
@@ -118,20 +114,17 @@ async def test_get_indexes(test_client, index_uid, index_uid2):
     assert len(response.json()) == 2
 
 
-@pytest.mark.asyncio
 async def test_get_indexes_none(test_client):
     response = await test_client.get("/indexes")
     assert response.status_code == 404
 
 
-@pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
 async def test_get_primary_key(test_client, index_uid2):
     response = await test_client.get(f"/indexes/primary-key/{index_uid2}")
     assert response.json()["primaryKey"] == "book_id"
 
 
-@pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
 async def test_delete_index(test_client, index_uid, index_uid2, raw_client):
     response = await test_client.delete(f"indexes/{index_uid}")
@@ -150,7 +143,6 @@ async def test_delete_index(test_client, index_uid, index_uid2, raw_client):
     assert response.status_code == 404
 
 
-@pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
 @pytest.mark.parametrize("test_uid", ["indexUID", "none"])
 async def test_delete_if_exists(test_client, test_uid):
@@ -161,7 +153,6 @@ async def test_delete_if_exists(test_client, test_uid):
     assert response.status_code == 404
 
 
-@pytest.mark.asyncio
 @pytest.mark.usefixtures("indexes_sample")
 async def test_update_index(test_client, index_uid, raw_client):
     primay_key = "objectID"
@@ -174,7 +165,6 @@ async def test_update_index(test_client, index_uid, raw_client):
     assert response_primary_key == primay_key
 
 
-@pytest.mark.asyncio
 async def test_get_stats(test_client, empty_index, small_movies):
     uid, index = empty_index
     data = {"uid": uid, "documents": small_movies}
@@ -185,7 +175,6 @@ async def test_get_stats(test_client, empty_index, small_movies):
     assert response.json()["numberOfDocuments"] == 30
 
 
-@pytest.mark.asyncio
 async def test_get_ranking_rules_default(test_client, empty_index, default_ranking_rules):
     uid, _ = empty_index
     response = await test_client.get(f"/indexes/ranking-rules/{uid}")
@@ -193,7 +182,6 @@ async def test_get_ranking_rules_default(test_client, empty_index, default_ranki
     assert ranking_rules == default_ranking_rules
 
 
-@pytest.mark.asyncio
 async def test_update_ranking_rules(test_client, empty_index, new_ranking_rules):
     uid, index = empty_index
     data = {"uid": uid, "rankingRules": new_ranking_rules}
@@ -204,7 +192,6 @@ async def test_update_ranking_rules(test_client, empty_index, new_ranking_rules)
     assert ranking_rules == new_ranking_rules
 
 
-@pytest.mark.asyncio
 async def test_reset_ranking_rules(
     test_client, empty_index, new_ranking_rules, default_ranking_rules
 ):
@@ -222,14 +209,12 @@ async def test_reset_ranking_rules(
     assert ranking_rules == default_ranking_rules
 
 
-@pytest.mark.asyncio
 async def test_get_distinct_attribute(test_client, empty_index, default_distinct_attribute):
     uid, _ = empty_index
     response = await test_client.get(f"/indexes/attributes/distinct/{uid}")
     assert response.json()["attribute"] == default_distinct_attribute
 
 
-@pytest.mark.asyncio
 async def test_update_distinct_attribute(test_client, empty_index, new_distinct_attribute):
     uid, index = empty_index
     data = {"uid": uid, "attribute": new_distinct_attribute}
@@ -239,7 +224,6 @@ async def test_update_distinct_attribute(test_client, empty_index, new_distinct_
     assert response.json()["attribute"] == new_distinct_attribute
 
 
-@pytest.mark.asyncio
 async def test_reset_distinct_attribute(
     test_client, empty_index, new_distinct_attribute, default_distinct_attribute
 ):
@@ -256,7 +240,6 @@ async def test_reset_distinct_attribute(
     assert response.json()["attribute"] == default_distinct_attribute
 
 
-@pytest.mark.asyncio
 async def test_get_searchable_attributes(test_client, empty_index, small_movies):
     uid, index = empty_index
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
@@ -268,7 +251,6 @@ async def test_get_searchable_attributes(test_client, empty_index, small_movies)
     assert response.json()["searchableAttributes"] == ["*"]
 
 
-@pytest.mark.asyncio
 async def test_update_searchable_attributes(test_client, empty_index, new_searchable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "searchableAttributes": new_searchable_attributes}
@@ -278,7 +260,6 @@ async def test_update_searchable_attributes(test_client, empty_index, new_search
     assert response.json()["searchableAttributes"] == new_searchable_attributes
 
 
-@pytest.mark.asyncio
 async def test_reset_searchable_attributes(test_client, empty_index, new_searchable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "searchableAttributes": new_searchable_attributes}
@@ -293,7 +274,6 @@ async def test_reset_searchable_attributes(test_client, empty_index, new_searcha
     assert response.json()["searchableAttributes"] == ["*"]
 
 
-@pytest.mark.asyncio
 async def test_get_displayed_attributes(test_client, empty_index, small_movies):
     uid, index = empty_index
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
@@ -305,7 +285,6 @@ async def test_get_displayed_attributes(test_client, empty_index, small_movies):
     assert response.json()["displayedAttributes"] == ["*"]
 
 
-@pytest.mark.asyncio
 async def test_update_displayed_attributes(test_client, empty_index, displayed_attributes):
     uid, index = empty_index
     data = {"uid": uid, "displayedAttributes": displayed_attributes}
@@ -315,7 +294,6 @@ async def test_update_displayed_attributes(test_client, empty_index, displayed_a
     assert sorted(response.json()["displayedAttributes"]) == sorted(displayed_attributes)
 
 
-@pytest.mark.asyncio
 async def test_reset_displayed_attributes(test_client, empty_index, displayed_attributes):
     uid, index = empty_index
     data = {"uid": uid, "displayedAttributes": displayed_attributes}
@@ -330,14 +308,12 @@ async def test_reset_displayed_attributes(test_client, empty_index, displayed_at
     assert response.json()["displayedAttributes"] == ["*"]
 
 
-@pytest.mark.asyncio
 async def test_get_stop_words_default(test_client, empty_index):
     uid, _ = empty_index
     response = await test_client.get(f"indexes/stop-words/{uid}")
     assert response.json()["stopWords"] is None
 
 
-@pytest.mark.asyncio
 async def test_update_stop_words(test_client, empty_index, new_stop_words):
     uid, index = empty_index
     data = {"uid": uid, "stopWords": new_stop_words}
@@ -348,7 +324,6 @@ async def test_update_stop_words(test_client, empty_index, new_stop_words):
     assert sorted(response.json()["stopWords"]) == sorted(new_stop_words)
 
 
-@pytest.mark.asyncio
 async def test_reset_stop_words(test_client, empty_index, new_stop_words):
     uid, index = empty_index
     data = {"uid": uid, "stopWords": new_stop_words}
@@ -364,14 +339,12 @@ async def test_reset_stop_words(test_client, empty_index, new_stop_words):
     assert response.json()["stopWords"] is None
 
 
-@pytest.mark.asyncio
 async def test_get_synonyms_default(test_client, empty_index):
     uid, _ = empty_index
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] is None
 
 
-@pytest.mark.asyncio
 async def test_update_synonyms(test_client, empty_index, new_synonyms):
     uid, index = empty_index
     data = {"uid": uid, "synonyms": new_synonyms}
@@ -382,7 +355,6 @@ async def test_update_synonyms(test_client, empty_index, new_synonyms):
     assert response.json()["synonyms"] == new_synonyms
 
 
-@pytest.mark.asyncio
 async def test_update_synonyms_none_provided(test_client, empty_index):
     uid, _ = empty_index
     data = {"uid": uid}
@@ -390,7 +362,6 @@ async def test_update_synonyms_none_provided(test_client, empty_index):
     assert response.status_code == 400
 
 
-@pytest.mark.asyncio
 async def test_reset_synonyms(test_client, empty_index, new_synonyms):
     uid, index = empty_index
     data = {"uid": uid, "synonyms": new_synonyms}
@@ -406,14 +377,12 @@ async def test_reset_synonyms(test_client, empty_index, new_synonyms):
     assert response.json()["synonyms"] is None
 
 
-@pytest.mark.asyncio
 async def test_get_filterable_attributes(test_client, empty_index):
     uid, _ = empty_index
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert response.json()["filterableAttributes"] is None
 
 
-@pytest.mark.asyncio
 async def test_update_filterable_attributes(test_client, empty_index, filterable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "filterableAttributes": filterable_attributes}
@@ -423,7 +392,6 @@ async def test_update_filterable_attributes(test_client, empty_index, filterable
     assert sorted(response.json()["filterableAttributes"]) == filterable_attributes
 
 
-@pytest.mark.asyncio
 async def test_reset_filterable_attributes(test_client, empty_index, filterable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "filterableAttributes": filterable_attributes}
@@ -438,14 +406,12 @@ async def test_reset_filterable_attributes(test_client, empty_index, filterable_
     assert response.json()["filterableAttributes"] is None
 
 
-@pytest.mark.asyncio
 async def test_get_sortable_attributes(test_client, empty_index):
     uid, _ = empty_index
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == []
 
 
-@pytest.mark.asyncio
 async def test_update_sortable_attributes(test_client, empty_index, sortable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "sortableAttributes": sortable_attributes}
@@ -455,7 +421,6 @@ async def test_update_sortable_attributes(test_client, empty_index, sortable_att
     assert response.json()["sortableAttributes"] == sortable_attributes
 
 
-@pytest.mark.asyncio
 async def test_reset_sortable_attributes(test_client, empty_index, sortable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "sortableAttributes": sortable_attributes}
