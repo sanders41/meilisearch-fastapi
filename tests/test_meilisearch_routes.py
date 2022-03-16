@@ -7,7 +7,6 @@ from meilisearch_python_async.models.client import KeyCreate
 
 
 @pytest.fixture
-@pytest.mark.asyncio
 async def test_key(raw_client):
     key_info = KeyCreate(description="test", actions=["search"], indexes=["movies"])
     key = await raw_client.create_key(key_info)
@@ -21,7 +20,6 @@ async def test_key(raw_client):
 
 
 @pytest.fixture
-@pytest.mark.asyncio
 async def test_key_info(raw_client):
     key_info = KeyCreate(description="test", actions=["search"], indexes=["movies"])
 
@@ -101,7 +99,6 @@ async def test_generate_tenant_token_invalid_restriction(test_key_info, test_cli
     assert response.status_code == 400
 
 
-@pytest.mark.asyncio
 async def test_get_health(test_client):
     response = await test_client.get("/meilisearch/health")
     assert response.json() == {"status": "available"}
@@ -114,7 +111,6 @@ async def test_get_health(test_client):
         (datetime.utcnow() + timedelta(days=2)).isoformat(),
     ),
 )
-@pytest.mark.asyncio
 async def test_create_key(expires_at, test_client, test_key_info):
     if expires_at:
         test_key_info.expires_at = expires_at
@@ -132,7 +128,6 @@ async def test_create_key(expires_at, test_client, test_key_info):
         assert key_info["expiresAt"] is None
 
 
-@pytest.mark.asyncio
 async def test_delete_key(test_key, test_client, raw_client):
     result = await test_client.delete(f"/meilisearch/keys/{test_key.key}")
     assert result.status_code == 204
@@ -141,7 +136,6 @@ async def test_delete_key(test_key, test_client, raw_client):
         await raw_client.get_key(test_key.key)
 
 
-@pytest.mark.asyncio
 async def test_get_keys(test_client):
     response = await test_client.get("/meilisearch/keys")
 
@@ -149,13 +143,11 @@ async def test_get_keys(test_client):
     assert len(response.json()) == 2
 
 
-@pytest.mark.asyncio
 async def test_get_key(test_key, test_client):
     response = await test_client.get(f"/meilisearch/keys/{test_key.key}")
     assert response.json()["description"] == test_key.description
 
 
-@pytest.mark.asyncio
 async def test_update_key(test_key, test_client):
     update_key_info = {
         "key": test_key.key,
@@ -174,7 +166,6 @@ async def test_update_key(test_key, test_client):
     assert key_info["expiresAt"].split("+")[0] == update_key_info["expires_at"].split(".")[0]
 
 
-@pytest.mark.asyncio
 async def test_get_stats(test_client):
     response = await test_client.get("meilisearch/stats")
 
@@ -184,7 +175,6 @@ async def test_get_stats(test_client):
     assert "indexes" in response.json()
 
 
-@pytest.mark.asyncio
 async def test_get_version(test_client):
     response = await test_client.get("meilisearch/version")
 

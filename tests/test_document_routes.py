@@ -23,14 +23,14 @@ def generate_test_movies(num_movies=50):
     return movies
 
 
-@pytest.mark.asyncio
+
 async def test_get_documents_none(empty_index, test_client):
     uid, _ = empty_index
     response = await test_client.get(f"/documents/{uid}")
     assert response.status_code == 404
 
 
-@pytest.mark.asyncio
+
 @pytest.mark.parametrize(
     "primary_key, expected_primary_key", [("release_date", "release_date"), (None, "id")]
 )
@@ -45,7 +45,7 @@ async def test_add_documents(
     assert update.status == "succeeded"
 
 
-@pytest.mark.asyncio
+
 @pytest.mark.parametrize("max_payload", [None, 3500, 2500])
 @pytest.mark.parametrize(
     "primary_key, expected_primary_key", [("pk_test", "pk_test"), (None, "id")]
@@ -78,7 +78,7 @@ async def test_add_documents_auto_batch(
     assert stats.number_of_documents == len(documents)
 
 
-@pytest.mark.asyncio
+
 @pytest.mark.parametrize(
     "primary_key, expected_primary_key", [("release_date", "release_date"), (None, "id")]
 )
@@ -103,7 +103,7 @@ async def test_add_documents_in_batches(
     assert await index.get_primary_key() == expected_primary_key
 
 
-@pytest.mark.asyncio
+
 async def test_delete_document(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}/500682")
@@ -112,7 +112,7 @@ async def test_delete_document(test_client, index_with_documents):
         await test_client.get(f"/documents/{uid}/500682")
 
 
-@pytest.mark.asyncio
+
 async def test_delete_documents(test_client, index_with_documents):
     to_delete = ["522681", "450465", "329996"]
     uid, index = index_with_documents
@@ -127,7 +127,7 @@ async def test_delete_documents(test_client, index_with_documents):
     assert to_delete not in ids
 
 
-@pytest.mark.asyncio
+
 async def test_delete_all_documents(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}")
@@ -136,28 +136,28 @@ async def test_delete_all_documents(test_client, index_with_documents):
     assert response.status_code == 404
 
 
-@pytest.mark.asyncio
+
 async def test_get_document(test_client, index_with_documents):
     uid, _ = index_with_documents
     response = await test_client.get(f"documents/{uid}/500682")
     assert response.json()["title"] == "The Highwaymen"
 
 
-@pytest.mark.asyncio
+
 async def test_get_document_nonexistent(test_client, empty_index):
     with pytest.raises(MeiliSearchApiError):
         uid, _ = empty_index
         await test_client.get(f"documents/{uid}/123")
 
 
-@pytest.mark.asyncio
+
 async def test_get_documents_populated(test_client, index_with_documents):
     uid, _ = index_with_documents
     response = await test_client.get(f"documents/{uid}")
     assert len(response.json()) == 20
 
 
-@pytest.mark.asyncio
+
 async def test_get_documents_offset_optional_params(test_client, index_with_documents):
     uid, _ = index_with_documents
     response = await test_client.get(f"/documents/{uid}")
@@ -174,7 +174,7 @@ async def test_get_documents_offset_optional_params(test_client, index_with_docu
     assert response_offset_json[0]["overview"] == response_json[1]["overview"]
 
 
-@pytest.mark.asyncio
+
 async def test_update_documents(test_client, index_with_documents, small_movies):
     uid, index = index_with_documents
     response = await test_client.get(f"documents/{uid}")
@@ -192,7 +192,7 @@ async def test_update_documents(test_client, index_with_documents, small_movies)
     assert response.json()[0]["title"] != "Some title"
 
 
-@pytest.mark.asyncio
+
 async def test_update_documents_with_primary_key(test_client, empty_index, small_movies):
     primary_key = "release_date"
     uid, index = empty_index
@@ -202,7 +202,7 @@ async def test_update_documents_with_primary_key(test_client, empty_index, small
     assert await index.get_primary_key() == primary_key
 
 
-@pytest.mark.asyncio
+
 @pytest.mark.parametrize("max_payload", [None, 3500, 2500])
 async def test_update_documents_auto_batch(empty_index, max_payload, test_client):
     documents = generate_test_movies()
@@ -236,7 +236,6 @@ async def test_update_documents_auto_batch(empty_index, max_payload, test_client
     assert stats.number_of_documents == len(documents)
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("batch_size", [2, 3, 1000])
 async def test_update_documents_in_batches(
     batch_size, test_client, index_with_documents, small_movies
