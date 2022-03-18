@@ -20,7 +20,7 @@ pip install meilisearch-fastapi
 
 Routes are split in groups so that different dependencies can be injected, and therefore different levels of access, can be given to different groups of routes.
 
-### Example with no authentication require for routes
+### Example with no authentication required for routes
 
 ```py
 from fastapi import APIRouter, FastAPI
