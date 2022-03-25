@@ -70,7 +70,7 @@ src_paths = ["meilisearch_fastapi", "tests"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "--cov=meilisearch_fastapi"
+addopts = "--cov=meilisearch_fastapi --cov-report term-missing"
 asyncio_mode = "auto"
 
 [tool.mypy]
