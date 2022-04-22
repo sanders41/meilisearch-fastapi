@@ -12,6 +12,12 @@ def default_settings():
         "searchableAttributes": ["*"],
         "displayedAttributes": ["*"],
         "sortableAttributes": [],
+        "typoTolerance": {
+            "enabled": True,
+            "disableOnAttributes": [],
+            "disableOnWords": [],
+            "minWordSizeForTypos": {"oneTypo": 5, "twoTypos": 9},
+        },
     }
 
 
@@ -27,7 +33,7 @@ async def test_settings_get(default_settings, index_uid, test_client):
 async def test_settings_update_and_delete(default_settings, index_uid, test_client):
     update_settings = {
         "uid": index_uid,
-        "synonyms": {"wolverine": ["logan", "xmen"], "logan": ["wolverine", "xmen"]},
+        "synonyms": {"logan": ["wolverine", "xmen"], "wolverine": ["logan", "xmen"]},
         "stopWords": ["stop", "words"],
         "rankingRules": ["words", "typo", "proximity"],
         "filterableAttributes": ["attributes", "filterable"],
@@ -35,6 +41,9 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
         "searchableAttributes": ["description", "title"],
         "displayedAttributes": ["genre", "title"],
         "sortableAttributes": ["genre", "title"],
+        "typoTolerance": {
+            "enabled": False,
+        },
     }
     response = await test_client.post("/settings", json=update_settings)
 
@@ -46,9 +55,14 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
 
     returned_settings = response.json()
 
+    assert returned_settings["typoTolerance"]["enabled"] is False
+
+    del returned_settings["typoTolerance"]
+
     # Filterable attributes come back in random order so sort them to be able to compare
     returned_settings["filterableAttributes"] = sorted(returned_settings["filterableAttributes"])
     update_settings.pop("uid")
+    update_settings.pop("typoTolerance")
 
     assert returned_settings == update_settings
 

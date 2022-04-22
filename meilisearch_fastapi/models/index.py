@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional
 
 from camel_converter.pydantic_base import CamelBase
+from meilisearch_python_async.models.settings import TypoTolerance as TypoToleranceInfo
 
 
 class FilterableAttributes(CamelBase):
@@ -74,4 +75,12 @@ class Synonyms(CamelBase):
 
 
 class SynonymsWithUID(Synonyms):
+    uid: str
+
+
+class TypoTolerance(CamelBase):
+    typo_tolerance: Optional[TypoToleranceInfo] = None
+
+
+class TypoToleranceWithUID(TypoTolerance):
     uid: str
