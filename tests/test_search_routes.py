@@ -260,3 +260,22 @@ async def test_search_sort(sort, titles, test_client, index_with_documents):
 
     assert response.json()["hits"][0]["title"] == titles[0]
     assert response.json()["hits"][stats.number_of_documents - 1]["title"] == titles[1]
+
+
+async def test_custom_search_hightlight_tags_and_crop_marker(test_client, index_with_documents):
+    uid, _ = index_with_documents
+    data = {
+        "uid": uid,
+        "query": "Dragon",
+        "crop_length": 5,
+        "attributes_to_highlight": ["title"],
+        "highlight_pre_tag": "<strong>",
+        "highlight_post_tag": "</strong>",
+        "crop_marker": "***",
+    }
+    response = await test_client.post("/search", json=data)
+    assert response.json()["hits"][0]["id"] == "166428"
+    assert "_formatted" in response.json()["hits"][0]
+    assert "dragon" in response.json()["hits"][0]["_formatted"]["title"].lower()
+    assert "<strong>" in response.json()["hits"][0]["_formatted"]["title"]
+    assert "</strong>" in response.json()["hits"][0]["_formatted"]["title"]
