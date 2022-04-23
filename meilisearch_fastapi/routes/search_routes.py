@@ -26,4 +26,7 @@ async def search(
         crop_length=search_parameters.crop_length,
         attributes_to_highlight=search_parameters.attributes_to_highlight,
         matches=search_parameters.matches,
+        highlight_pre_tag=search_parameters.highlight_pre_tag,
+        highlight_post_tag=search_parameters.highlight_post_tag,
+        crop_marker=search_parameters.crop_marker,
     )
