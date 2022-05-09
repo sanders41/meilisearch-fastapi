@@ -1052,11 +1052,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-<<<<<<< HEAD
-content-hash = "cd25fc3941560e0034901bb4c0a2950eb83c38215eb18fe597ad1c79e4fd6a5d"
-=======
 content-hash = "3b32b6b70e985982c7780d3a7a89f50a125f42872407bd77f83cc358a11e0825"
->>>>>>> 247a4a7 (Bump meilisearch-python-async)
 
 [metadata.files]
 aiofiles = [
