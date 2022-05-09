@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
-from meilisearch_python_async.models.task import TaskId
+from meilisearch_python_async.models.task import TaskStatus
 
 from meilisearch_fastapi._client import meilisearch_client
 from meilisearch_fastapi.models.document_info import (
@@ -15,22 +15,22 @@ from meilisearch_fastapi.models.document_info import (
 router = APIRouter()
 
 
-@router.post("/", response_model=TaskId, status_code=202, tags=["MeiliSearch Documents"])
+@router.post("/", response_model=TaskStatus, status_code=202, tags=["MeiliSearch Documents"])
 async def add_documents(
     document_info: DocumentInfo,
     client: Client = Depends(meilisearch_client),
-) -> TaskId:
+) -> TaskStatus:
     index = client.index(document_info.uid)
 
     return await index.add_documents(document_info.documents, document_info.primary_key)
 
 
 @router.post(
-    "/auto-batch", response_model=List[TaskId], status_code=202, tags=["MeiliSearch Documents"]
+    "/auto-batch", response_model=List[TaskStatus], status_code=202, tags=["MeiliSearch Documents"]
 )
 async def add_documents_auto_batch(
     document_info: DocumentInfoAutoBatch, client: Client = Depends(meilisearch_client)
-) -> List[TaskId]:
+) -> List[TaskStatus]:
     index = client.index(document_info.uid)
 
     if document_info.max_payload_size:
@@ -46,11 +46,11 @@ async def add_documents_auto_batch(
 
 
 @router.post(
-    "/batches", response_model=List[TaskId], status_code=202, tags=["MeiliSearch Documents"]
+    "/batches", response_model=List[TaskStatus], status_code=202, tags=["MeiliSearch Documents"]
 )
 async def add_documents_in_batches(
     document_info: DocumentInfoBatches, client: Client = Depends(meilisearch_client)
-) -> List[TaskId]:
+) -> List[TaskStatus]:
     index = client.index(document_info.uid)
 
     return await index.add_documents_in_batches(
@@ -60,29 +60,34 @@ async def add_documents_in_batches(
     )
 
 
-@router.delete("/{uid}", response_model=TaskId, status_code=202, tags=["MeiliSearch Documents"])
-async def delete_all_documents(uid: str, client: Client = Depends(meilisearch_client)) -> TaskId:
+@router.delete("/{uid}", response_model=TaskStatus, status_code=202, tags=["MeiliSearch Documents"])
+async def delete_all_documents(
+    uid: str, client: Client = Depends(meilisearch_client)
+) -> TaskStatus:
     index = client.index(uid)
 
     return await index.delete_all_documents()
 
 
 @router.delete(
-    "/{uid}/{document_id}", response_model=TaskId, status_code=202, tags=["MeiliSearch Documents"]
+    "/{uid}/{document_id}",
+    response_model=TaskStatus,
+    status_code=202,
+    tags=["MeiliSearch Documents"],
 )
 async def delete_document(
     uid: str, document_id: str, client: Client = Depends(meilisearch_client)
-) -> TaskId:
+) -> TaskStatus:
     index = client.index(uid)
 
     return await index.delete_document(document_id)
 
 
-@router.post("/delete", response_model=TaskId, status_code=202, tags=["MeiliSearch Documents"])
+@router.post("/delete", response_model=TaskStatus, status_code=202, tags=["MeiliSearch Documents"])
 async def delete_documents(
     documents: DocumentDelete,
     client: Client = Depends(meilisearch_client),
-) -> TaskId:
+) -> TaskStatus:
     index = client.index(documents.uid)
 
     return await index.delete_documents(documents.document_ids)
@@ -121,23 +126,23 @@ async def get_documents(
     return documents
 
 
-@router.put("/", response_model=TaskId, status_code=202, tags=["MeiliSearch Documents"])
+@router.put("/", response_model=TaskStatus, status_code=202, tags=["MeiliSearch Documents"])
 async def update_documents(
     document_info: DocumentInfo,
     client: Client = Depends(meilisearch_client),
-) -> TaskId:
+) -> TaskStatus:
     index = client.index(document_info.uid)
 
     return await index.update_documents(document_info.documents, document_info.primary_key)
 
 
 @router.put(
-    "/auto-batch", response_model=List[TaskId], status_code=202, tags=["MeiliSearch Documents"]
+    "/auto-batch", response_model=List[TaskStatus], status_code=202, tags=["MeiliSearch Documents"]
 )
 async def update_documents_auto_batch(
     document_info: DocumentInfoAutoBatch,
     client: Client = Depends(meilisearch_client),
-) -> List[TaskId]:
+) -> List[TaskStatus]:
     index = client.index(document_info.uid)
 
     if document_info.max_payload_size:
@@ -153,12 +158,12 @@ async def update_documents_auto_batch(
 
 
 @router.put(
-    "/batches", response_model=List[TaskId], status_code=202, tags=["MeiliSearch Documents"]
+    "/batches", response_model=List[TaskStatus], status_code=202, tags=["MeiliSearch Documents"]
 )
 async def update_documents_in_batches(
     document_info: DocumentInfoBatches,
     client: Client = Depends(meilisearch_client),
-) -> List[TaskId]:
+) -> List[TaskStatus]:
     index = client.index(document_info.uid)
 
     return await index.update_documents_in_batches(

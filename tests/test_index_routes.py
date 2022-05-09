@@ -51,6 +51,19 @@ def new_synonyms():
 
 
 @pytest.fixture
+def new_typo_tolerance():
+    return {
+        "enabled": False,
+        "disableOnAttributes": ["title"],
+        "disableOnWords": ["spiderman"],
+        "minWordSizeForTypos": {
+            "oneTypo": 10,
+            "twoTypos": 20,
+        },
+    }
+
+
+@pytest.fixture
 def filterable_attributes():
     return ["release_date", "title"]
 
@@ -433,3 +446,41 @@ async def test_reset_sortable_attributes(test_client, empty_index, sortable_attr
     await wait_for_task(index.http_client, response.json()["uid"])
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == []
+
+
+async def test_typo_tolerance_default(test_client, empty_index):
+    uid, _ = empty_index
+    response = await test_client.get(f"/indexes/typo-tolerance/{uid}")
+    assert response.json()["typoTolerance"]["enabled"] is True
+
+
+async def test_update_typo_tolerance(test_client, empty_index, new_typo_tolerance):
+    uid, index = empty_index
+    data = {"uid": uid, "typo_tolerance": new_typo_tolerance}
+    response = await test_client.put("/indexes/typo-tolerance", json=data)
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
+    response = await test_client.get(f"/indexes/typo-tolerance/{uid}")
+    assert response.json()["typoTolerance"] == new_typo_tolerance
+
+
+async def test_update_typo_tolerance_none_provided(test_client, empty_index):
+    uid, _ = empty_index
+    data = {"uid": uid}
+    response = await test_client.put("/indexes/typo-tolerance", json=data)
+    assert response.status_code == 400
+
+
+async def test_reset_typo_tolerance(test_client, empty_index, new_typo_tolerance):
+    uid, index = empty_index
+    data = {"uid": uid, "typo_tolerance": new_typo_tolerance}
+    response = await test_client.put("/indexes/typo-tolerance", json=data)
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
+    response = await test_client.get(f"/indexes/typo-tolerance/{uid}")
+    assert response.json()["typoTolerance"] == new_typo_tolerance
+    response = await test_client.delete(f"/indexes/typo-tolerance/{uid}")
+    update = await wait_for_task(index.http_client, response.json()["uid"])
+    assert update.status == "succeeded"
+    response = await test_client.get(f"/indexes/typo-tolerance/{uid}")
+    assert response.json()["typoTolerance"]["enabled"] is True

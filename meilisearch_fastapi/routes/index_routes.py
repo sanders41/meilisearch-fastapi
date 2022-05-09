@@ -26,12 +26,14 @@ from meilisearch_fastapi.models.index import (
     StopWordsWithUID,
     Synonyms,
     SynonymsWithUID,
+    TypoTolerance,
+    TypoToleranceWithUID,
 )
 
 router = APIRouter()
 
 
-@router.post("/", response_model=IndexInfo, status_code=201, tags=["MeiliSearch Index"])
+@router.post("/", response_model=IndexInfo, status_code=201, tags=["Meilisearch Index"])
 async def create_index(
     index_info: IndexBase, client: Client = Depends(meilisearch_client)
 ) -> IndexInfo:
@@ -49,7 +51,7 @@ async def create_index(
     "/filterable-attributes/{uid}",
     response_model=TaskId,
     status_code=202,
-    tags=["MeiliSearch Index"],
+    tags=["Meilisearch Index"],
 )
 async def delete_filterable_attributes(
     uid: str,
@@ -64,7 +66,7 @@ async def delete_filterable_attributes(
     "/displayed-attributes/{uid}",
     response_model=TaskId,
     status_code=202,
-    tags=["MeiliSearch Index"],
+    tags=["Meilisearch Index"],
 )
 async def delete_displayed_attributes(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -78,7 +80,7 @@ async def delete_displayed_attributes(
     "/attributes/distinct/{uid}",
     response_model=TaskId,
     status_code=202,
-    tags=["MeiliSearch Index"],
+    tags=["Meilisearch Index"],
 )
 async def delete_distinct_attribute(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -88,21 +90,21 @@ async def delete_distinct_attribute(
     return await index.reset_distinct_attribute()
 
 
-@router.delete("/delete-if-exists/{uid}", status_code=204, tags=["MeiliSearch Index"])
+@router.delete("/delete-if-exists/{uid}", status_code=204, tags=["Meilisearch Index"])
 async def delete_if_exists(uid: str, client: Client = Depends(meilisearch_client)) -> int:
     index = client.index(uid)
     await index.delete_if_exists()
     return status.HTTP_204_NO_CONTENT
 
 
-@router.delete("/{uid}", response_model=TaskStatus, tags=["MeiliSearch Index"])
+@router.delete("/{uid}", response_model=TaskStatus, tags=["Meilisearch Index"])
 async def delete_index(uid: str, client: Client = Depends(meilisearch_client)) -> TaskStatus:
     index = client.index(uid)
     return await index.delete()
 
 
 @router.delete(
-    "/ranking-rules/{uid}", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/ranking-rules/{uid}", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def delete_ranking_rules(uid: str, client: Client = Depends(meilisearch_client)) -> TaskId:
     index = client.index(uid)
@@ -114,7 +116,7 @@ async def delete_ranking_rules(uid: str, client: Client = Depends(meilisearch_cl
     "/searchable-attributes/{uid}",
     response_model=TaskId,
     status_code=202,
-    tags=["MeiliSearch Index"],
+    tags=["Meilisearch Index"],
 )
 async def delete_searchable_attributes(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -128,7 +130,7 @@ async def delete_searchable_attributes(
     "/sortable-attributes/{uid}",
     response_model=TaskId,
     status_code=202,
-    tags=["MeiliSearch Index"],
+    tags=["Meilisearch Index"],
 )
 async def delete_sortable_attributes(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -139,7 +141,7 @@ async def delete_sortable_attributes(
 
 
 @router.delete(
-    "/stop-words/{uid}", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/stop-words/{uid}", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def delete_stop_words(uid: str, client: Client = Depends(meilisearch_client)) -> TaskId:
     index = client.index(uid)
@@ -148,7 +150,7 @@ async def delete_stop_words(uid: str, client: Client = Depends(meilisearch_clien
 
 
 @router.delete(
-    "/synonyms/{uid}", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/synonyms/{uid}", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def delete_synonyms(uid: str, client: Client = Depends(meilisearch_client)) -> TaskId:
     index = client.index(uid)
@@ -156,8 +158,17 @@ async def delete_synonyms(uid: str, client: Client = Depends(meilisearch_client)
     return await index.reset_synonyms()
 
 
+@router.delete(
+    "/typo-tolerance/{uid}", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
+)
+async def delete_typo_tolerance(uid: str, client: Client = Depends(meilisearch_client)) -> TaskId:
+    index = client.index(uid)
+
+    return await index.reset_typo_tolerance()
+
+
 @router.get(
-    "/filterable-attributes/{uid}", response_model=FilterableAttributes, tags=["MeiliSearch Index"]
+    "/filterable-attributes/{uid}", response_model=FilterableAttributes, tags=["Meilisearch Index"]
 )
 async def get_filterable_attributes(
     uid: str,
@@ -170,7 +181,7 @@ async def get_filterable_attributes(
 
 
 @router.get(
-    "/displayed-attributes/{uid}", response_model=DisplayedAttributes, tags=["MeiliSearch Index"]
+    "/displayed-attributes/{uid}", response_model=DisplayedAttributes, tags=["Meilisearch Index"]
 )
 async def get_displayed_attributes(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -182,7 +193,7 @@ async def get_displayed_attributes(
 
 
 @router.get(
-    "/attributes/distinct/{uid}", response_model=DistinctAttribute, tags=["MeiliSearch Index"]
+    "/attributes/distinct/{uid}", response_model=DistinctAttribute, tags=["Meilisearch Index"]
 )
 async def get_distinct_attribute(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -193,7 +204,7 @@ async def get_distinct_attribute(
     return DistinctAttribute(attribute=attribute)
 
 
-@router.get("/{uid}", response_model=IndexInfo, tags=["MeiliSearch Index"])
+@router.get("/{uid}", response_model=IndexInfo, tags=["Meilisearch Index"])
 async def get_index(
     uid: str,
     client: Client = Depends(meilisearch_client),
@@ -206,7 +217,7 @@ async def get_index(
     return index
 
 
-@router.get("/ranking-rules/{uid}", response_model=RankingRules, tags=["MeiliSearch Index"])
+@router.get("/ranking-rules/{uid}", response_model=RankingRules, tags=["Meilisearch Index"])
 async def get_ranking_rules(uid: str, client: Client = Depends(meilisearch_client)) -> RankingRules:
     index = client.index(uid)
     ranking_rules = await index.get_ranking_rules()
@@ -214,14 +225,14 @@ async def get_ranking_rules(uid: str, client: Client = Depends(meilisearch_clien
     return RankingRules(ranking_rules=ranking_rules)
 
 
-@router.get("/stats/{uid}", response_model=IndexStats, tags=["MeiliSearch Index"])
+@router.get("/stats/{uid}", response_model=IndexStats, tags=["Meilisearch Index"])
 async def get_stats(uid: str, client: Client = Depends(meilisearch_client)) -> IndexStats:
     index = client.index(uid)
 
     return await index.get_stats()
 
 
-@router.get("/", response_model=List[IndexInfo], tags=["MeiliSearch Index"])
+@router.get("/", response_model=List[IndexInfo], tags=["Meilisearch Index"])
 async def get_indexes(
     client: Client = Depends(meilisearch_client),
 ) -> List[IndexInfo]:
@@ -233,7 +244,7 @@ async def get_indexes(
     return indexes
 
 
-@router.get("/primary-key/{uid}", response_model=PrimaryKey, tags=["MeiliSearch Index"])
+@router.get("/primary-key/{uid}", response_model=PrimaryKey, tags=["Meilisearch Index"])
 async def get_primary_key(uid: str, client: Client = Depends(meilisearch_client)) -> PrimaryKey:
     index = client.index(uid)
     primary_key = await index.get_primary_key()
@@ -242,7 +253,7 @@ async def get_primary_key(uid: str, client: Client = Depends(meilisearch_client)
 
 
 @router.get(
-    "/searchable-attributes/{uid}", response_model=SearchableAttributes, tags=["MeiliSearch Index"]
+    "/searchable-attributes/{uid}", response_model=SearchableAttributes, tags=["Meilisearch Index"]
 )
 async def get_searchable_attributes(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -254,7 +265,7 @@ async def get_searchable_attributes(
 
 
 @router.get(
-    "/sortable-attributes/{uid}", response_model=SortableAttributes, tags=["MeiliSearch Index"]
+    "/sortable-attributes/{uid}", response_model=SortableAttributes, tags=["Meilisearch Index"]
 )
 async def get_sortable_attributes(
     uid: str, client: Client = Depends(meilisearch_client)
@@ -265,7 +276,7 @@ async def get_sortable_attributes(
     return SortableAttributes(sortable_attributes=attributes)
 
 
-@router.get("/stop-words/{uid}", response_model=StopWords, tags=["MeiliSearch Index"])
+@router.get("/stop-words/{uid}", response_model=StopWords, tags=["Meilisearch Index"])
 async def get_stop_words(uid: str, client: Client = Depends(meilisearch_client)) -> StopWords:
     index = client.index(uid)
     stop_words = await index.get_stop_words()
@@ -273,7 +284,7 @@ async def get_stop_words(uid: str, client: Client = Depends(meilisearch_client))
     return StopWords(stop_words=stop_words)
 
 
-@router.get("/synonyms/{uid}", response_model=Synonyms, tags=["MeiliSearch Index"])
+@router.get("/synonyms/{uid}", response_model=Synonyms, tags=["Meilisearch Index"])
 async def get_synonyms(uid: str, client: Client = Depends(meilisearch_client)) -> Synonyms:
     index = client.index(uid)
     synonyms = await index.get_synonyms()
@@ -281,8 +292,18 @@ async def get_synonyms(uid: str, client: Client = Depends(meilisearch_client)) -
     return Synonyms(synonyms=synonyms)
 
 
+@router.get("/typo-tolerance/{uid}", response_model=TypoTolerance, tags=["Meilisearch Index"])
+async def get_typo_tolerance(
+    uid: str, client: Client = Depends(meilisearch_client)
+) -> TypoTolerance:
+    index = client.index(uid)
+    typo_tolerance = await index.get_typo_tolerance()
+
+    return TypoTolerance(typo_tolerance=typo_tolerance)
+
+
 @router.put(
-    "/filterable-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/filterable-attributes", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def update_filterable_attributes(
     filterable_attributes: FilterableAttributesWithUID,
@@ -295,7 +316,7 @@ async def update_filterable_attributes(
 
 
 @router.put(
-    "/displayed-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/displayed-attributes", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def update_displayed_attributes(
     displayed_attributes: DisplayedAttributesUID, client: Client = Depends(meilisearch_client)
@@ -306,7 +327,7 @@ async def update_displayed_attributes(
 
 
 @router.put(
-    "/attributes/distinct", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/attributes/distinct", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def update_distinct_attribute(
     attribute_with_uid: DistinctAttributeWithUID, client: Client = Depends(meilisearch_client)
@@ -316,7 +337,7 @@ async def update_distinct_attribute(
     return await index.update_distinct_attribute(attribute_with_uid.attribute)
 
 
-@router.put("/", response_model=TaskId, tags=["MeiliSearch Index"])
+@router.put("/", response_model=TaskId, tags=["Meilisearch Index"])
 async def update_index(
     index_update: IndexUpdate,
     client: Client = Depends(meilisearch_client),
@@ -332,7 +353,7 @@ async def update_index(
     return TaskId(**response.json())
 
 
-@router.put("/ranking-rules", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"])
+@router.put("/ranking-rules", response_model=TaskId, status_code=202, tags=["Meilisearch Index"])
 async def update_ranking_rules(
     ranking_rules: RankingRulesWithUID, client: Client = Depends(meilisearch_client)
 ) -> TaskId:
@@ -342,7 +363,7 @@ async def update_ranking_rules(
 
 
 @router.put(
-    "/searchable-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/searchable-attributes", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def update_searchable_attributes(
     searchable_attributes: SearchableAttributesWithUID,
@@ -354,7 +375,7 @@ async def update_searchable_attributes(
 
 
 @router.put(
-    "/sortable-attributes", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"]
+    "/sortable-attributes", response_model=TaskId, status_code=202, tags=["Meilisearch Index"]
 )
 async def update_sortable_attributes(
     sortable_attributes: SortableAttributesWithUID, client: Client = Depends(meilisearch_client)
@@ -364,7 +385,7 @@ async def update_sortable_attributes(
     return await index.update_sortable_attributes(sortable_attributes.sortable_attributes)
 
 
-@router.put("/stop-words", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"])
+@router.put("/stop-words", response_model=TaskId, status_code=202, tags=["Meilisearch Index"])
 async def update_stop_words(
     stop_words: StopWordsWithUID, client: Client = Depends(meilisearch_client)
 ) -> TaskId:
@@ -374,7 +395,7 @@ async def update_stop_words(
     return await index.update_stop_words(words)
 
 
-@router.put("/synonyms", response_model=TaskId, status_code=202, tags=["MeiliSearch Index"])
+@router.put("/synonyms", response_model=TaskId, status_code=202, tags=["Meilisearch Index"])
 async def update_synonyms(
     synonyms: SynonymsWithUID, client: Client = Depends(meilisearch_client)
 ) -> TaskId:
@@ -384,3 +405,15 @@ async def update_synonyms(
         raise HTTPException(400, "No synonyms provided")
 
     return await index.update_synonyms(synonyms.synonyms)
+
+
+@router.put("/typo-tolerance", response_model=TaskId, status_code=202, tags=["Meilisearch Index"])
+async def update_typo_tolerance(
+    typo_tolerance: TypoToleranceWithUID, client: Client = Depends(meilisearch_client)
+) -> TaskId:
+    index = client.index(typo_tolerance.uid)
+
+    if not typo_tolerance.typo_tolerance:
+        raise HTTPException(400, "No typo tolerance provided")
+
+    return await index.update_typo_tolerance(typo_tolerance.typo_tolerance)

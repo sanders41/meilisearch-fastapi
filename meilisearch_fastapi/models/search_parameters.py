@@ -16,3 +16,6 @@ class SearchParameters(CamelBase):
     crop_length: int = 200
     attributes_to_highlight: Optional[List[str]] = None
     matches: bool = False
+    highlight_pre_tag: str = "<em>"
+    highlight_post_tag: str = "</em>"
+    crop_marker: str = "..."
