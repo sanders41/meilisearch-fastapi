@@ -468,25 +468,18 @@ python-versions = "*"
 
 [[package]]
 name = "meilisearch-python-async"
-version = "0.23.1"
+version = "0.24.0"
 description = "A Python async client for the Meilisearch API"
 category = "main"
 optional = false
-python-versions = "^3.7"
-develop = false
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
 aiofiles = ">=0.7,<0.9"
-camel-converter = "^1.0.0"
+camel-converter = ">=1.0.0,<2.0.0"
 httpx = ">=0.17,<0.23"
-pydantic = "^1.8"
-PyJWT = "^2.3.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/sanders41/meilisearch-python-async"
-reference = "meilisearch-v0.27.0"
-resolved_reference = "029c4492c5ab4f9e0e00cb89a4d5e12d75f02378"
+pydantic = ">=1.8,<2.0"
+PyJWT = ">=2.3.0,<3.0.0"
 
 [[package]]
 name = "msgpack"
@@ -1059,7 +1052,11 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
+<<<<<<< HEAD
 content-hash = "cd25fc3941560e0034901bb4c0a2950eb83c38215eb18fe597ad1c79e4fd6a5d"
+=======
+content-hash = "3b32b6b70e985982c7780d3a7a89f50a125f42872407bd77f83cc358a11e0825"
+>>>>>>> 247a4a7 (Bump meilisearch-python-async)
 
 [metadata.files]
 aiofiles = [
@@ -1336,7 +1333,10 @@ mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
     {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
 ]
-meilisearch-python-async = []
+meilisearch-python-async = [
+    {file = "meilisearch-python-async-0.24.0.tar.gz", hash = "sha256:2396e1d9fe606454c2569646c592623193fda7116ad2f19e0f8e453ccfff2bab"},
+    {file = "meilisearch_python_async-0.24.0-py3-none-any.whl", hash = "sha256:ed89cef696f56df0b0ca2918ed9de079d239f70782f3aa7b18a31cc10420d638"},
+]
 msgpack = [
     {file = "msgpack-1.0.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:96acc674bb9c9be63fa8b6dabc3248fdc575c4adc005c440ad02f87ca7edd079"},
     {file = "msgpack-1.0.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:2c3ca57c96c8e69c1a0d2926a6acf2d9a522b41dc4253a8945c4c6cd4981a4e3"},
