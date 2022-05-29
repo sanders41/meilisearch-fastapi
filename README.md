@@ -47,7 +47,13 @@ app.include_router(api_router)
 
 ```py
 from fastapi import APIRouter, FastAPI
-from meilisearch_fastapi import routes
+from meilisearch_fastapi.routes import (
+    document_routes,
+    index_routes,
+    meilisearch_routes,
+    search_routes,
+    settings_routes,
+)
 
 from my_app import my_authentication
 
