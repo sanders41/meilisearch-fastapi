@@ -1,9 +1,7 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from meilisearch_python_async import Client
 from meilisearch_python_async.errors import InvalidRestriction
-from meilisearch_python_async.models.client import ClientStats, Key, KeyCreate, KeyUpdate
+from meilisearch_python_async.models.client import ClientStats, Key, KeyCreate, KeySearch, KeyUpdate
 from meilisearch_python_async.models.health import Health
 from meilisearch_python_async.models.version import Version
 
@@ -46,8 +44,8 @@ async def delete_key(key: str, client: Client = Depends(meilisearch_client)) -> 
     return await client.delete_key(key)
 
 
-@router.get("/keys", response_model=List[Key], tags=["MeiliSearch"])
-async def get_keys(client: Client = Depends(meilisearch_client)) -> List[Key]:
+@router.get("/keys", response_model=KeySearch, tags=["MeiliSearch"])
+async def get_keys(client: Client = Depends(meilisearch_client)) -> KeySearch:
     return await client.get_keys()
 
 

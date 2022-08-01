@@ -27,7 +27,7 @@ async def test_key_info(raw_client):
 
     try:
         keys = await raw_client.get_keys()
-        key = next(x for x in keys if x.description == key_info.description)
+        key = next(x for x in keys.results if x.description == key_info.description)
         await raw_client.delete_key(key.key)
     except MeiliSearchApiError:
         pass
@@ -35,8 +35,7 @@ async def test_key_info(raw_client):
 
 async def test_generate_tenant_token(test_client, default_search_key):
     search_rules = {"test": "value"}
-    expected = {"searchRules": search_rules}
-    expected["apiKeyPrefix"] = default_search_key.key[:8]
+    expected = {"searchRules": search_rules, "apiKeyUid": default_search_key.uid}
     api_key = default_search_key.dict()
     api_key["created_at"] = api_key["created_at"].isoformat()
     api_key["updated_at"] = api_key["updated_at"].isoformat()
@@ -53,8 +52,7 @@ async def test_generate_tenant_token(test_client, default_search_key):
 async def test_generate_tenant_token_expires(test_client, default_search_key):
     search_rules = {"test": "value"}
     expires_at = datetime.utcnow() + timedelta(days=1)
-    expected = {"searchRules": search_rules}
-    expected["apiKeyPrefix"] = default_search_key.key[:8]
+    expected = {"searchRules": search_rules, "apiKeyUid": default_search_key.uid}
     expected["exp"] = int(datetime.timestamp(expires_at))  # type: ignore
     api_key = default_search_key.dict()
     api_key["created_at"] = api_key["created_at"].isoformat()
@@ -140,7 +138,7 @@ async def test_get_keys(test_client):
     response = await test_client.get("/meilisearch/keys")
 
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert len(response.json()["results"]) == 2
 
 
 async def test_get_key(test_key, test_client):
@@ -151,19 +149,15 @@ async def test_get_key(test_key, test_client):
 async def test_update_key(test_key, test_client):
     update_key_info = {
         "key": test_key.key,
+        "name": "Updated Name",
         "description": "updated",
-        "actions": ["*"],
-        "indexes": ["*"],
-        "expires_at": (datetime.utcnow() + timedelta(days=2)).isoformat(),
     }
 
     key = await test_client.patch(f"meilisearch/keys/{test_key.key}", json=update_key_info)
     key_info = key.json()
 
+    assert key_info["name"] == update_key_info["name"]
     assert key_info["description"] == update_key_info["description"]
-    assert key_info["actions"] == update_key_info["actions"]
-    assert key_info["indexes"] == update_key_info["indexes"]
-    assert key_info["expiresAt"].split("+")[0] == update_key_info["expires_at"].split(".")[0]
 
 
 async def test_get_stats(test_client):

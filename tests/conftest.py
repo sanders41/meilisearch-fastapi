@@ -96,7 +96,7 @@ async def clear_indexes():
         if indexes:
             for index in indexes:
                 response = await client.index(index.uid).delete()
-                await wait_for_task(client.http_client, response.uid)
+                await wait_for_task(client.http_client, response.task_uid)
 
 
 @pytest.fixture(autouse=True)
@@ -144,7 +144,7 @@ def small_movies():
 async def index_with_documents(empty_index, small_movies):
     uid, index = empty_index
     response = await index.add_documents(small_movies)
-    await wait_for_task(index.http_client, response.uid)
+    await wait_for_task(index.http_client, response.task_uid)
 
     yield uid, index
 
@@ -162,6 +162,6 @@ async def indexes_sample():
 @pytest.fixture
 async def default_search_key(raw_client):
     keys = await raw_client.get_keys()
-    for key in keys:
-        if "Default Search API Key" in key.description:
+    for key in keys.results:
+        if key.name and "Default Search API Key" in key.name:
             return key
