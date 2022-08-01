@@ -141,13 +141,13 @@ async def test_get_primary_key(test_client, index_uid2):
 @pytest.mark.usefixtures("indexes_sample")
 async def test_delete_index(test_client, index_uid, index_uid2, raw_client):
     response = await test_client.delete(f"indexes/{index_uid}")
-    await wait_for_task(raw_client.http_client, response.json()["uid"])
+    await wait_for_task(raw_client.http_client, response.json()["taskUid"])
 
     response = await test_client.get(f"/indexes/{index_uid}")
     assert response.status_code == 404
 
     response = await test_client.delete(f"indexes/{index_uid2}")
-    await wait_for_task(raw_client.http_client, response.json()["uid"])
+    await wait_for_task(raw_client.http_client, response.json()["taskUid"])
 
     response = await test_client.get(f"/indexes/{index_uid2}")
     assert response.status_code == 404
@@ -170,8 +170,8 @@ async def test_delete_if_exists(test_client, test_uid):
 async def test_update_index(test_client, index_uid, raw_client):
     primay_key = "objectID"
     update_data = {"uid": index_uid, "primaryKey": primay_key}
-    update = await test_client.put("/indexes", json=update_data)
-    await wait_for_task(raw_client.http_client, update.json()["uid"])
+    update = await test_client.patch("/indexes", json=update_data)
+    await wait_for_task(raw_client.http_client, update.json()["taskUid"])
     response = await test_client.get(f"/indexes/{index_uid}")
     response_primary_key = response.json()["primaryKey"]
 
@@ -182,7 +182,7 @@ async def test_get_stats(test_client, empty_index, small_movies):
     uid, index = empty_index
     data = {"uid": uid, "documents": small_movies}
     update = await test_client.put("/documents", json=data)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     response = await test_client.get(f"/indexes/stats/{uid}")
 
     assert response.json()["numberOfDocuments"] == 30
@@ -198,8 +198,8 @@ async def test_get_ranking_rules_default(test_client, empty_index, default_ranki
 async def test_update_ranking_rules(test_client, empty_index, new_ranking_rules):
     uid, index = empty_index
     data = {"uid": uid, "rankingRules": new_ranking_rules}
-    response = await test_client.put("/indexes/ranking-rules", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/ranking-rules", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/ranking-rules/{uid}")
     ranking_rules = response.json()["rankingRules"]
     assert ranking_rules == new_ranking_rules
@@ -210,13 +210,13 @@ async def test_reset_ranking_rules(
 ):
     uid, index = empty_index
     data = {"uid": uid, "rankingRules": new_ranking_rules}
-    response = await test_client.put("/indexes/ranking-rules", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/ranking-rules", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/ranking-rules/{uid}")
     ranking_rules = response.json()["rankingRules"]
     assert ranking_rules == new_ranking_rules
     response = await test_client.delete(f"/indexes/ranking-rules/{uid}")
-    await wait_for_task(index.http_client, response.json()["uid"])
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/ranking-rules/{uid}")
     ranking_rules = response.json()["rankingRules"]
     assert ranking_rules == default_ranking_rules
@@ -231,8 +231,8 @@ async def test_get_distinct_attribute(test_client, empty_index, default_distinct
 async def test_update_distinct_attribute(test_client, empty_index, new_distinct_attribute):
     uid, index = empty_index
     data = {"uid": uid, "attribute": new_distinct_attribute}
-    response = await test_client.put("/indexes/attributes/distinct", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/attributes/distinct", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/attributes/distinct/{uid}")
     assert response.json()["attribute"] == new_distinct_attribute
 
@@ -242,13 +242,13 @@ async def test_reset_distinct_attribute(
 ):
     uid, index = empty_index
     data = {"uid": uid, "attribute": new_distinct_attribute}
-    response = await test_client.put("/indexes/attributes/distinct", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/attributes/distinct", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/attributes/distinct/{uid}")
     assert response.json()["attribute"] == new_distinct_attribute
     response = await test_client.delete(f"/indexes/attributes/distinct/{uid}")
-    await wait_for_task(index.http_client, response.json()["uid"])
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/attributes/distinct/{uid}")
     assert response.json()["attribute"] == default_distinct_attribute
 
@@ -259,7 +259,7 @@ async def test_get_searchable_attributes(test_client, empty_index, small_movies)
     assert response.json()["searchableAttributes"] == ["*"]
     data = {"uid": uid, "documents": small_movies, "primaryKey": "id"}
     response = await test_client.put("/documents", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == ["*"]
 
@@ -267,8 +267,8 @@ async def test_get_searchable_attributes(test_client, empty_index, small_movies)
 async def test_update_searchable_attributes(test_client, empty_index, new_searchable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "searchableAttributes": new_searchable_attributes}
-    response = await test_client.put("/indexes/searchable-attributes", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/searchable-attributes", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == new_searchable_attributes
 
@@ -276,13 +276,13 @@ async def test_update_searchable_attributes(test_client, empty_index, new_search
 async def test_reset_searchable_attributes(test_client, empty_index, new_searchable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "searchableAttributes": new_searchable_attributes}
-    response = await test_client.put("/indexes/searchable-attributes", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/searchable-attributes", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == new_searchable_attributes
     response = await test_client.delete(f"/indexes/searchable-attributes/{uid}")
-    await wait_for_task(index.http_client, response.json()["uid"])
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/searchable-attributes/{uid}")
     assert response.json()["searchableAttributes"] == ["*"]
 
@@ -293,7 +293,7 @@ async def test_get_displayed_attributes(test_client, empty_index, small_movies):
     assert response.json()["displayedAttributes"] == ["*"]
     data = {"uid": uid, "documents": small_movies}
     update = await test_client.put("/documents", json=data)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert response.json()["displayedAttributes"] == ["*"]
 
@@ -301,8 +301,8 @@ async def test_get_displayed_attributes(test_client, empty_index, small_movies):
 async def test_update_displayed_attributes(test_client, empty_index, displayed_attributes):
     uid, index = empty_index
     data = {"uid": uid, "displayedAttributes": displayed_attributes}
-    response = await test_client.put("/indexes/displayed-attributes", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/displayed-attributes", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert sorted(response.json()["displayedAttributes"]) == sorted(displayed_attributes)
 
@@ -310,13 +310,13 @@ async def test_update_displayed_attributes(test_client, empty_index, displayed_a
 async def test_reset_displayed_attributes(test_client, empty_index, displayed_attributes):
     uid, index = empty_index
     data = {"uid": uid, "displayedAttributes": displayed_attributes}
-    response = await test_client.put("/indexes/displayed-attributes", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/displayed-attributes", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert sorted(response.json()["displayedAttributes"]) == sorted(displayed_attributes)
     response = await test_client.delete(f"/indexes/displayed-attributes/{uid}")
-    await wait_for_task(index.http_client, response.json()["uid"])
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/displayed-attributes/{uid}")
     assert response.json()["displayedAttributes"] == ["*"]
 
@@ -330,8 +330,8 @@ async def test_get_stop_words_default(test_client, empty_index):
 async def test_update_stop_words(test_client, empty_index, new_stop_words):
     uid, index = empty_index
     data = {"uid": uid, "stopWords": new_stop_words}
-    response = await test_client.put("/indexes/stop-words", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/stop-words", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"indexes/stop-words/{uid}")
     assert sorted(response.json()["stopWords"]) == sorted(new_stop_words)
@@ -340,13 +340,13 @@ async def test_update_stop_words(test_client, empty_index, new_stop_words):
 async def test_reset_stop_words(test_client, empty_index, new_stop_words):
     uid, index = empty_index
     data = {"uid": uid, "stopWords": new_stop_words}
-    response = await test_client.put("/indexes/stop-words", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/stop-words", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"indexes/stop-words/{uid}")
     assert sorted(response.json()["stopWords"]) == sorted(new_stop_words)
     response = await test_client.delete(f"indexes/stop-words/{uid}")
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"indexes/stop-words/{uid}")
     assert response.json()["stopWords"] is None
@@ -361,8 +361,8 @@ async def test_get_synonyms_default(test_client, empty_index):
 async def test_update_synonyms(test_client, empty_index, new_synonyms):
     uid, index = empty_index
     data = {"uid": uid, "synonyms": new_synonyms}
-    response = await test_client.put("/indexes/synonyms", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/synonyms", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] == new_synonyms
@@ -371,20 +371,20 @@ async def test_update_synonyms(test_client, empty_index, new_synonyms):
 async def test_update_synonyms_none_provided(test_client, empty_index):
     uid, _ = empty_index
     data = {"uid": uid}
-    response = await test_client.put("/indexes/synonyms", json=data)
+    response = await test_client.patch("/indexes/synonyms", json=data)
     assert response.status_code == 400
 
 
 async def test_reset_synonyms(test_client, empty_index, new_synonyms):
     uid, index = empty_index
     data = {"uid": uid, "synonyms": new_synonyms}
-    response = await test_client.put("/indexes/synonyms", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/synonyms", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] == new_synonyms
     response = await test_client.delete(f"/indexes/synonyms/{uid}")
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] is None
@@ -399,8 +399,8 @@ async def test_get_filterable_attributes(test_client, empty_index):
 async def test_update_filterable_attributes(test_client, empty_index, filterable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "filterableAttributes": filterable_attributes}
-    response = await test_client.put("indexes/filterable-attributes", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("indexes/filterable-attributes", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert sorted(response.json()["filterableAttributes"]) == filterable_attributes
 
@@ -408,13 +408,13 @@ async def test_update_filterable_attributes(test_client, empty_index, filterable
 async def test_reset_filterable_attributes(test_client, empty_index, filterable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "filterableAttributes": filterable_attributes}
-    response = await test_client.put("indexes/filterable-attributes", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("indexes/filterable-attributes", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert sorted(response.json()["filterableAttributes"]) == filterable_attributes
     response = await test_client.delete(f"/indexes/filterable-attributes/{uid}")
-    await wait_for_task(index.http_client, response.json()["uid"])
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/filterable-attributes/{uid}")
     assert response.json()["filterableAttributes"] is None
 
@@ -428,8 +428,8 @@ async def test_get_sortable_attributes(test_client, empty_index):
 async def test_update_sortable_attributes(test_client, empty_index, sortable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "sortableAttributes": sortable_attributes}
-    response = await test_client.put("indexes/sortable-attributes", json=data)
-    await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("indexes/sortable-attributes", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == sortable_attributes
 
@@ -437,13 +437,13 @@ async def test_update_sortable_attributes(test_client, empty_index, sortable_att
 async def test_reset_sortable_attributes(test_client, empty_index, sortable_attributes):
     uid, index = empty_index
     data = {"uid": uid, "sortableAttributes": sortable_attributes}
-    response = await test_client.put("indexes/sortable-attributes", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("indexes/sortable-attributes", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == sortable_attributes
     response = await test_client.delete(f"/indexes/sortable-attributes/{uid}")
-    await wait_for_task(index.http_client, response.json()["uid"])
+    await wait_for_task(index.http_client, response.json()["taskUid"])
     response = await test_client.get(f"/indexes/sortable-attributes/{uid}")
     assert response.json()["sortableAttributes"] == []
 
@@ -457,8 +457,8 @@ async def test_typo_tolerance_default(test_client, empty_index):
 async def test_update_typo_tolerance(test_client, empty_index, new_typo_tolerance):
     uid, index = empty_index
     data = {"uid": uid, "typo_tolerance": new_typo_tolerance}
-    response = await test_client.put("/indexes/typo-tolerance", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/typo-tolerance", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/typo-tolerance/{uid}")
     assert response.json()["typoTolerance"] == new_typo_tolerance
@@ -467,20 +467,20 @@ async def test_update_typo_tolerance(test_client, empty_index, new_typo_toleranc
 async def test_update_typo_tolerance_none_provided(test_client, empty_index):
     uid, _ = empty_index
     data = {"uid": uid}
-    response = await test_client.put("/indexes/typo-tolerance", json=data)
+    response = await test_client.patch("/indexes/typo-tolerance", json=data)
     assert response.status_code == 400
 
 
 async def test_reset_typo_tolerance(test_client, empty_index, new_typo_tolerance):
     uid, index = empty_index
     data = {"uid": uid, "typo_tolerance": new_typo_tolerance}
-    response = await test_client.put("/indexes/typo-tolerance", json=data)
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    response = await test_client.patch("/indexes/typo-tolerance", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/typo-tolerance/{uid}")
     assert response.json()["typoTolerance"] == new_typo_tolerance
     response = await test_client.delete(f"/indexes/typo-tolerance/{uid}")
-    update = await wait_for_task(index.http_client, response.json()["uid"])
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/typo-tolerance/{uid}")
     assert response.json()["typoTolerance"]["enabled"] is True

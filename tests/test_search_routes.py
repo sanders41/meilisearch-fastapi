@@ -94,31 +94,30 @@ async def test_custom_search_params_with_string_list(test_client, index_with_doc
     assert "<em>" not in response.json()["hits"][0]["_formatted"]["overview"]
 
 
-async def test_custom_search_params_with_facets_distribution(test_client, index_with_documents):
+async def test_custom_search_params_with_facet_distribution(test_client, index_with_documents):
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
-        "facetsDistribution": ["genre"],
+        "facets": ["genre"],
     }
     response = await test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 12
-    assert response.json()["facetsDistribution"] is not None
-    assert response.json()["exhaustiveFacetsCount"] is not None
-    assert "genre" in response.json()["facetsDistribution"]
-    assert response.json()["facetsDistribution"]["genre"]["cartoon"] == 1
-    assert response.json()["facetsDistribution"]["genre"]["action"] == 3
-    assert response.json()["facetsDistribution"]["genre"]["fantasy"] == 1
+    assert response.json()["facetDistribution"] is not None
+    assert "genre" in response.json()["facetDistribution"]
+    assert response.json()["facetDistribution"]["genre"]["cartoon"] == 1
+    assert response.json()["facetDistribution"]["genre"]["action"] == 3
+    assert response.json()["facetDistribution"]["genre"]["fantasy"] == 1
 
 
 async def test_custom_search_params_with_facet_filters(test_client, index_with_documents):
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -127,15 +126,14 @@ async def test_custom_search_params_with_facet_filters(test_client, index_with_d
 
     response = await test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
-    assert response.json()["facetsDistribution"] is None
-    assert response.json()["exhaustiveFacetsCount"] is None
+    assert response.json()["facetDistribution"] is None
 
 
 async def test_custom_search_params_with_multiple_facet_filters(test_client, index_with_documents):
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -143,8 +141,7 @@ async def test_custom_search_params_with_multiple_facet_filters(test_client, ind
     }
     response = await test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
-    assert response.json()["facetsDistribution"] is None
-    assert response.json()["exhaustiveFacetsCount"] is None
+    assert response.json()["facetDistribution"] is None
 
 
 async def test_custom_search_facet_filters_with_space(test_client, empty_index):
@@ -194,10 +191,10 @@ async def test_custom_search_facet_filters_with_space(test_client, empty_index):
         "documents": dataset,
     }
     update = await test_client.post("/documents", json=documents)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "h",
@@ -211,8 +208,8 @@ async def test_custom_search_facet_filters_with_space(test_client, empty_index):
 async def test_custom_search_params_with_many_params(test_client, index_with_documents):
     uid, index = index_with_documents
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.put("/indexes/filterable-attributes", json=facet_data)
-    await wait_for_task(index.http_client, update.json()["uid"])
+    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -221,8 +218,7 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
     }
     response = await test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
-    assert response.json()["facetsDistribution"] is None
-    assert response.json()["exhaustiveFacetsCount"] is None
+    assert response.json()["facetDistribution"] is None
     assert "title" in response.json()["hits"][0]
     assert "poster" in response.json()["hits"][0]
     assert "overview" not in response.json()["hits"][0]
@@ -246,7 +242,7 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
 async def test_search_sort(sort, titles, test_client, index_with_documents):
     uid, index = index_with_documents
     response = await index.update_sortable_attributes(["title"])
-    await wait_for_task(index.http_client, response.uid)
+    await wait_for_task(index.http_client, response.task_uid)
     stats = await index.get_stats()  # get this to get the total document count
 
     # Using a placeholder search because ranking rules affect sort otherwaise meaning the results

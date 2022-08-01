@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from meilisearch_python_async import Client
 from meilisearch_python_async.models.settings import MeiliSearchSettings
-from meilisearch_python_async.models.task import TaskId
+from meilisearch_python_async.models.task import TaskInfo
 
 from meilisearch_fastapi._client import meilisearch_client
 from meilisearch_fastapi._config import MeiliSearchConfig, get_config
@@ -19,22 +19,22 @@ async def get_settings(
     return await index.get_settings()
 
 
-@router.delete("/{uid}", response_model=TaskId, tags=["MeiliSearch Settings"])
+@router.delete("/{uid}", response_model=TaskInfo, tags=["MeiliSearch Settings"])
 async def delete_settings(
     uid: str,
     client: Client = Depends(meilisearch_client),
     config: MeiliSearchConfig = Depends(get_config),
-) -> TaskId:
+) -> TaskInfo:
     async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
         index = client.index(uid)
 
         return await index.reset_settings()
 
 
-@router.post("/", response_model=TaskId, tags=["MeiliSearch Settings"])
+@router.patch("/", response_model=TaskInfo, tags=["MeiliSearch Settings"])
 async def update_settings(
     update_settings: MeiliSearchIndexSettings, client: Client = Depends(meilisearch_client)
-) -> TaskId:
+) -> TaskInfo:
     index = client.index(update_settings.uid)
 
     meili_settings = MeiliSearchSettings(

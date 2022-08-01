@@ -45,7 +45,7 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
             "enabled": False,
         },
     }
-    response = await test_client.post("/settings", json=update_settings)
+    response = await test_client.patch("/settings", json=update_settings)
 
     assert response.status_code == 200
 
