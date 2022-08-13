@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from meilisearch_python_async import Client
 from meilisearch_python_async.models.index import IndexBase, IndexInfo, IndexStats
+from meilisearch_python_async.models.settings import Faceting
 from meilisearch_python_async.models.task import TaskInfo
 
 from meilisearch_fastapi._client import meilisearch_client
@@ -12,6 +13,7 @@ from meilisearch_fastapi.models.index import (
     DisplayedAttributesUID,
     DistinctAttribute,
     DistinctAttributeWithUID,
+    FacetingWithUID,
     FilterableAttributes,
     FilterableAttributesWithUID,
     IndexUpdate,
@@ -45,6 +47,13 @@ async def create_index(
         created_at=index.created_at,
         updated_at=index.updated_at,
     )
+
+
+@router.delete("/faceting/{uid}", response_model=TaskInfo, tags=["Meilisearch Index"])
+async def delete_faceting(uid: str, client: Client = Depends(meilisearch_client)) -> TaskInfo:
+    index = client.index(uid)
+
+    return await index.reset_faceting()
 
 
 @router.delete(
@@ -165,6 +174,14 @@ async def delete_typo_tolerance(uid: str, client: Client = Depends(meilisearch_c
     index = client.index(uid)
 
     return await index.reset_typo_tolerance()
+
+
+@router.get("/faceting/{uid}", response_model=Faceting, tags=["Meilisearch Index"])
+async def get_faceting(uid: str, client: Client = Depends(meilisearch_client)) -> Faceting:
+    index = client.index(uid)
+    faceting = await index.get_faceting()
+
+    return faceting
 
 
 @router.get(
@@ -300,6 +317,16 @@ async def get_typo_tolerance(
     typo_tolerance = await index.get_typo_tolerance()
 
     return TypoTolerance(typo_tolerance=typo_tolerance)
+
+
+@router.patch("/faceting", response_model=TaskInfo, status_code=202, tags=["Meilisearch Index"])
+async def update_faceting(
+    faceting: FacetingWithUID,
+    client: Client = Depends(meilisearch_client),
+) -> TaskInfo:
+    index = client.index(faceting.uid)
+
+    return await index.update_faceting(Faceting(max_values_per_facet=faceting.max_values_per_facet))
 
 
 @router.patch(

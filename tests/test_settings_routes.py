@@ -1,4 +1,5 @@
 import pytest
+from meilisearch_python_async.task import wait_for_task
 
 
 @pytest.fixture
@@ -8,6 +9,7 @@ def default_settings():
         "stopWords": [],
         "rankingRules": ["words", "typo", "proximity", "attribute", "sort", "exactness"],
         "filterableAttributes": [],
+        "faceting": {"maxValuesPerFacet": 100},
         "distinctAttribute": None,
         "searchableAttributes": ["*"],
         "displayedAttributes": ["*"],
@@ -30,13 +32,14 @@ async def test_settings_get(default_settings, index_uid, test_client):
 
 
 @pytest.mark.usefixtures("indexes_sample")
-async def test_settings_update_and_delete(default_settings, index_uid, test_client):
+async def test_settings_update_and_delete(default_settings, index_uid, test_client, raw_client):
     update_settings = {
         "uid": index_uid,
         "synonyms": {"logan": ["wolverine", "xmen"], "wolverine": ["logan", "xmen"]},
         "stopWords": ["stop", "words"],
         "rankingRules": ["words", "typo", "proximity"],
         "filterableAttributes": ["attributes", "filterable"],
+        "faceting": {"maxValuesPerFacet": 90},
         "distinctAttribute": "movie_id",
         "searchableAttributes": ["description", "title"],
         "displayedAttributes": ["genre", "title"],
@@ -48,6 +51,7 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
     response = await test_client.patch("/settings", json=update_settings)
 
     assert response.status_code == 200
+    await wait_for_task(raw_client.http_client, response.json()["taskUid"])
 
     response = await test_client.get(f"/settings/{index_uid}")
 
