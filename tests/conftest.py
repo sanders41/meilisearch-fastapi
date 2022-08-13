@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -35,11 +36,20 @@ INDEX_FIXTURE = [
 
 @pytest.fixture(autouse=True)
 def env_vars(monkeypatch):
+    current_addr = os.getenv("MEILI_HTTP_ADDR")
+    current_key = os.getenv("MEILI_MASTER_KEY")
     monkeypatch.setenv("MEILI_HTTP_ADDR", MEILISEARCH_URL)
     monkeypatch.setenv("MEILI_MASTER_KEY", MASTER_KEY)
     yield
-    monkeypatch.delenv("MEILI_HTTP_ADDR", raising=False)
-    monkeypatch.delenv("MEILI_MASTER_KEY", raising=False)
+    if current_addr:
+        os.environ["MEILI_HTTP_ADDR"] = current_addr
+    else:
+        monkeypatch.delenv("MEILI_HTTP_ADDR", raising=False)
+
+    if current_key:
+        os.environ["MEILI_MASTER_KEY"] = current_key
+    else:
+        monkeypatch.delenv("MEILI_MASTER_KEY", raising=False)
 
 
 @pytest.fixture
