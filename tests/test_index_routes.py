@@ -64,6 +64,11 @@ def new_typo_tolerance():
 
 
 @pytest.fixture
+def faceting():
+    return 90
+
+
+@pytest.fixture
 def filterable_attributes():
     return ["release_date", "title"]
 
@@ -388,6 +393,35 @@ async def test_reset_synonyms(test_client, empty_index, new_synonyms):
     assert update.status == "succeeded"
     response = await test_client.get(f"/indexes/synonyms/{uid}")
     assert response.json()["synonyms"] is None
+
+
+async def test_get_faceting(test_client, empty_index):
+    uid, _ = empty_index
+    response = await test_client.get(f"/indexes/faceting/{uid}")
+    assert response.json()["maxValuesPerFacet"] == 100
+
+
+async def test_update_faceting(test_client, empty_index, faceting):
+    uid, index = empty_index
+    data = {"uid": uid, "max_values_per_facet": 90}
+    response = await test_client.patch("indexes/faceting", json=data)
+    await wait_for_task(index.http_client, response.json()["taskUid"])
+    response = await test_client.get(f"/indexes/faceting/{uid}")
+    assert response.json()["maxValuesPerFacet"] == faceting
+
+
+async def test_reset_faceting(test_client, empty_index, faceting):
+    uid, index = empty_index
+    data = {"uid": uid, "maxValuesPerFacet": faceting}
+    response = await test_client.patch("indexes/faceting", json=data)
+    update = await wait_for_task(index.http_client, response.json()["taskUid"])
+    assert update.status == "succeeded"
+    response = await test_client.get(f"/indexes/faceting/{uid}")
+    assert response.json()["maxValuesPerFacet"] == faceting
+    response = await test_client.delete(f"/indexes/faceting/{uid}")
+    await wait_for_task(index.http_client, response.json()["taskUid"])
+    response = await test_client.get(f"/indexes/faceting/{uid}")
+    assert response.json() == {"maxValuesPerFacet": 100}
 
 
 async def test_get_filterable_attributes(test_client, empty_index):
