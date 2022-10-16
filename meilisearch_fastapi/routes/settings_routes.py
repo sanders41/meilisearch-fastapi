@@ -47,6 +47,7 @@ async def update_settings(
         displayed_attributes=update_settings.displayed_attributes,
         sortable_attributes=update_settings.sortable_attributes,
         typo_tolerance=update_settings.typo_tolerance,
+        faceting=update_settings.faceting,
     )
 
     return await index.update_settings(meili_settings)
