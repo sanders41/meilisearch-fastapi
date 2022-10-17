@@ -36,7 +36,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "black"
@@ -273,9 +273,9 @@ python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
+pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
 plugins = ["setuptools"]
-requirements_deprecated_finder = ["pip-api", "pipreqs"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
 [[package]]
 name = "mccabe"
@@ -287,18 +287,18 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "meilisearch-python-async"
-version = "0.26.0"
+version = "0.28.0"
 description = "A Python async client for the Meilisearch API"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-aiofiles = ">=0.7,<0.9"
-camel-converter = ">=1.0.0,<2.0.0"
-httpx = ">=0.17,<0.24"
-pydantic = ">=1.8,<2.0"
-PyJWT = ">=2.3.0,<3.0.0"
+aiofiles = ">=0.7"
+camel-converter = ">=1.0.0"
+httpx = ">=0.17"
+pydantic = ">=1.8"
+PyJWT = ">=2.3.0"
 
 [[package]]
 name = "mypy"
@@ -861,8 +861,8 @@ mccabe = [
     {file = "mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
 ]
 meilisearch-python-async = [
-    {file = "meilisearch-python-async-0.26.0.tar.gz", hash = "sha256:6463f3b69a04adfbd85c7a661e0050b14d44b3fd1310404db7529916abb38cb4"},
-    {file = "meilisearch_python_async-0.26.0-py3-none-any.whl", hash = "sha256:434b3deaf95382fe7e35bab019c4617650c0e37ba45a0ff540e367921ea2e7b9"},
+    {file = "meilisearch_python_async-0.28.0-py3-none-any.whl", hash = "sha256:06d44c9d61053ad1415ffb435fe0dd95d8fd43aff644a0af8494438fdefee8e2"},
+    {file = "meilisearch_python_async-0.28.0.tar.gz", hash = "sha256:59e1396aac4a16c9977f00c212875688ebea232fa3390b9dc165abdc13767a1c"},
 ]
 mypy = [
     {file = "mypy-0.982-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:5085e6f442003fa915aeb0a46d4da58128da69325d8213b4b35cc7054090aed5"},
