@@ -23,9 +23,7 @@ repos:
     rev: v0.991
     hooks:
     - id: mypy
-  - repo: https://github.com/PyCQA/flake8
-    rev: '6.0.0'
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.152
     hooks:
-    - id: flake8
-      additional_dependencies: [flake8-print]
-      args: [--max-line-length=100, "--ignore=E203,E231,E501"]
+    - id: ruff
