@@ -20,10 +20,10 @@ repos:
       language_version: python3
       args: [--line-length=100]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.1
+    rev: v1.1.1
     hooks:
     - id: mypy
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.253
+    rev: v0.0.257
     hooks:
     - id: ruff
