@@ -29,4 +29,4 @@ class MeiliSearchConfig(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_config() -> MeiliSearchConfig:
-    return MeiliSearchConfig()
+    return MeiliSearchConfig()  # type: ignore[call-arg]
