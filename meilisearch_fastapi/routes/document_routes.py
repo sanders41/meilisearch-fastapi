@@ -15,7 +15,7 @@ from meilisearch_fastapi.models.document_info import (
 router = APIRouter()
 
 
-@router.post("/", response_model=TaskInfo, status_code=202, tags=["MeiliSearch Documents"])
+@router.post("/", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
 async def add_documents(
     document_info: DocumentInfo,
     client: Client = Depends(meilisearch_client),
@@ -26,7 +26,7 @@ async def add_documents(
 
 
 @router.post(
-    "/batches", response_model=List[TaskInfo], status_code=202, tags=["MeiliSearch Documents"]
+    "/batches", response_model=List[TaskInfo], status_code=202, tags=["Meilisearch Documents"]
 )
 async def add_documents_in_batches(
     document_info: DocumentInfoBatches, client: Client = Depends(meilisearch_client)
@@ -40,7 +40,7 @@ async def add_documents_in_batches(
     )
 
 
-@router.delete("/{uid}", response_model=TaskInfo, status_code=202, tags=["MeiliSearch Documents"])
+@router.delete("/{uid}", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
 async def delete_all_documents(uid: str, client: Client = Depends(meilisearch_client)) -> TaskInfo:
     index = client.index(uid)
 
@@ -51,7 +51,7 @@ async def delete_all_documents(uid: str, client: Client = Depends(meilisearch_cl
     "/{uid}/{document_id}",
     response_model=TaskInfo,
     status_code=202,
-    tags=["MeiliSearch Documents"],
+    tags=["Meilisearch Documents"],
 )
 async def delete_document(
     uid: str, document_id: str, client: Client = Depends(meilisearch_client)
@@ -61,7 +61,7 @@ async def delete_document(
     return await index.delete_document(document_id)
 
 
-@router.post("/delete", response_model=TaskInfo, status_code=202, tags=["MeiliSearch Documents"])
+@router.post("/delete", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
 async def delete_documents(
     documents: DocumentDelete,
     client: Client = Depends(meilisearch_client),
@@ -71,7 +71,7 @@ async def delete_documents(
     return await index.delete_documents(documents.document_ids)
 
 
-@router.get("/{uid}/{document_id}", response_model=dict, tags=["MeiliSearch Documents"])
+@router.get("/{uid}/{document_id}", response_model=dict, tags=["Meilisearch Documents"])
 async def get_document(
     uid: str,
     document_id: str,
@@ -82,7 +82,7 @@ async def get_document(
     return await index.get_document(document_id)
 
 
-@router.get("/{uid}", response_model=DocumentsInfo, tags=["MeiliSearch Documents"])
+@router.get("/{uid}", response_model=DocumentsInfo, tags=["Meilisearch Documents"])
 async def get_documents(
     uid: str,
     limit: int = 20,
@@ -101,7 +101,7 @@ async def get_documents(
     return documents
 
 
-@router.put("/", response_model=TaskInfo, status_code=202, tags=["MeiliSearch Documents"])
+@router.put("/", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
 async def update_documents(
     document_info: DocumentInfo,
     client: Client = Depends(meilisearch_client),
@@ -112,7 +112,7 @@ async def update_documents(
 
 
 @router.put(
-    "/batches", response_model=List[TaskInfo], status_code=202, tags=["MeiliSearch Documents"]
+    "/batches", response_model=List[TaskInfo], status_code=202, tags=["Meilisearch Documents"]
 )
 async def update_documents_in_batches(
     document_info: DocumentInfoBatches,

@@ -1,7 +1,7 @@
 from math import ceil
 
 import pytest
-from meilisearch_python_async.errors import MeiliSearchApiError
+from meilisearch_python_async.errors import MeilisearchApiError
 from meilisearch_python_async.task import wait_for_task
 
 
@@ -71,7 +71,7 @@ async def test_delete_document(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}/500682")
     await wait_for_task(index.http_client, response.json()["taskUid"])
-    with pytest.raises(MeiliSearchApiError):
+    with pytest.raises(MeilisearchApiError):
         await test_client.get(f"/documents/{uid}/500682")
 
 
@@ -104,7 +104,7 @@ async def test_get_document(test_client, index_with_documents):
 
 
 async def test_get_document_nonexistent(test_client, empty_index):
-    with pytest.raises(MeiliSearchApiError):
+    with pytest.raises(MeilisearchApiError):
         uid, _ = empty_index
         await test_client.get(f"documents/{uid}/123")
 

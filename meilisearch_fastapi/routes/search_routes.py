@@ -8,7 +8,7 @@ from meilisearch_fastapi.models.search_parameters import SearchParameters
 router = APIRouter()
 
 
-@router.post("/", response_model=SearchResults, tags=["MeiliSearch Search"])
+@router.post("/", response_model=SearchResults, tags=["Meilisearch Search"])
 async def search(
     search_parameters: SearchParameters, client: Client = Depends(meilisearch_client)
 ) -> SearchResults:

@@ -1,11 +1,11 @@
 import pytest
-from meilisearch_python_async.models.settings import MeiliSearchSettings
+from meilisearch_python_async.models.settings import MeilisearchSettings
 from meilisearch_python_async.task import wait_for_task
 
 
 @pytest.fixture
 def new_settings():
-    return MeiliSearchSettings(
+    return MeilisearchSettings(
         ranking_rules=["typo", "words"], searchable_attributes=["title", "overview"]
     )
 

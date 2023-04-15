@@ -8,7 +8,7 @@ from meilisearch_python_async.models.task import TaskInfo
 from starlette.status import HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT
 
 from meilisearch_fastapi._client import meilisearch_client
-from meilisearch_fastapi._config import MeiliSearchConfig, get_config
+from meilisearch_fastapi._config import MeilisearchConfig, get_config
 from meilisearch_fastapi.models.index import (
     DisplayedAttributes,
     DisplayedAttributesUID,
@@ -394,7 +394,7 @@ async def update_distinct_attribute(
 async def update_index(
     index_update: IndexUpdate,
     client: Client = Depends(meilisearch_client),
-    config: MeiliSearchConfig = Depends(get_config),
+    config: MeilisearchConfig = Depends(get_config),
 ) -> TaskInfo:
     payload = {}
     if index_update.primary_key is not None:

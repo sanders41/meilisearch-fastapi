@@ -430,22 +430,22 @@ files = [
 
 [[package]]
 name = "meilisearch-python-async"
-version = "0.26.0"
+version = "1.1.1"
 description = "A Python async client for the Meilisearch API"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "meilisearch-python-async-0.26.0.tar.gz", hash = "sha256:6463f3b69a04adfbd85c7a661e0050b14d44b3fd1310404db7529916abb38cb4"},
-    {file = "meilisearch_python_async-0.26.0-py3-none-any.whl", hash = "sha256:434b3deaf95382fe7e35bab019c4617650c0e37ba45a0ff540e367921ea2e7b9"},
+    {file = "meilisearch_python_async-1.1.1-py3-none-any.whl", hash = "sha256:a60ef9c4f4864c0244010fefdeb6986d0d7c71efb0da911b2acd0cec68906579"},
+    {file = "meilisearch_python_async-1.1.1.tar.gz", hash = "sha256:7c16e226a67b2a8231cc4df05e819969442a2d41164cdb50273f9c586824058b"},
 ]
 
 [package.dependencies]
-aiofiles = ">=0.7,<0.9"
-camel-converter = ">=1.0.0,<2.0.0"
-httpx = ">=0.17,<0.24"
-pydantic = ">=1.8,<2.0"
-PyJWT = ">=2.3.0,<3.0.0"
+aiofiles = ">=0.7"
+camel-converter = ">=1.0.0"
+httpx = ">=0.17"
+pydantic = ">=1.8"
+PyJWT = ">=2.3.0"
 
 [[package]]
 name = "mypy"
@@ -1066,4 +1066,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "bc960c249bbf557da766a624955ca67f72eb70565eb4ca9aa35a787fb628d7f2"
+content-hash = "e6caf495c2ab5a78b58e9ac70969758c8b271814be4f58ce4e7ea2ac57d169dc"
