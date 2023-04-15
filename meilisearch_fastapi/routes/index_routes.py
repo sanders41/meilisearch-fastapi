@@ -41,11 +41,12 @@ async def create_index(
 ) -> IndexInfo:
     index = await client.create_index(index_info.uid, index_info.primary_key)
 
+    # TODO: Fix types
     return IndexInfo(
         uid=index.uid,
         primary_key=index.primary_key,
-        created_at=index.created_at,
-        updated_at=index.updated_at,
+        created_at=index.created_at,  # type: ignore
+        updated_at=index.updated_at,  # type: ignore
     )
 
 
