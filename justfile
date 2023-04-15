@@ -5,9 +5,9 @@
   just --justfile {{justfile()}} mypy
   echo ruff
   just --justfile {{justfile()}} ruff
-.ghithub.ghithub
+
 @black:
-  poetry run black meilisearch_python_async tests
+  poetry run black meilisearch_fastapi tests
 
 @mypy:
   poetry run mypy .
