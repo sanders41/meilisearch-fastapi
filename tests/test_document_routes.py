@@ -136,10 +136,11 @@ async def test_update_documents(test_client, index_with_documents, small_movies)
     response = await test_client.get(f"documents/{uid}")
     response_docs = response.json()["results"]
     response_docs[0]["title"] = "Some title"
+    doc_id = response_docs[0]["id"]
     update_body = {"uid": uid, "documents": response_docs}
     update = await test_client.put("/documents", json=update_body)
     await wait_for_task(index.http_client, update.json()["taskUid"])
-    response = await test_client.get(f"/documents/{uid}")
+    response = await test_client.get(f"/document/{uid}/{doc_id}")
     assert response.json()["results"][0]["title"] == "Some title"
     update_body = {"uid": uid, "documents": small_movies}
     update = await test_client.put("/documents", json=update_body)
