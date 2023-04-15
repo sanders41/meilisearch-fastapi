@@ -74,22 +74,19 @@ git checkout main
 git pull upstream main --ff-only
 ```
 
-### Code Standards and tests (isort, flake8, black, mypy, pytest, tox, and pre-commit)
+### Code Standards and tests (ruff, black, mypy, pytest, tox, and pre-commit)
 
-meilisearch-fastapi uses [isort](https://pycqa.github.io/isort/),
-[Flake8](https://flake8.pycqa.org/en/latest/), [Black](https://github.com/psf/black), and [mypy](https://mypy.readthedocs.io/en/stable/) to ensure consistant code formmating.
+meilisearch-fastapi uses [ruff](https://github.com/charliermarsh/ruff),
+[Black](https://github.com/psf/black), and [mypy](https://mypy.readthedocs.io/en/stable/) to ensure consistant code formmating.
 
 You can run linting on your code at any time with:
 
 ```sh
-# Run isort
-poetry run isort meilisearch_fastapi tests
+# Run ruff
+poetry run ruff check .
 
 # Run black
 poetry run black meilisearch_fastapi tests
-
-# Run flake8
-poetry run flake8 meilisearch_fastapi tests
 
 # Run mypy
 poetry run mypy meilisearch_fastapi
