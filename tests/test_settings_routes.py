@@ -9,7 +9,6 @@ def default_settings():
         "stopWords": [],
         "rankingRules": ["words", "typo", "proximity", "attribute", "sort", "exactness"],
         "filterableAttributes": [],
-        "faceting": {"maxValuesPerFacet": 100},
         "distinctAttribute": None,
         "searchableAttributes": ["*"],
         "displayedAttributes": ["*"],
@@ -20,6 +19,8 @@ def default_settings():
             "disableOnWords": [],
             "minWordSizeForTypos": {"oneTypo": 5, "twoTypos": 9},
         },
+        "faceting": {"maxValuesPerFacet": 100},
+        "pagination": {"maxTotalHits": 1000},
     }
 
 
@@ -47,6 +48,7 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
         "typoTolerance": {
             "enabled": False,
         },
+        "pagination": {"maxTotalHits": 1000},
     }
     response = await test_client.patch("/settings", json=update_settings)
 

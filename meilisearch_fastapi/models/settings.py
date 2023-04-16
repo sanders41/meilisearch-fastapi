@@ -1,5 +1,5 @@
-from meilisearch_python_async.models.settings import MeiliSearchSettings
+from meilisearch_python_async.models.settings import MeilisearchSettings
 
 
-class MeiliSearchIndexSettings(MeiliSearchSettings):
+class MeilisearchIndexSettings(MeilisearchSettings):
     uid: str

@@ -12,7 +12,7 @@ from meilisearch_fastapi.models.tenant_token import TenantToken, TenantTokenSett
 router = APIRouter()
 
 
-@router.post("/generate-tenant-token", response_model=TenantToken, tags=["MeiliSearch"])
+@router.post("/generate-tenant-token", response_model=TenantToken, tags=["Meilisearch"])
 async def generate_tenant_token(
     tenant_token_settings: TenantTokenSettings, client: Client = Depends(meilisearch_client)
 ) -> TenantToken:
@@ -30,43 +30,43 @@ async def generate_tenant_token(
     return TenantToken(tenant_token=token)
 
 
-@router.get("/health", response_model=Health, tags=["MeiliSearch"])
+@router.get("/health", response_model=Health, tags=["Meilisearch"])
 async def get_health(client: Client = Depends(meilisearch_client)) -> Health:
     return await client.health()
 
 
-@router.post("/keys", response_model=Key, tags=["MeiliSearch"])
+@router.post("/keys", response_model=Key, tags=["Meilisearch"])
 async def create_key(key: KeyCreate, client: Client = Depends(meilisearch_client)) -> Key:
     return await client.create_key(key)
 
 
-@router.delete("/keys/{key}", status_code=HTTP_204_NO_CONTENT, tags=["MeiliSearch"])
+@router.delete("/keys/{key}", status_code=HTTP_204_NO_CONTENT, tags=["Meilisearch"])
 async def delete_key(key: str, client: Client = Depends(meilisearch_client)) -> None:
     await client.delete_key(key)
 
 
-@router.get("/keys", response_model=KeySearch, tags=["MeiliSearch"])
+@router.get("/keys", response_model=KeySearch, tags=["Meilisearch"])
 async def get_keys(client: Client = Depends(meilisearch_client)) -> KeySearch:
     return await client.get_keys()
 
 
-@router.get("/keys/{key}", response_model=Key, tags=["MeiliSearch"])
+@router.get("/keys/{key}", response_model=Key, tags=["Meilisearch"])
 async def get_key(key: str, client: Client = Depends(meilisearch_client)) -> Key:
     return await client.get_key(key)
 
 
-@router.patch("/keys/{key}", response_model=Key, tags=["MeiliSearch"])
+@router.patch("/keys/{key}", response_model=Key, tags=["Meilisearch"])
 async def update_key(
     key: str, update_key: KeyUpdate, client: Client = Depends(meilisearch_client)
 ) -> Key:
     return await client.update_key(update_key)
 
 
-@router.get("/stats", response_model=ClientStats, tags=["MeiliSearch"])
+@router.get("/stats", response_model=ClientStats, tags=["Meilisearch"])
 async def get_stats(client: Client = Depends(meilisearch_client)) -> ClientStats:
     return await client.get_all_stats()
 
 
-@router.get("/version", response_model=Version, tags=["MeiliSearch"])
+@router.get("/version", response_model=Version, tags=["Meilisearch"])
 async def get_version(client: Client = Depends(meilisearch_client)) -> Version:
     return await client.get_version()

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import jwt
 import pytest
-from meilisearch_python_async.errors import MeiliSearchApiError
+from meilisearch_python_async.errors import MeilisearchApiError
 from meilisearch_python_async.models.client import KeyCreate
 
 
@@ -15,7 +15,7 @@ async def test_key(raw_client):
 
     try:
         await raw_client.delete_key(key.key)
-    except MeiliSearchApiError:
+    except MeilisearchApiError:
         pass
 
 
@@ -29,7 +29,7 @@ async def test_key_info(raw_client):
         keys = await raw_client.get_keys()
         key = next(x for x in keys.results if x.description == key_info.description)
         await raw_client.delete_key(key.key)
-    except MeiliSearchApiError:
+    except MeilisearchApiError:
         pass
 
 
@@ -130,7 +130,7 @@ async def test_delete_key(test_key, test_client, raw_client):
     result = await test_client.delete(f"/meilisearch/keys/{test_key.key}")
     assert result.status_code == 204
 
-    with pytest.raises(MeiliSearchApiError):
+    with pytest.raises(MeilisearchApiError):
         await raw_client.get_key(test_key.key)
 
 

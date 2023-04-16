@@ -1,7 +1,7 @@
 from math import ceil
 
 import pytest
-from meilisearch_python_async.errors import MeiliSearchApiError
+from meilisearch_python_async.errors import MeilisearchApiError
 from meilisearch_python_async.task import wait_for_task
 
 
@@ -71,7 +71,7 @@ async def test_delete_document(test_client, index_with_documents):
     uid, index = index_with_documents
     response = await test_client.delete(f"/documents/{uid}/500682")
     await wait_for_task(index.http_client, response.json()["taskUid"])
-    with pytest.raises(MeiliSearchApiError):
+    with pytest.raises(MeilisearchApiError):
         await test_client.get(f"/documents/{uid}/500682")
 
 
@@ -104,7 +104,7 @@ async def test_get_document(test_client, index_with_documents):
 
 
 async def test_get_document_nonexistent(test_client, empty_index):
-    with pytest.raises(MeiliSearchApiError):
+    with pytest.raises(MeilisearchApiError):
         uid, _ = empty_index
         await test_client.get(f"documents/{uid}/123")
 
@@ -136,16 +136,17 @@ async def test_update_documents(test_client, index_with_documents, small_movies)
     response = await test_client.get(f"documents/{uid}")
     response_docs = response.json()["results"]
     response_docs[0]["title"] = "Some title"
+    doc_id = response_docs[0]["id"]
     update_body = {"uid": uid, "documents": response_docs}
     update = await test_client.put("/documents", json=update_body)
     await wait_for_task(index.http_client, update.json()["taskUid"])
-    response = await test_client.get(f"/documents/{uid}")
-    assert response.json()["results"][0]["title"] == "Some title"
+    response = await test_client.get(f"/documents/{uid}/{doc_id}")
+    assert response.json()["title"] == "Some title"
     update_body = {"uid": uid, "documents": small_movies}
     update = await test_client.put("/documents", json=update_body)
     await wait_for_task(index.http_client, update.json()["taskUid"])
-    response = await test_client.get(f"/documents/{uid}")
-    assert response.json()["results"][0]["title"] != "Some title"
+    response = await test_client.get(f"/documents/{uid}/{doc_id}")
+    assert response.json()["title"] != "Some title"
 
 
 async def test_update_documents_with_primary_key(test_client, empty_index, small_movies):
@@ -165,16 +166,17 @@ async def test_update_documents_in_batches(
     response = await test_client.get(f"documents/{uid}")
     response_docs = response.json()["results"]
     response_docs[0]["title"] = "Some title"
+    doc_id = response_docs[0]["id"]
     update_body = {"uid": uid, "documents": response_docs}
     update = await test_client.put("/documents", json=update_body)
     await wait_for_task(index.http_client, update.json()["taskUid"])
-    response = await test_client.get(f"/documents/{uid}")
-    assert response.json()["results"][0]["title"] == "Some title"
+    response = await test_client.get(f"/documents/{uid}/{doc_id}")
+    assert response.json()["title"] == "Some title"
     update_body = {"uid": uid, "batch_size": batch_size, "documents": small_movies}
     updates = await test_client.put("/documents/batches", json=update_body)
 
     for update in updates.json():
         await wait_for_task(index.http_client, update["taskUid"])
 
-    response = await test_client.get(f"/documents/{uid}")
-    assert response.json()["results"][0]["title"] != "Some title"
+    response = await test_client.get(f"/documents/{uid}/{doc_id}")
+    assert response.json()["title"] != "Some title"
