@@ -80,10 +80,6 @@ MEILI_MASTER_KEY=masterKey  # This is the API key for your Meilisearch instance
 
 Now the Meilisearch routes will be available in your FastAPI app. Documentation for the routes can be viewed in the OpenAPI documentation of the FastAPI app. To view this start your FastAPI app and naviate to the docs `http://localhost:8000/docs` replacing the url with the correct url for your app.
 
-## Compatibility with Meilisearch
-
-This package only guarantees the compatibility with [version v0.28 of Meilisearch](https://github.com/meilisearch/meilisearch/releases/tag/v0.28.0).
-
 ## Contributing
 
 Contributions to this project are welcome. If you are interesting in contributing please see our [contributing guide](CONTRIBUTING.md)
