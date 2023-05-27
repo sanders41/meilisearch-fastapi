@@ -146,7 +146,7 @@ async def empty_index():
 def small_movies():
     """Runs once per session. Provides the content of small_movies.json"""
 
-    with open(SMALL_MOVIES_PATH, "r") as movie_file:
+    with open(SMALL_MOVIES_PATH) as movie_file:
         yield json.loads(movie_file.read())
 
 
