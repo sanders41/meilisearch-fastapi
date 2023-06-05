@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import jwt
 import pytest
@@ -51,7 +51,7 @@ async def test_generate_tenant_token(test_client, default_search_key):
 
 async def test_generate_tenant_token_expires(test_client, default_search_key):
     search_rules = {"test": "value"}
-    expires_at = datetime.utcnow() + timedelta(days=1)
+    expires_at = datetime.now(tz=timezone.utc) + timedelta(days=1)
     expected = {"searchRules": search_rules, "apiKeyUid": default_search_key.uid}
     expected["exp"] = int(datetime.timestamp(expires_at))  # type: ignore
     api_key = default_search_key.dict()
@@ -70,7 +70,7 @@ async def test_generate_tenant_token_expires(test_client, default_search_key):
 
 async def test_generate_tenant_token_default_key_expires_past(test_client, default_search_key):
     search_rules = {"test": "value"}
-    expires_at = datetime.utcnow() + timedelta(days=-1)
+    expires_at = datetime.now(tz=timezone.utc) + timedelta(days=-1)
     api_key = default_search_key.dict()
     api_key["created_at"] = api_key["created_at"].isoformat()
     api_key["updated_at"] = api_key["updated_at"].isoformat()
@@ -106,7 +106,7 @@ async def test_get_health(test_client):
     "expires_at",
     (
         None,
-        (datetime.utcnow() + timedelta(days=2)).isoformat(),
+        (datetime.now(tz=timezone.utc) + timedelta(days=2)).isoformat(),
     ),
 )
 async def test_create_key(expires_at, test_client, test_key_info):
