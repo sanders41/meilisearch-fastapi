@@ -19,3 +19,6 @@ class SearchParameters(CamelBase):
     highlight_pre_tag: str = "<em>"
     highlight_post_tag: str = "</em>"
     crop_marker: str = "..."
+    matching_strategy: str = "all"
+    hists_per_page: int | None = None
+    page: int | None = None
