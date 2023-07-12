@@ -275,3 +275,27 @@ async def test_custom_search_hightlight_tags_and_crop_marker(test_client, index_
     assert "dragon" in response.json()["hits"][0]["_formatted"]["title"].lower()
     assert "<strong>" in response.json()["hits"][0]["_formatted"]["title"]
     assert "</strong>" in response.json()["hits"][0]["_formatted"]["title"]
+
+async def test_custom_search_params_with_matching_strategy_all(test_client, index_with_documents):
+    uid, _ = index_with_documents
+    data = {
+        "uid": uid,
+        "query": "man loves",
+        "limit": 5,
+        "matchingStrategy": "all",
+    }
+
+    response = await test_client.post("/search", json=data)
+    assert len(response.json()["hits"]) == 1
+
+async def test_custom_search_params_with_matching_strategy_last(test_client, index_with_documents):
+    uid, _ = index_with_documents
+    data = {
+        "uid": uid,
+        "query": "man loves",
+        "limit": 5,
+        "matchingStrategy": "last",
+    }
+
+    response = await test_client.post("/search", json=data)
+    assert len(response.json()["hits"]) > 1
