@@ -20,5 +20,5 @@ class SearchParameters(CamelBase):
     highlight_post_tag: str = "</em>"
     crop_marker: str = "..."
     matching_strategy: str = "all"
-    hists_per_page: int | None = None
-    page: int | None = None
+    hits_per_page: Optional[int] = None
+    page: Optional[int] = None
