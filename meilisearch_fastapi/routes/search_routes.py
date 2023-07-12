@@ -29,4 +29,7 @@ async def search(
         highlight_pre_tag=search_parameters.highlight_pre_tag,
         highlight_post_tag=search_parameters.highlight_post_tag,
         crop_marker=search_parameters.crop_marker,
+        matching_strategy=search_parameters.matching_strategy,
+        hits_per_page=search_parameters.hits_per_page,
+        page=search_parameters.page,
     )
