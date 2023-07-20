@@ -24,6 +24,7 @@ python = "^3.8"
 fastapi = ">=0.95.1"
 pydantic = {version = ">=1.8.2", extras = ["dotenv"]}
 meilisearch-python-async = ">=1.3.0"
+camel-converter = ">=3.0.2"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=22.8.0"
