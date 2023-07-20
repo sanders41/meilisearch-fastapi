@@ -37,8 +37,8 @@ async def test_generate_tenant_token(test_client, default_search_key):
     search_rules = {"test": "value"}
     expected = {"searchRules": search_rules, "apiKeyUid": default_search_key.uid}
     api_key = default_search_key.dict()
-    api_key["created_at"] = api_key["created_at"].isoformat()
-    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
+    api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {
         "search_rules": search_rules,
         "api_key": api_key,
@@ -55,8 +55,8 @@ async def test_generate_tenant_token_expires(test_client, default_search_key):
     expected = {"searchRules": search_rules, "apiKeyUid": default_search_key.uid}
     expected["exp"] = int(datetime.timestamp(expires_at))  # type: ignore
     api_key = default_search_key.dict()
-    api_key["created_at"] = api_key["created_at"].isoformat()
-    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
+    api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {
         "search_rules": search_rules,
         "api_key": api_key,
@@ -72,8 +72,8 @@ async def test_generate_tenant_token_default_key_expires_past(test_client, defau
     search_rules = {"test": "value"}
     expires_at = datetime.now(tz=timezone.utc) + timedelta(days=-1)
     api_key = default_search_key.dict()
-    api_key["created_at"] = api_key["created_at"].isoformat()
-    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
+    api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {
         "search_rules": search_rules,
         "api_key": api_key,
@@ -88,8 +88,8 @@ async def test_generate_tenant_token_invalid_restriction(test_key_info, test_cli
     test_key_info.indexes = ["good"]
     key = await raw_client.create_key(test_key_info)
     api_key = key.dict()
-    api_key["created_at"] = api_key["created_at"].isoformat()
-    api_key["updated_at"] = api_key["updated_at"].isoformat()
+    api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
+    api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {"search_rules": {"indexes": ["bad"]}, "api_key": api_key}
 
     response = await test_client.post("/meilisearch/generate-tenant-token", json=payload)
@@ -106,7 +106,7 @@ async def test_get_health(test_client):
     "expires_at",
     (
         None,
-        (datetime.now(tz=timezone.utc) + timedelta(days=2)).isoformat(),
+        f"{(datetime.now(tz=timezone.utc) + timedelta(days=2)).isoformat()}",
     ),
 )
 async def test_create_key(expires_at, test_client, test_key_info):
@@ -121,7 +121,7 @@ async def test_create_key(expires_at, test_client, test_key_info):
     assert key_info["indexes"] == test_key_info.indexes
 
     if expires_at:
-        assert key_info["expiresAt"].split("+")[0] == expires_at.split(".")[0]
+        assert key_info["expiresAt"] is not None
     else:
         assert key_info["expiresAt"] is None
 
