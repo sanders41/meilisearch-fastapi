@@ -80,13 +80,13 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "camel-converter"
-version = "3.0.2"
+version = "3.0.3"
 description = "Converts a string from snake case to camel case or camel case to snake case"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "camel_converter-3.0.2-py3-none-any.whl", hash = "sha256:88e5d91be5b2dff9c0748ba515774c3421088922d9e77c39f8742eb41cb7db88"},
-    {file = "camel_converter-3.0.2.tar.gz", hash = "sha256:3b3d076e824ae979b271b4d497c90514c2b218811f76b0c368fb69da2556fe07"},
+    {file = "camel_converter-3.0.3-py3-none-any.whl", hash = "sha256:d20aec6f048a9c2b79ef5e83dbc41bcf5aaaad40cd1ac66c92d384e9696a3c2d"},
+    {file = "camel_converter-3.0.3.tar.gz", hash = "sha256:70e282f94359b40269aa754c12df613356acbc283a97be7e15beac1cfce33891"},
 ]
 
 [package.extras]
