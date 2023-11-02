@@ -10,9 +10,9 @@ def test_config_with_key(https, meilisearch_url, master_key, monkeypatch):
 
     assert config.meilisearch_api_key == master_key
     if https == "true":
-        assert config.meilisearch_url == f"https://{meilisearch_url}"
+        assert config.meilisearch_url == f"https://{meilisearch_url[7:]}"
     else:
-        assert config.meilisearch_url == f"http://{meilisearch_url}"
+        assert config.meilisearch_url == meilisearch_url
 
 
 def test_config_no_key(meilisearch_url, monkeypatch):
@@ -22,7 +22,7 @@ def test_config_no_key(meilisearch_url, monkeypatch):
     config = get_config()
 
     assert config.meilisearch_api_key is None
-    assert config.meilisearch_url == f"http://{meilisearch_url}"
+    assert config.meilisearch_url == meilisearch_url
 
 
 def test_config_no_url(monkeypatch):
