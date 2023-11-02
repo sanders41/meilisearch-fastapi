@@ -25,15 +25,17 @@ def default_settings():
 
 
 @pytest.mark.usefixtures("indexes_sample")
-async def test_settings_get(default_settings, index_uid, test_client):
-    response = await test_client.get(f"/settings/{index_uid}")
+async def test_settings_get(default_settings, index_uid, fastapi_test_client):
+    response = await fastapi_test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
     assert response.json() == default_settings
 
 
 @pytest.mark.usefixtures("indexes_sample")
-async def test_settings_update_and_delete(default_settings, index_uid, test_client, raw_client):
+async def test_settings_update_and_delete(
+    default_settings, index_uid, fastapi_test_client, async_client
+):
     update_settings = {
         "uid": index_uid,
         "synonyms": {"logan": ["wolverine", "xmen"], "wolverine": ["logan", "xmen"]},
@@ -50,12 +52,12 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
         },
         "pagination": {"maxTotalHits": 1000},
     }
-    response = await test_client.patch("/settings", json=update_settings)
+    response = await fastapi_test_client.patch("/settings", json=update_settings)
 
     assert response.status_code == 200
-    await wait_for_task(raw_client.http_client, response.json()["taskUid"])
+    await wait_for_task(async_client.http_client, response.json()["taskUid"])
 
-    response = await test_client.get(f"/settings/{index_uid}")
+    response = await fastapi_test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
 
@@ -72,11 +74,11 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
 
     assert returned_settings == update_settings
 
-    response = await test_client.delete(f"/settings/{index_uid}")
+    response = await fastapi_test_client.delete(f"/settings/{index_uid}")
 
     assert response.status_code == 200
 
-    response = await test_client.get(f"/settings/{index_uid}")
+    response = await fastapi_test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
     returned_settings = response.json()

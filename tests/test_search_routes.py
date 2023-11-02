@@ -1,49 +1,65 @@
+from uuid import uuid4
+
 import pytest
 from meilisearch_python_async.task import wait_for_task
 
 
-async def test_basic_search(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_basic_search(fastapi_test_client, async_index_with_documents, small_movies):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {"uid": uid, "query": "How to Train Your Dragon"}
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert response.json()["hits"][0]["id"] == "166428"
     assert "_formatted" not in response.json()["hits"][0]
 
 
-async def test_search_with_empty_query(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_search_with_empty_query(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {"uid": uid, "query": ""}
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 20
     assert response.json()["query"] == ""
 
 
-async def test_custom_search(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search(fastapi_test_client, async_index_with_documents, small_movies):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {"uid": uid, "query": "Dragon", "attributesToHighlight": ["title"]}
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert response.json()["hits"][0]["id"] == "166428"
     assert "_formatted" in response.json()["hits"][0]
     assert "dragon" in response.json()["hits"][0]["_formatted"]["title"].lower()
 
 
-async def test_custom_search_with_empty_query(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_with_empty_query(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {"uid": uid, "query": "", "attributesToHighlight": ["title"]}
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 20
     assert response.json()["query"] == ""
 
 
-async def test_custom_search_with_no_query(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_with_no_query(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {"uid": uid, "query": "", "limit": 5}
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 5
 
 
-async def test_custom_search_params_with_wildcard(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_params_with_wildcard(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {
         "uid": uid,
         "query": "a",
@@ -52,14 +68,17 @@ async def test_custom_search_params_with_wildcard(test_client, index_with_docume
         "attributesToRetrieve": ["*"],
         "attributesToCrop": ["*"],
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 5
     assert "_formatted" in response.json()["hits"][0]
     assert "title" in response.json()["hits"][0]["_formatted"]
 
 
-async def test_custom_search_params_with_simple_string(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_params_with_simple_string(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {
         "uid": uid,
         "query": "a",
@@ -68,15 +87,18 @@ async def test_custom_search_params_with_simple_string(test_client, index_with_d
         "attributesToRetrieve": ["title"],
         "attributesToCrop": ["title"],
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 5
     assert "_formatted" in response.json()["hits"][0]
     assert "title" in response.json()["hits"][0]["_formatted"]
     assert "release_date" not in response.json()["hits"][0]["_formatted"]
 
 
-async def test_custom_search_params_with_string_list(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_params_with_string_list(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {
         "uid": uid,
         "query": "a",
@@ -84,7 +106,7 @@ async def test_custom_search_params_with_string_list(test_client, index_with_doc
         "attributesToRetrieve": ["title", "overview"],
         "attributesToHighlight": ["title"],
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
 
     assert len(response.json()["hits"]) == 5
     assert "title" in response.json()["hits"][0]
@@ -94,17 +116,20 @@ async def test_custom_search_params_with_string_list(test_client, index_with_doc
     assert "<em>" not in response.json()["hits"][0]["_formatted"]["overview"]
 
 
-async def test_custom_search_params_with_facet_distribution(test_client, index_with_documents):
-    uid, index = index_with_documents
+async def test_custom_search_params_with_facet_distribution(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    index = await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
     await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
         "facets": ["genre"],
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 12
     assert response.json()["facetDistribution"] is not None
     assert "genre" in response.json()["facetDistribution"]
@@ -113,10 +138,13 @@ async def test_custom_search_params_with_facet_distribution(test_client, index_w
     assert response.json()["facetDistribution"]["genre"]["fantasy"] == 1
 
 
-async def test_custom_search_params_with_facet_filters(test_client, index_with_documents):
-    uid, index = index_with_documents
+async def test_custom_search_params_with_facet_filters(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    index = await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
     await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
@@ -124,27 +152,30 @@ async def test_custom_search_params_with_facet_filters(test_client, index_with_d
         "filter": [["genre = action"]],
     }
 
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
     assert response.json()["facetDistribution"] is None
 
 
-async def test_custom_search_params_with_multiple_facet_filters(test_client, index_with_documents):
-    uid, index = index_with_documents
+async def test_custom_search_params_with_multiple_facet_filters(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    index = await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
     await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
         "filter": ["genre = action", ["genre = action", "genre = action"]],
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
     assert response.json()["facetDistribution"] is None
 
 
-async def test_custom_search_facet_filters_with_space(test_client, empty_index):
+async def test_custom_search_facet_filters_with_space(fastapi_test_client, async_empty_index):
     dataset = [
         {
             "id": 123,
@@ -185,30 +216,34 @@ async def test_custom_search_facet_filters_with_space(test_client, empty_index):
         {"id": 42, "title": "The Hitchhiker's Guide to the Galaxy", "genre": "fantasy"},
     ]
 
-    uid, index = empty_index
+    uid = str(uuid4())
+    index = await async_empty_index(uid)
     documents = {
         "uid": uid,
         "documents": dataset,
     }
-    update = await test_client.post("/documents", json=documents)
+    update = await fastapi_test_client.post("/documents", json=documents)
     await wait_for_task(index.http_client, update.json()["taskUid"])
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
     await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "h",
         "filter": ["genre = 'sci fi'"],
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 1
     assert response.json()["hits"][0]["title"] == "The Hobbit"
 
 
-async def test_custom_search_params_with_many_params(test_client, index_with_documents):
-    uid, index = index_with_documents
+async def test_custom_search_params_with_many_params(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    index = await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
-    update = await test_client.patch("/indexes/filterable-attributes", json=facet_data)
+    update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
     await wait_for_task(index.http_client, update.json()["taskUid"])
     data = {
         "uid": uid,
@@ -216,7 +251,7 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
         "filter": [["genre = action"]],
         "attributesToRetrieve": ["title", "poster"],
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 3
     assert response.json()["facetDistribution"] is None
     assert "title" in response.json()["hits"][0]
@@ -239,8 +274,11 @@ async def test_custom_search_params_with_many_params(test_client, index_with_doc
         ),
     ],
 )
-async def test_search_sort(sort, titles, test_client, index_with_documents):
-    uid, index = index_with_documents
+async def test_search_sort(
+    sort, titles, fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    index = await async_index_with_documents(small_movies, uid)
     response = await index.update_sortable_attributes(["title"])
     await wait_for_task(index.http_client, response.task_uid)
     stats = await index.get_stats()  # get this to get the total document count
@@ -252,14 +290,17 @@ async def test_search_sort(sort, titles, test_client, index_with_documents):
         "sort": sort,
         "limit": stats.number_of_documents,
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
 
     assert response.json()["hits"][0]["title"] == titles[0]
     assert response.json()["hits"][stats.number_of_documents - 1]["title"] == titles[1]
 
 
-async def test_custom_search_hightlight_tags_and_crop_marker(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_hightlight_tags_and_crop_marker(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {
         "uid": uid,
         "query": "Dragon",
@@ -269,7 +310,7 @@ async def test_custom_search_hightlight_tags_and_crop_marker(test_client, index_
         "highlight_post_tag": "</strong>",
         "crop_marker": "***",
     }
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert response.json()["hits"][0]["id"] == "166428"
     assert "_formatted" in response.json()["hits"][0]
     assert "dragon" in response.json()["hits"][0]["_formatted"]["title"].lower()
@@ -277,8 +318,11 @@ async def test_custom_search_hightlight_tags_and_crop_marker(test_client, index_
     assert "</strong>" in response.json()["hits"][0]["_formatted"]["title"]
 
 
-async def test_custom_search_params_with_matching_strategy_all(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_params_with_matching_strategy_all(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {
         "uid": uid,
         "query": "man loves",
@@ -286,12 +330,15 @@ async def test_custom_search_params_with_matching_strategy_all(test_client, inde
         "matchingStrategy": "all",
     }
 
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) == 1
 
 
-async def test_custom_search_params_with_matching_strategy_last(test_client, index_with_documents):
-    uid, _ = index_with_documents
+async def test_custom_search_params_with_matching_strategy_last(
+    fastapi_test_client, async_index_with_documents, small_movies
+):
+    uid = str(uuid4())
+    await async_index_with_documents(small_movies, uid)
     data = {
         "uid": uid,
         "query": "man loves",
@@ -299,5 +346,5 @@ async def test_custom_search_params_with_matching_strategy_last(test_client, ind
         "matchingStrategy": "last",
     }
 
-    response = await test_client.post("/search", json=data)
+    response = await fastapi_test_client.post("/search", json=data)
     assert len(response.json()["hits"]) > 1
