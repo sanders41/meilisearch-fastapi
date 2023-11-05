@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional
 
 from camel_converter.pydantic_base import CamelBase
-from meilisearch_python_async.models.settings import Faceting
-from meilisearch_python_async.models.settings import TypoTolerance as TypoToleranceInfo
+from meilisearch_python_sdk.models.settings import Faceting
+from meilisearch_python_sdk.models.settings import TypoTolerance as TypoToleranceInfo
 
 
 class FacetingWithUID(Faceting):

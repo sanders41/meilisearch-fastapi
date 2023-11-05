@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
-from meilisearch_python_async import Client
-from meilisearch_python_async.models.search import SearchResults
+from meilisearch_python_sdk import AsyncClient
+from meilisearch_python_sdk.models.search import SearchResults
 
 from meilisearch_fastapi._client import meilisearch_client
 from meilisearch_fastapi.models.search_parameters import SearchParameters
@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post("/", response_model=SearchResults, tags=["Meilisearch Search"])
 async def search(
-    search_parameters: SearchParameters, client: Client = Depends(meilisearch_client)
+    search_parameters: SearchParameters, client: AsyncClient = Depends(meilisearch_client)
 ) -> SearchResults:
     index = client.index(search_parameters.uid)
 

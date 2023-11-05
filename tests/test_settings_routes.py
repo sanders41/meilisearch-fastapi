@@ -1,5 +1,4 @@
 import pytest
-from meilisearch_python_async.task import wait_for_task
 
 
 @pytest.fixture
@@ -19,43 +18,51 @@ def default_settings():
             "disableOnWords": [],
             "minWordSizeForTypos": {"oneTypo": 5, "twoTypos": 9},
         },
-        "faceting": {"maxValuesPerFacet": 100},
+        "faceting": {"maxValuesPerFacet": 100, "sortFacetValuesBy": {"*": "alpha"}},
         "pagination": {"maxTotalHits": 1000},
+        "dictionary": [],
+        "nonSeparatorTokens": [],
+        "separatorTokens": [],
     }
 
 
 @pytest.mark.usefixtures("indexes_sample")
-async def test_settings_get(default_settings, index_uid, test_client):
-    response = await test_client.get(f"/settings/{index_uid}")
+async def test_settings_get(default_settings, index_uid, fastapi_test_client):
+    response = await fastapi_test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
     assert response.json() == default_settings
 
 
 @pytest.mark.usefixtures("indexes_sample")
-async def test_settings_update_and_delete(default_settings, index_uid, test_client, raw_client):
+async def test_settings_update_and_delete(
+    default_settings, index_uid, fastapi_test_client, async_client
+):
     update_settings = {
         "uid": index_uid,
         "synonyms": {"logan": ["wolverine", "xmen"], "wolverine": ["logan", "xmen"]},
         "stopWords": ["stop", "words"],
         "rankingRules": ["words", "typo", "proximity"],
         "filterableAttributes": ["attributes", "filterable"],
-        "faceting": {"maxValuesPerFacet": 90},
+        "faceting": {"maxValuesPerFacet": 90, "sortFacetValuesBy": {"*": "alpha"}},
         "distinctAttribute": "movie_id",
         "searchableAttributes": ["description", "title"],
+        "separatorTokens": ["-"],
+        "nonSeparatorTokens": ["&"],
         "displayedAttributes": ["genre", "title"],
         "sortableAttributes": ["genre", "title"],
         "typoTolerance": {
             "enabled": False,
         },
         "pagination": {"maxTotalHits": 1000},
+        "dictionary": ["a"],
     }
-    response = await test_client.patch("/settings", json=update_settings)
+    response = await fastapi_test_client.patch("/settings", json=update_settings)
 
     assert response.status_code == 200
-    await wait_for_task(raw_client.http_client, response.json()["taskUid"])
+    await async_client.wait_for_task(response.json()["taskUid"])
 
-    response = await test_client.get(f"/settings/{index_uid}")
+    response = await fastapi_test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
 
@@ -72,11 +79,11 @@ async def test_settings_update_and_delete(default_settings, index_uid, test_clie
 
     assert returned_settings == update_settings
 
-    response = await test_client.delete(f"/settings/{index_uid}")
+    response = await fastapi_test_client.delete(f"/settings/{index_uid}")
 
     assert response.status_code == 200
 
-    response = await test_client.get(f"/settings/{index_uid}")
+    response = await fastapi_test_client.get(f"/settings/{index_uid}")
 
     assert response.status_code == 200
     returned_settings = response.json()

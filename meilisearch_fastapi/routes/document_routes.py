@@ -1,9 +1,9 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends
-from meilisearch_python_async import Client
-from meilisearch_python_async.models.documents import DocumentsInfo
-from meilisearch_python_async.models.task import TaskInfo
+from meilisearch_python_sdk import AsyncClient
+from meilisearch_python_sdk.models.documents import DocumentsInfo
+from meilisearch_python_sdk.models.task import TaskInfo
 
 from meilisearch_fastapi._client import meilisearch_client
 from meilisearch_fastapi.models.document_info import (
@@ -18,7 +18,7 @@ router = APIRouter()
 @router.post("/", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
 async def add_documents(
     document_info: DocumentInfo,
-    client: Client = Depends(meilisearch_client),
+    client: AsyncClient = Depends(meilisearch_client),
 ) -> TaskInfo:
     index = client.index(document_info.uid)
 
@@ -29,7 +29,7 @@ async def add_documents(
     "/batches", response_model=List[TaskInfo], status_code=202, tags=["Meilisearch Documents"]
 )
 async def add_documents_in_batches(
-    document_info: DocumentInfoBatches, client: Client = Depends(meilisearch_client)
+    document_info: DocumentInfoBatches, client: AsyncClient = Depends(meilisearch_client)
 ) -> List[TaskInfo]:
     index = client.index(document_info.uid)
 
@@ -41,7 +41,9 @@ async def add_documents_in_batches(
 
 
 @router.delete("/{uid}", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
-async def delete_all_documents(uid: str, client: Client = Depends(meilisearch_client)) -> TaskInfo:
+async def delete_all_documents(
+    uid: str, client: AsyncClient = Depends(meilisearch_client)
+) -> TaskInfo:
     index = client.index(uid)
 
     return await index.delete_all_documents()
@@ -54,7 +56,7 @@ async def delete_all_documents(uid: str, client: Client = Depends(meilisearch_cl
     tags=["Meilisearch Documents"],
 )
 async def delete_document(
-    uid: str, document_id: str, client: Client = Depends(meilisearch_client)
+    uid: str, document_id: str, client: AsyncClient = Depends(meilisearch_client)
 ) -> TaskInfo:
     index = client.index(uid)
 
@@ -64,7 +66,7 @@ async def delete_document(
 @router.post("/delete", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
 async def delete_documents(
     documents: DocumentDelete,
-    client: Client = Depends(meilisearch_client),
+    client: AsyncClient = Depends(meilisearch_client),
 ) -> TaskInfo:
     index = client.index(documents.uid)
 
@@ -75,7 +77,7 @@ async def delete_documents(
 async def get_document(
     uid: str,
     document_id: str,
-    client: Client = Depends(meilisearch_client),
+    client: AsyncClient = Depends(meilisearch_client),
 ) -> dict:
     index = client.index(uid)
 
@@ -88,7 +90,7 @@ async def get_documents(
     limit: int = 20,
     offset: int = 0,
     fields: Optional[List[str]] = None,
-    client: Client = Depends(meilisearch_client),
+    client: AsyncClient = Depends(meilisearch_client),
 ) -> DocumentsInfo:
     index = client.index(uid)
 
@@ -104,7 +106,7 @@ async def get_documents(
 @router.put("/", response_model=TaskInfo, status_code=202, tags=["Meilisearch Documents"])
 async def update_documents(
     document_info: DocumentInfo,
-    client: Client = Depends(meilisearch_client),
+    client: AsyncClient = Depends(meilisearch_client),
 ) -> TaskInfo:
     index = client.index(document_info.uid)
 
@@ -116,7 +118,7 @@ async def update_documents(
 )
 async def update_documents_in_batches(
     document_info: DocumentInfoBatches,
-    client: Client = Depends(meilisearch_client),
+    client: AsyncClient = Depends(meilisearch_client),
 ) -> List[TaskInfo]:
     index = client.index(document_info.uid)
 
