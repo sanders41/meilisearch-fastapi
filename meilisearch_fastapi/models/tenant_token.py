@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
 from camel_converter.pydantic_base import CamelBase
-from meilisearch_python_async.models.client import Key
+from meilisearch_python_sdk.models.client import Key
 
 
 class TenantToken(CamelBase):

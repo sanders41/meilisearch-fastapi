@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from meilisearch_python_async import Client
-from meilisearch_python_async.models.settings import MeilisearchSettings
-from meilisearch_python_async.models.task import TaskInfo
+from meilisearch_python_sdk import AsyncClient
+from meilisearch_python_sdk.models.settings import MeilisearchSettings
+from meilisearch_python_sdk.models.task import TaskInfo
 
 from meilisearch_fastapi._client import meilisearch_client
 from meilisearch_fastapi._config import MeilisearchConfig, get_config
@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.get("/{uid}", response_model=MeilisearchSettings, tags=["Meilisearch Settings"])
 async def get_settings(
-    uid: str, client: Client = Depends(meilisearch_client)
+    uid: str, client: AsyncClient = Depends(meilisearch_client)
 ) -> MeilisearchSettings:
     index = client.index(uid)
 
@@ -22,10 +22,12 @@ async def get_settings(
 @router.delete("/{uid}", response_model=TaskInfo, tags=["Meilisearch Settings"])
 async def delete_settings(
     uid: str,
-    client: Client = Depends(meilisearch_client),
+    client: AsyncClient = Depends(meilisearch_client),
     config: MeilisearchConfig = Depends(get_config),
 ) -> TaskInfo:
-    async with Client(url=config.meilisearch_url, api_key=config.meilisearch_api_key) as client:
+    async with AsyncClient(
+        url=config.meilisearch_url, api_key=config.meilisearch_api_key
+    ) as client:
         index = client.index(uid)
 
         return await index.reset_settings()
@@ -33,7 +35,7 @@ async def delete_settings(
 
 @router.patch("/", response_model=TaskInfo, tags=["Meilisearch Settings"])
 async def update_settings(
-    update_settings: MeilisearchIndexSettings, client: Client = Depends(meilisearch_client)
+    update_settings: MeilisearchIndexSettings, client: AsyncClient = Depends(meilisearch_client)
 ) -> TaskInfo:
     index = client.index(update_settings.uid)
 
@@ -48,6 +50,9 @@ async def update_settings(
         sortable_attributes=update_settings.sortable_attributes,
         typo_tolerance=update_settings.typo_tolerance,
         faceting=update_settings.faceting,
+        separator_tokens=update_settings.separator_tokens,
+        non_separator_tokens=update_settings.non_separator_tokens,
+        dictionary=update_settings.dictionary,
     )
 
     return await index.update_settings(meili_settings)

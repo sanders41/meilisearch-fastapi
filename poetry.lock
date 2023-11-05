@@ -354,24 +354,6 @@ files = [
 ]
 
 [[package]]
-name = "meilisearch-python-async"
-version = "1.4.8"
-description = "A Python async client for the Meilisearch API"
-optional = false
-python-versions = ">=3.8,<4.0"
-files = [
-    {file = "meilisearch_python_async-1.4.8-py3-none-any.whl", hash = "sha256:dea8da89ea254cd2de7e3c0f0883e98486fc724ba8212e4fe19b2b44d9ca6aa1"},
-    {file = "meilisearch_python_async-1.4.8.tar.gz", hash = "sha256:ebcea0ed800dce291809ec599384f103da55362b4485997ff4daa0010c935fc6"},
-]
-
-[package.dependencies]
-aiofiles = ">=0.7"
-camel-converter = ">=1.0.0"
-httpx = ">=0.17"
-pydantic = ">=1.8"
-PyJWT = ">=2.3.0"
-
-[[package]]
 name = "meilisearch-python-sdk"
 version = "2.0.1"
 description = "A Python async client for the Meilisearch API"
@@ -871,4 +853,4 @@ test = ["covdefaults (>=2.2.2)", "coverage (>=7.1)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "2b15d51d94a6ca547834c8f42902e01ddecbf3807704dc0ecfeb9368b8158ff0"
+content-hash = "7422ded1c7b501f0149320be878054f92668ab50f7105ac5b60a6c2605af71c5"
