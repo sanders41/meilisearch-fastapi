@@ -1,5 +1,4 @@
 import pytest
-from meilisearch_python_async.task import wait_for_task
 
 
 @pytest.fixture
@@ -19,8 +18,11 @@ def default_settings():
             "disableOnWords": [],
             "minWordSizeForTypos": {"oneTypo": 5, "twoTypos": 9},
         },
-        "faceting": {"maxValuesPerFacet": 100},
+        "faceting": {"maxValuesPerFacet": 100, "sortFacetValuesBy": {"*": "alpha"}},
         "pagination": {"maxTotalHits": 1000},
+        "dictionary": [],
+        "nonSeparatorTokens": [],
+        "separatorTokens": [],
     }
 
 
@@ -42,20 +44,23 @@ async def test_settings_update_and_delete(
         "stopWords": ["stop", "words"],
         "rankingRules": ["words", "typo", "proximity"],
         "filterableAttributes": ["attributes", "filterable"],
-        "faceting": {"maxValuesPerFacet": 90},
+        "faceting": {"maxValuesPerFacet": 90, "sortFacetValuesBy": {"*": "alpha"}},
         "distinctAttribute": "movie_id",
         "searchableAttributes": ["description", "title"],
+        "separatorTokens": ["-"],
+        "nonSeparatorTokens": ["&"],
         "displayedAttributes": ["genre", "title"],
         "sortableAttributes": ["genre", "title"],
         "typoTolerance": {
             "enabled": False,
         },
         "pagination": {"maxTotalHits": 1000},
+        "dictionary": ["a"],
     }
     response = await fastapi_test_client.patch("/settings", json=update_settings)
 
     assert response.status_code == 200
-    await wait_for_task(async_client.http_client, response.json()["taskUid"])
+    await async_client.wait_for_task(response.json()["taskUid"])
 
     response = await fastapi_test_client.get(f"/settings/{index_uid}")
 

@@ -2,8 +2,7 @@ from math import ceil
 from uuid import uuid4
 
 import pytest
-from meilisearch_python_async.errors import MeilisearchApiError
-from meilisearch_python_async.task import wait_for_task
+from meilisearch_python_sdk.errors import MeilisearchApiError
 
 
 def generate_test_movies(num_movies=50):
@@ -35,13 +34,18 @@ async def test_get_documents_none(async_empty_index, fastapi_test_client):
     "primary_key, expected_primary_key", [("release_date", "release_date"), (None, "id")]
 )
 async def test_add_documents(
-    primary_key, expected_primary_key, async_empty_index, small_movies, fastapi_test_client
+    primary_key,
+    expected_primary_key,
+    async_empty_index,
+    small_movies,
+    fastapi_test_client,
+    async_client,
 ):
     uid = str(uuid4())
     index = await async_empty_index(uid)
     document = {"uid": uid, "documents": small_movies, "primaryKey": primary_key}
     response = await fastapi_test_client.post("/documents", json=document)
-    update = await wait_for_task(index.http_client, response.json()["taskUid"])
+    update = await async_client.wait_for_task(response.json()["taskUid"])
     assert await index.get_primary_key() == expected_primary_key
     assert update.status == "succeeded"
 
@@ -57,6 +61,7 @@ async def test_add_documents_in_batches(
     async_empty_index,
     small_movies,
     fastapi_test_client,
+    async_client,
 ):
     uid = str(uuid4())
     index = await async_empty_index(uid)
@@ -70,41 +75,47 @@ async def test_add_documents_in_batches(
     assert ceil(len(small_movies) / batch_size) == len(response.json())
 
     for r in response.json():
-        update = await wait_for_task(index.http_client, r["taskUid"])
+        update = await async_client.wait_for_task(r["taskUid"])
         assert update.status == "succeeded"
 
     assert await index.get_primary_key() == expected_primary_key
 
 
-async def test_delete_document(fastapi_test_client, async_index_with_documents, small_movies):
+async def test_delete_document(
+    fastapi_test_client, async_index_with_documents, small_movies, async_client
+):
     uid = str(uuid4())
-    index = await async_index_with_documents(small_movies, uid)
+    await async_index_with_documents(small_movies, uid)
     response = await fastapi_test_client.delete(f"/documents/{uid}/500682")
-    await wait_for_task(index.http_client, response.json()["taskUid"])
+    await async_client.wait_for_task(response.json()["taskUid"])
     with pytest.raises(MeilisearchApiError):
         await fastapi_test_client.get(f"/documents/{uid}/500682")
 
 
-async def test_delete_documents(fastapi_test_client, async_index_with_documents, small_movies):
+async def test_delete_documents(
+    fastapi_test_client, async_index_with_documents, small_movies, async_client
+):
     to_delete = ["522681", "450465", "329996"]
     uid = str(uuid4())
-    index = await async_index_with_documents(small_movies, uid)
+    await async_index_with_documents(small_movies, uid)
     delete_info = {
         "uid": uid,
         "document_ids": to_delete,
     }
     response = await fastapi_test_client.post("/documents/delete", json=delete_info)
-    await wait_for_task(index.http_client, response.json()["taskUid"])
+    await async_client.wait_for_task(response.json()["taskUid"])
     documents = await fastapi_test_client.get(f"/documents/{uid}")
     ids = [x["id"] for x in documents.json()["results"]]
     assert to_delete not in ids
 
 
-async def test_delete_all_documents(fastapi_test_client, async_index_with_documents, small_movies):
+async def test_delete_all_documents(
+    fastapi_test_client, async_index_with_documents, small_movies, async_client
+):
     uid = str(uuid4())
-    index = await async_index_with_documents(small_movies, uid)
+    await async_index_with_documents(small_movies, uid)
     response = await fastapi_test_client.delete(f"/documents/{uid}")
-    await wait_for_task(index.http_client, response.json()["taskUid"])
+    await async_client.wait_for_task(response.json()["taskUid"])
     response = await fastapi_test_client.get(f"/documents/{uid}")
     assert response.json()["results"] == []
 
@@ -151,57 +162,59 @@ async def test_get_documents_offset_optional_params(
     assert response_offset_json[0]["overview"] == response_json[1]["overview"]
 
 
-async def test_update_documents(fastapi_test_client, async_index_with_documents, small_movies):
+async def test_update_documents(
+    fastapi_test_client, async_index_with_documents, small_movies, async_client
+):
     uid = str(uuid4())
-    index = await async_index_with_documents(small_movies, uid)
+    await async_index_with_documents(small_movies, uid)
     response = await fastapi_test_client.get(f"documents/{uid}")
     response_docs = response.json()["results"]
     response_docs[0]["title"] = "Some title"
     doc_id = response_docs[0]["id"]
     update_body = {"uid": uid, "documents": response_docs}
     update = await fastapi_test_client.put("/documents", json=update_body)
-    await wait_for_task(index.http_client, update.json()["taskUid"])
+    await async_client.wait_for_task(update.json()["taskUid"])
     response = await fastapi_test_client.get(f"/documents/{uid}/{doc_id}")
     assert response.json()["title"] == "Some title"
     update_body = {"uid": uid, "documents": small_movies}
     update = await fastapi_test_client.put("/documents", json=update_body)
-    await wait_for_task(index.http_client, update.json()["taskUid"])
+    await async_client.wait_for_task(update.json()["taskUid"])
     response = await fastapi_test_client.get(f"/documents/{uid}/{doc_id}")
     assert response.json()["title"] != "Some title"
 
 
 async def test_update_documents_with_primary_key(
-    fastapi_test_client, async_empty_index, small_movies
+    fastapi_test_client, async_empty_index, small_movies, async_client
 ):
     primary_key = "release_date"
     uid = str(uuid4())
     index = await async_empty_index(uid)
     document_info = {"uid": uid, "documents": small_movies, "primaryKey": primary_key}
     update = await fastapi_test_client.put("/documents", json=document_info)
-    await wait_for_task(index.http_client, update.json()["taskUid"])
+    await async_client.wait_for_task(update.json()["taskUid"])
     assert await index.get_primary_key() == primary_key
 
 
 @pytest.mark.parametrize("batch_size", [2, 3, 1000])
 async def test_update_documents_in_batches(
-    batch_size, fastapi_test_client, async_index_with_documents, small_movies
+    batch_size, fastapi_test_client, async_index_with_documents, small_movies, async_client
 ):
     uid = str(uuid4())
-    index = await async_index_with_documents(small_movies, uid)
+    await async_index_with_documents(small_movies, uid)
     response = await fastapi_test_client.get(f"documents/{uid}")
     response_docs = response.json()["results"]
     response_docs[0]["title"] = "Some title"
     doc_id = response_docs[0]["id"]
     update_body = {"uid": uid, "documents": response_docs}
     update = await fastapi_test_client.put("/documents", json=update_body)
-    await wait_for_task(index.http_client, update.json()["taskUid"])
+    await async_client.wait_for_task(update.json()["taskUid"])
     response = await fastapi_test_client.get(f"/documents/{uid}/{doc_id}")
     assert response.json()["title"] == "Some title"
     update_body = {"uid": uid, "batch_size": batch_size, "documents": small_movies}
     updates = await fastapi_test_client.put("/documents/batches", json=update_body)
 
     for update in updates.json():
-        await wait_for_task(index.http_client, update["taskUid"])
+        await async_client.wait_for_task(update["taskUid"])
 
     response = await fastapi_test_client.get(f"/documents/{uid}/{doc_id}")
     assert response.json()["title"] != "Some title"
