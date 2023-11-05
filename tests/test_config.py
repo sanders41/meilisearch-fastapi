@@ -31,5 +31,5 @@ def test_config_no_url(monkeypatch):
 
     get_config.cache_clear()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         get_config()
