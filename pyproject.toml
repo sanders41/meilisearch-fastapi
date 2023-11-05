@@ -22,7 +22,8 @@ include = ["meilisearch_fastapi/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.8"
 fastapi = ">=0.95.1"
-pydantic = {version = ">=1.8.2", extras = ["dotenv"]}
+pydantic = {version = ">=2.0.0", extras = ["dotenv"]}
+pydantic-settings = ">=2.0.3"
 meilisearch-python-sdk = ">=2.0.1"
 camel-converter = ">=3.0.2"
 

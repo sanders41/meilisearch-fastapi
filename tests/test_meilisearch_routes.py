@@ -36,7 +36,7 @@ async def test_key_info(async_client):
 async def test_generate_tenant_token(fastapi_test_client, default_search_key):
     search_rules = {"test": "value"}
     expected = {"searchRules": search_rules, "apiKeyUid": default_search_key.uid}
-    api_key = default_search_key.dict()
+    api_key = default_search_key.model_dump()
     api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
     api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {
@@ -54,7 +54,7 @@ async def test_generate_tenant_token_expires(fastapi_test_client, default_search
     expires_at = datetime.now(tz=timezone.utc) + timedelta(days=1)
     expected = {"searchRules": search_rules, "apiKeyUid": default_search_key.uid}
     expected["exp"] = int(datetime.timestamp(expires_at))  # type: ignore
-    api_key = default_search_key.dict()
+    api_key = default_search_key.model_dump()
     api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
     api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {
@@ -73,7 +73,7 @@ async def test_generate_tenant_token_default_key_expires_past(
 ):
     search_rules = {"test": "value"}
     expires_at = datetime.now(tz=timezone.utc) + timedelta(days=-1)
-    api_key = default_search_key.dict()
+    api_key = default_search_key.model_dump()
     api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
     api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {
@@ -91,7 +91,7 @@ async def test_generate_tenant_token_invalid_restriction(
 ):
     test_key_info.indexes = ["good"]
     key = await async_client.create_key(test_key_info)
-    api_key = key.dict()
+    api_key = key.model_dump()
     api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
     api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
     payload = {"search_rules": {"indexes": ["bad"]}, "api_key": api_key}
@@ -114,10 +114,11 @@ async def test_get_health(fastapi_test_client):
     ),
 )
 async def test_create_key(expires_at, fastapi_test_client, test_key_info):
+    info = test_key_info.model_dump()
     if expires_at:
-        test_key_info.expires_at = expires_at
+        info["expires_at"] = expires_at
 
-    key = await fastapi_test_client.post("/meilisearch/keys", json=test_key_info.dict())
+    key = await fastapi_test_client.post("/meilisearch/keys", json=info)
     key_info = key.json()
 
     assert key_info["description"] == test_key_info.description
