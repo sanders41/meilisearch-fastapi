@@ -6,8 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class MeilisearchConfig(BaseSettings):
-    meili_http_addr: str  # = Field(..., validation_alias="MEILI_HTTP_ADDR")
-    meili_https_url: bool = False  # Field(False, validation_alias="MEILI_HTTPS_URL")
+    meili_http_addr: str
+    meili_https_url: bool = False
     meilisearch_url: str = "http://localhost:7700"
     meilisearch_api_key: Optional[str] = Field(None, validation_alias="MEILI_MASTER_KEY")
     model_config = SettingsConfigDict(
