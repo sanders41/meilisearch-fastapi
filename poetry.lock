@@ -704,13 +704,13 @@ testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtuale
 
 [[package]]
 name = "pytest-meilisearch"
-version = "0.3.2"
+version = "0.3.3"
 description = "Pytest helpers for testing projects using Meilisearch"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "pytest_meilisearch-0.3.2-py3-none-any.whl", hash = "sha256:b10755a98011d68c6600d02e0777a8cdea711560cc2af3f1eada30bb983b05ca"},
-    {file = "pytest_meilisearch-0.3.2.tar.gz", hash = "sha256:a1e8e3fa833e38557819251e607c47b132b86acac1e603cf246f567a55b83383"},
+    {file = "pytest_meilisearch-0.3.3-py3-none-any.whl", hash = "sha256:a73f24b12bd3bd729567239fe84ad32222245b86c4bf1ff3d800182a8028738a"},
+    {file = "pytest_meilisearch-0.3.3.tar.gz", hash = "sha256:1cc0ff6578ed9a7fd4c31bd63c4f0436648ec6dcc5c1755426b4486039f6558c"},
 ]
 
 [package.dependencies]
