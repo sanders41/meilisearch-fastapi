@@ -23,6 +23,8 @@ def default_settings():
         "dictionary": [],
         "nonSeparatorTokens": [],
         "separatorTokens": [],
+        "proximityPrecision": "byWord",
+        "embedders": None,
     }
 
 
@@ -56,6 +58,8 @@ async def test_settings_update_and_delete(
         },
         "pagination": {"maxTotalHits": 1000},
         "dictionary": ["a"],
+        "proximityPrecision": "byWord",
+        "embedders": None,
     }
     response = await fastapi_test_client.patch("/settings", json=update_settings)
 
