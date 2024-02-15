@@ -110,18 +110,18 @@ def small_movies():
 
 
 @pytest.fixture
-async def indexes_sample(async_client):
+async def indexes_sample(async_meilisearch_client):
     # async with Client(f"http://{MEILISEARCH_URL}", MASTER_KEY) as client:
     indexes = []
     for index_args in INDEX_FIXTURE:
-        index = await async_client.create_index(**index_args)
+        index = await async_meilisearch_client.create_index(**index_args)
         indexes.append(index)
     yield indexes
 
 
 @pytest.fixture
-async def default_search_key(async_client):
-    keys = await async_client.get_keys()
+async def default_search_key(async_meilisearch_client):
+    keys = await async_meilisearch_client.get_keys()
     for key in keys.results:
         if key.name and "Default Search API Key" in key.name:
             return key

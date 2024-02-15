@@ -38,7 +38,7 @@ async def test_settings_get(default_settings, index_uid, fastapi_test_client):
 
 @pytest.mark.usefixtures("indexes_sample")
 async def test_settings_update_and_delete(
-    default_settings, index_uid, fastapi_test_client, async_client
+    default_settings, index_uid, fastapi_test_client, async_meilisearch_client
 ):
     update_settings = {
         "uid": index_uid,
@@ -64,7 +64,7 @@ async def test_settings_update_and_delete(
     response = await fastapi_test_client.patch("/settings", json=update_settings)
 
     assert response.status_code == 200
-    await async_client.wait_for_task(response.json()["taskUid"])
+    await async_meilisearch_client.wait_for_task(response.json()["taskUid"])
 
     response = await fastapi_test_client.get(f"/settings/{index_uid}")
 

@@ -7,28 +7,28 @@ from meilisearch_python_sdk.models.client import KeyCreate
 
 
 @pytest.fixture
-async def test_key(async_client):
+async def test_key(async_meilisearch_client):
     key_info = KeyCreate(description="test", actions=["search"], indexes=["movies"])
-    key = await async_client.create_key(key_info)
+    key = await async_meilisearch_client.create_key(key_info)
 
     yield key
 
     try:
-        await async_client.delete_key(key.key)
+        await async_meilisearch_client.delete_key(key.key)
     except MeilisearchApiError:
         pass
 
 
 @pytest.fixture
-async def test_key_info(async_client):
+async def test_key_info(async_meilisearch_client):
     key_info = KeyCreate(description="test", actions=["search"], indexes=["movies"])
 
     yield key_info
 
     try:
-        keys = await async_client.get_keys()
+        keys = await async_meilisearch_client.get_keys()
         key = next(x for x in keys.results if x.description == key_info.description)
-        await async_client.delete_key(key.key)
+        await async_meilisearch_client.delete_key(key.key)
     except MeilisearchApiError:
         pass
 
@@ -87,10 +87,10 @@ async def test_generate_tenant_token_default_key_expires_past(
 
 
 async def test_generate_tenant_token_invalid_restriction(
-    test_key_info, fastapi_test_client, async_client
+    test_key_info, fastapi_test_client, async_meilisearch_client
 ):
     test_key_info.indexes = ["good"]
-    key = await async_client.create_key(test_key_info)
+    key = await async_meilisearch_client.create_key(test_key_info)
     api_key = key.model_dump()
     api_key["created_at"] = f"{api_key['created_at'].isoformat()}Z"
     api_key["updated_at"] = f"{api_key['updated_at'].isoformat()}Z"
@@ -131,12 +131,12 @@ async def test_create_key(expires_at, fastapi_test_client, test_key_info):
         assert key_info["expiresAt"] is None
 
 
-async def test_delete_key(test_key, fastapi_test_client, async_client):
+async def test_delete_key(test_key, fastapi_test_client, async_meilisearch_client):
     result = await fastapi_test_client.delete(f"/meilisearch/keys/{test_key.key}")
     assert result.status_code == 204
 
     with pytest.raises(MeilisearchApiError):
-        await async_client.get_key(test_key.key)
+        await async_meilisearch_client.get_key(test_key.key)
 
 
 async def test_get_keys(fastapi_test_client):
