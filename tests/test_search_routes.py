@@ -116,13 +116,13 @@ async def test_custom_search_params_with_string_list(
 
 
 async def test_custom_search_params_with_facet_distribution(
-    fastapi_test_client, async_index_with_documents, small_movies, async_client
+    fastapi_test_client, async_index_with_documents, small_movies, async_meilisearch_client
 ):
     uid = str(uuid4())
     await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
-    await async_client.wait_for_task(update.json()["taskUid"])
+    await async_meilisearch_client.wait_for_task(update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -138,13 +138,13 @@ async def test_custom_search_params_with_facet_distribution(
 
 
 async def test_custom_search_params_with_facet_filters(
-    fastapi_test_client, async_index_with_documents, small_movies, async_client
+    fastapi_test_client, async_index_with_documents, small_movies, async_meilisearch_client
 ):
     uid = str(uuid4())
     await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
-    await async_client.wait_for_task(update.json()["taskUid"])
+    await async_meilisearch_client.wait_for_task(update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -157,13 +157,13 @@ async def test_custom_search_params_with_facet_filters(
 
 
 async def test_custom_search_params_with_multiple_facet_filters(
-    fastapi_test_client, async_index_with_documents, small_movies, async_client
+    fastapi_test_client, async_index_with_documents, small_movies, async_meilisearch_client
 ):
     uid = str(uuid4())
     await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
-    await async_client.wait_for_task(update.json()["taskUid"])
+    await async_meilisearch_client.wait_for_task(update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -175,7 +175,7 @@ async def test_custom_search_params_with_multiple_facet_filters(
 
 
 async def test_custom_search_facet_filters_with_space(
-    fastapi_test_client, async_empty_index, async_client
+    fastapi_test_client, async_empty_index, async_meilisearch_client
 ):
     dataset = [
         {
@@ -224,10 +224,10 @@ async def test_custom_search_facet_filters_with_space(
         "documents": dataset,
     }
     update = await fastapi_test_client.post("/documents", json=documents)
-    await async_client.wait_for_task(update.json()["taskUid"])
+    await async_meilisearch_client.wait_for_task(update.json()["taskUid"])
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
-    await async_client.wait_for_task(update.json()["taskUid"])
+    await async_meilisearch_client.wait_for_task(update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "h",
@@ -239,13 +239,13 @@ async def test_custom_search_facet_filters_with_space(
 
 
 async def test_custom_search_params_with_many_params(
-    fastapi_test_client, async_index_with_documents, small_movies, async_client
+    fastapi_test_client, async_index_with_documents, small_movies, async_meilisearch_client
 ):
     uid = str(uuid4())
     await async_index_with_documents(small_movies, uid)
     facet_data = {"uid": uid, "filterableAttributes": ["genre"]}
     update = await fastapi_test_client.patch("/indexes/filterable-attributes", json=facet_data)
-    await async_client.wait_for_task(update.json()["taskUid"])
+    await async_meilisearch_client.wait_for_task(update.json()["taskUid"])
     data = {
         "uid": uid,
         "query": "world",
@@ -276,12 +276,17 @@ async def test_custom_search_params_with_many_params(
     ],
 )
 async def test_search_sort(
-    sort, titles, fastapi_test_client, async_index_with_documents, small_movies, async_client
+    sort,
+    titles,
+    fastapi_test_client,
+    async_index_with_documents,
+    small_movies,
+    async_meilisearch_client,
 ):
     uid = str(uuid4())
     index = await async_index_with_documents(small_movies, uid)
     response = await index.update_sortable_attributes(["title"])
-    await async_client.wait_for_task(response.task_uid)
+    await async_meilisearch_client.wait_for_task(response.task_uid)
     stats = await index.get_stats()  # get this to get the total document count
 
     # Using a placeholder search because ranking rules affect sort otherwaise meaning the results
