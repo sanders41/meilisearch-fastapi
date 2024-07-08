@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 from fastapi import APIRouter, FastAPI
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 
 from meilisearch_fastapi._config import get_config
 from meilisearch_fastapi.routes import (
@@ -71,7 +71,9 @@ async def fastapi_test_client():
 
     app.include_router(api_router)
 
-    async with AsyncClient(app=app, base_url="http://test/", follow_redirects=True) as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test/", follow_redirects=True
+    ) as ac:
         yield ac
 
 
