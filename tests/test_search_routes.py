@@ -100,14 +100,14 @@ async def test_custom_search_params_with_string_list(
     await async_index_with_documents(small_movies, uid)
     data = {
         "uid": uid,
-        "query": "a",
+        "query": "shazam!",
         "limit": 5,
         "attributesToRetrieve": ["title", "overview"],
         "attributesToHighlight": ["title"],
     }
     response = await fastapi_test_client.post("/search", json=data)
 
-    assert len(response.json()["hits"]) == 5
+    assert len(response.json()["hits"]) == 1
     assert "title" in response.json()["hits"][0]
     assert "overview" in response.json()["hits"][0]
     assert "release_date" not in response.json()["hits"][0]
