@@ -1,4 +1,4 @@
-from typing import List, Optional
+from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 from meilisearch_python_sdk import AsyncClient
@@ -26,11 +26,11 @@ async def add_documents(
 
 
 @router.post(
-    "/batches", response_model=List[TaskInfo], status_code=202, tags=["Meilisearch Documents"]
+    "/batches", response_model=list[TaskInfo], status_code=202, tags=["Meilisearch Documents"]
 )
 async def add_documents_in_batches(
     document_info: DocumentInfoBatches, client: AsyncClient = Depends(meilisearch_client)
-) -> List[TaskInfo]:
+) -> list[TaskInfo]:
     index = client.index(document_info.uid)
 
     return await index.add_documents_in_batches(
@@ -89,7 +89,7 @@ async def get_documents(
     uid: str,
     limit: int = 20,
     offset: int = 0,
-    fields: Optional[List[str]] = None,
+    fields: list[str] | None = None,
     client: AsyncClient = Depends(meilisearch_client),
 ) -> DocumentsInfo:
     index = client.index(uid)
@@ -114,12 +114,12 @@ async def update_documents(
 
 
 @router.put(
-    "/batches", response_model=List[TaskInfo], status_code=202, tags=["Meilisearch Documents"]
+    "/batches", response_model=list[TaskInfo], status_code=202, tags=["Meilisearch Documents"]
 )
 async def update_documents_in_batches(
     document_info: DocumentInfoBatches,
     client: AsyncClient = Depends(meilisearch_client),
-) -> List[TaskInfo]:
+) -> list[TaskInfo]:
     index = client.index(document_info.uid)
 
     return await index.update_documents_in_batches(

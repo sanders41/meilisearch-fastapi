@@ -10,7 +10,6 @@ homepage = "https://github.com/sanders41/meilisearch-fastapi"
 documentation = "https://github.com/sanders41/meilisearch-fastapi"
 keywords = ["meilisearch", "fastapi", "async", "search"]
 classifiers=[
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -21,7 +20,8 @@ classifiers=[
 include = ["meilisearch_fastapi/py.typed"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
+eval-type-backport = {version = ">=0.2.0", python = "<3.10"}  # allows pydantic to use pipe instead of Union
 fastapi = ">=0.95.1"
 pydantic = {version = ">=2.0.0", extras = ["dotenv"]}
 pydantic-settings = ">=2.0.3"
@@ -57,8 +57,23 @@ module = ["tests.*"]
 disallow_untyped_defs = false
 
 [tool.ruff]
-select=["E", "F", "UP", "I001", "T201", "T203"]
+line-length = 100
+target-version = "py39"
+fix = true
+
+[tool.ruff.lint]
+select=[
+  "E",  # pycodestyle
+  "B",  #
+  "F",  # pyflakes
+  "UP",  # pyupgrade
+  "I001",  # unsorted-imports
+  "T201",
+  "T203",
+  "ASYNC",  # flake8-async
+]
 ignore=[
+  "B008",  # do not perform function calls in argument defaults
   # Recommened ignores by ruff when using formatter
   "E501",
   "W191",
@@ -76,6 +91,3 @@ ignore=[
   "ISC001",
   "ISC002",
 ]
-line-length = 100
-target-version = "py38"
-fix = true

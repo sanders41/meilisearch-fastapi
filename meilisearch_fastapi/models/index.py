@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from __future__ import annotations
 
 from camel_converter.pydantic_base import CamelBase
 from meilisearch_python_sdk.models.settings import Faceting
@@ -10,7 +10,7 @@ class FacetingWithUID(Faceting):
 
 
 class FilterableAttributes(CamelBase):
-    filterable_attributes: Optional[List[str]] = None
+    filterable_attributes: list[str] | None = None
 
 
 class FilterableAttributesWithUID(FilterableAttributes):
@@ -18,7 +18,7 @@ class FilterableAttributesWithUID(FilterableAttributes):
 
 
 class DisplayedAttributes(CamelBase):
-    displayed_attributes: List[str]
+    displayed_attributes: list[str]
 
 
 class DisplayedAttributesUID(DisplayedAttributes):
@@ -26,7 +26,7 @@ class DisplayedAttributesUID(DisplayedAttributes):
 
 
 class DistinctAttribute(CamelBase):
-    attribute: Optional[str] = None
+    attribute: str | None = None
 
 
 class DistinctAttributeWithUID(CamelBase):
@@ -36,11 +36,11 @@ class DistinctAttributeWithUID(CamelBase):
 
 class IndexUpdate(CamelBase):
     uid: str
-    primary_key: Optional[str] = None
+    primary_key: str | None = None
 
 
 class RankingRules(CamelBase):
-    ranking_rules: List[str]
+    ranking_rules: list[str]
 
 
 class RankingRulesWithUID(RankingRules):
@@ -48,11 +48,11 @@ class RankingRulesWithUID(RankingRules):
 
 
 class PrimaryKey(CamelBase):
-    primary_key: Optional[str] = None
+    primary_key: str | None = None
 
 
 class SearchableAttributes(CamelBase):
-    searchable_attributes: List[str]
+    searchable_attributes: list[str]
 
 
 class SearchableAttributesWithUID(SearchableAttributes):
@@ -60,7 +60,7 @@ class SearchableAttributesWithUID(SearchableAttributes):
 
 
 class SortableAttributes(CamelBase):
-    sortable_attributes: List[str]
+    sortable_attributes: list[str]
 
 
 class SortableAttributesWithUID(SortableAttributes):
@@ -68,7 +68,7 @@ class SortableAttributesWithUID(SortableAttributes):
 
 
 class StopWords(CamelBase):
-    stop_words: Optional[List[str]] = None
+    stop_words: list[str] | None = None
 
 
 class StopWordsWithUID(StopWords):
@@ -76,7 +76,7 @@ class StopWordsWithUID(StopWords):
 
 
 class Synonyms(CamelBase):
-    synonyms: Optional[Dict[str, List[str]]] = None
+    synonyms: dict[str, list[str]] | None = None
 
 
 class SynonymsWithUID(Synonyms):
@@ -84,7 +84,7 @@ class SynonymsWithUID(Synonyms):
 
 
 class TypoTolerance(CamelBase):
-    typo_tolerance: Optional[TypoToleranceInfo] = None
+    typo_tolerance: TypoToleranceInfo | None = None
 
 
 class TypoToleranceWithUID(TypoTolerance):

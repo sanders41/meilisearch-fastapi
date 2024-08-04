@@ -1,21 +1,23 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any
 
 from camel_converter.pydantic_base import CamelBase
 
 
 class DocumentDelete(CamelBase):
     uid: str
-    document_ids: List[str]
+    document_ids: list[str]
 
 
 class DocumentInfo(CamelBase):
     uid: str
-    documents: List[Dict[str, Any]]
-    primary_key: Optional[str] = None
+    documents: list[dict[str, Any]]
+    primary_key: str | None = None
 
 
 class DocumentInfoAutoBatch(DocumentInfo):
-    max_payload_size: Optional[int] = None
+    max_payload_size: int | None = None
 
 
 class DocumentInfoBatches(DocumentInfo):

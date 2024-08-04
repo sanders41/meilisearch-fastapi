@@ -22,9 +22,6 @@ files = [
     {file = "annotated_types-0.7.0.tar.gz", hash = "sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89"},
 ]
 
-[package.dependencies]
-typing-extensions = {version = ">=4.0.0", markers = "python_version < \"3.9\""}
-
 [[package]]
 name = "anyio"
 version = "4.4.0"
@@ -173,6 +170,20 @@ files = [
 ]
 
 [[package]]
+name = "eval-type-backport"
+version = "0.2.0"
+description = "Like `typing._eval_type`, but lets older Python versions use newer typing features."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "eval_type_backport-0.2.0-py3-none-any.whl", hash = "sha256:ac2f73d30d40c5a30a80b8739a789d6bb5e49fdffa66d7912667e2015d9c9933"},
+    {file = "eval_type_backport-0.2.0.tar.gz", hash = "sha256:68796cfbc7371ebf923f03bdf7bef415f3ec098aeced24e054b253a0e78f7b37"},
+]
+
+[package.extras]
+tests = ["pytest"]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.2.2"
 description = "Backport of PEP 654 (exception groups)"
@@ -316,21 +327,27 @@ files = [
 
 [[package]]
 name = "meilisearch-python-sdk"
-version = "2.12.1"
+version = "3.0.1"
 description = "A Python client providing both async and sync support for the Meilisearch API"
 optional = false
-python-versions = "<4.0,>=3.8"
+python-versions = "<4.0,>=3.9"
 files = [
-    {file = "meilisearch_python_sdk-2.12.1-py3-none-any.whl", hash = "sha256:f04f2cc7c996b498e49deec66e74d034a663bd581084c7c68a62a968ad5bd9a0"},
-    {file = "meilisearch_python_sdk-2.12.1.tar.gz", hash = "sha256:6fe26737465ec572ff985fc821fb2821f341c15bb6fa75b1cb7d1f7e908e45c1"},
+    {file = "meilisearch_python_sdk-3.0.1-py3-none-any.whl", hash = "sha256:ae17260d356417e6fa7bfc1998f7eb5a5a60f2be88cb26030c37a3dea36b5f11"},
+    {file = "meilisearch_python_sdk-3.0.1.tar.gz", hash = "sha256:91186b35c3c2aaa03fc84c67b5996bc392fe41788c0b1aa5e662777e60f92fbf"},
 ]
 
 [package.dependencies]
 aiofiles = ">=0.7"
 camel-converter = ">=1.0.0"
+eval-type-backport = {version = ">=0.2.0", markers = "python_version < \"3.10\""}
 httpx = ">=0.17"
-pydantic = ">=1.8"
+pydantic = ">=2.0.0"
 PyJWT = ">=2.3.0"
+
+[package.extras]
+all = ["orjson (>=3.10.6)", "ujson (>=5.10.0)"]
+orjson = ["orjson (>=3.10.6)"]
+ujson = ["ujson (>=5.10.0)"]
 
 [[package]]
 name = "mypy"
@@ -868,5 +885,5 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.8"
-content-hash = "1b553ae93b6ce825e8aed22517fb51ad1a93b7a90f54bd931f44586bf0e95985"
+python-versions = "^3.9"
+content-hash = "7ed30e5964ede66c395e0208c8cb4d3429b81d6112ed6bf3a9b5adadc6a78b22"
