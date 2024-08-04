@@ -1,24 +1,26 @@
-from typing import List, Optional, Union
+from __future__ import annotations
+
+from typing import Literal
 
 from camel_converter.pydantic_base import CamelBase
 
 
 class SearchParameters(CamelBase):
     uid: str
-    query: Optional[str] = None
+    query: str | None = None
     offset: int = 0
     limit: int = 20
-    filter: Optional[Union[str, List[Union[str, List[str]]]]] = None
-    facets: Optional[List[str]] = None
-    attributes_to_retrieve: List[str] = ["*"]
-    attributes_to_crop: Optional[List[str]] = None
-    sort: Optional[List[str]] = None
+    filter: str | list[str | list[str]] | None = None
+    facets: list[str] | None = None
+    attributes_to_retrieve: list[str] = ["*"]
+    attributes_to_crop: list[str] | None = None
+    sort: list[str] | None = None
     crop_length: int = 200
-    attributes_to_highlight: Optional[List[str]] = None
+    attributes_to_highlight: list[str] | None = None
     show_matches_position: bool = False
     highlight_pre_tag: str = "<em>"
     highlight_post_tag: str = "</em>"
     crop_marker: str = "..."
-    matching_strategy: str = "all"
-    hits_per_page: Optional[int] = None
-    page: Optional[int] = None
+    matching_strategy: Literal["all", "last", "frequency"] = "last"
+    hits_per_page: int | None = None
+    page: int | None = None

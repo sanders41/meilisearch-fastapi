@@ -29,9 +29,9 @@ async def generate_tenant_token(
             expires_at=tenant_token_settings.expires_at,
         )
     except InvalidRestriction as e:
-        raise HTTPException(400, str(e))
+        raise HTTPException(400, str(e)) from e
     except ValueError as e:
-        raise HTTPException(400, str(e))
+        raise HTTPException(400, str(e)) from e
 
     return TenantToken(tenant_token=token)
 
