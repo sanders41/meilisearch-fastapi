@@ -327,13 +327,13 @@ files = [
 
 [[package]]
 name = "meilisearch-python-sdk"
-version = "3.2.0"
+version = "3.3.0"
 description = "A Python client providing both async and sync support for the Meilisearch API"
 optional = false
-python-versions = "<4.0,>=3.9"
+python-versions = ">=3.9"
 files = [
-    {file = "meilisearch_python_sdk-3.2.0-py3-none-any.whl", hash = "sha256:bdf4c6f532b42f8603aa1be45bc352d6d414025e0eb67a08c0e609ecd25bbb4b"},
-    {file = "meilisearch_python_sdk-3.2.0.tar.gz", hash = "sha256:6dee96f961f4863d9a4bfdb545163778852d59948f86a7184ce24eada4830e33"},
+    {file = "meilisearch_python_sdk-3.3.0-py3-none-any.whl", hash = "sha256:b2535e60978a6f7c7a88e49ac5fb7772cba32481de97c46e4e5656134fd67c61"},
+    {file = "meilisearch_python_sdk-3.3.0.tar.gz", hash = "sha256:7659c0a66c11f2f6d4b7e2b71e569b30c7decba8895b37b36f9fb5e07e08193f"},
 ]
 
 [package.dependencies]
@@ -342,10 +342,10 @@ camel-converter = ">=1.0.0"
 eval-type-backport = {version = ">=0.2.0", markers = "python_version < \"3.10\""}
 httpx = ">=0.17"
 pydantic = ">=2.0.0"
-PyJWT = ">=2.3.0"
+pyjwt = ">=2.3.0"
 
 [package.extras]
-all = ["orjson (>=3.10.6)", "ujson (>=5.10.0)"]
+all = ["orjson", "ujson"]
 orjson = ["orjson (>=3.10.6)"]
 ujson = ["ujson (>=5.10.0)"]
 
