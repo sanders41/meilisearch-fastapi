@@ -698,17 +698,17 @@ testing = ["fields", "hunter", "process-tests", "pytest-xdist", "virtualenv"]
 
 [[package]]
 name = "pytest-meilisearch"
-version = "0.5.0"
+version = "0.6.0"
 description = "Pytest helpers for testing projects using Meilisearch"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = ">=3.9"
 files = [
-    {file = "pytest_meilisearch-0.5.0-py3-none-any.whl", hash = "sha256:bda441a69b945bedd3a64fcc47189377d27145cc9b3adb539e683844f40a0387"},
-    {file = "pytest_meilisearch-0.5.0.tar.gz", hash = "sha256:5848272ac412ef135d5398854ef32509051b268a21450ef40f42a15ab4fc624e"},
+    {file = "pytest_meilisearch-0.6.0-py3-none-any.whl", hash = "sha256:5406afba7df29b51e1f678417f719425912c765ac218005b5039a3c6c5dafe5d"},
+    {file = "pytest_meilisearch-0.6.0.tar.gz", hash = "sha256:1779300b5cfe2f90a3a8769fce6db6c2a17beb1b0e050fd0287281501d9f1222"},
 ]
 
 [package.dependencies]
-meilisearch-python-sdk = ">=2.0.1"
+meilisearch-python-sdk = ">=3.0.0"
 pytest = ">=7.4.3"
 
 [[package]]
@@ -886,4 +886,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f904f17aae3e6da0ea8fb4e9d62d055a413b8bfced8675334e43e7b020658e2f"
+content-hash = "addee9a7ce44353a1d5e9f91fbcb36356d7d4692c3c270176732ea64656fc891"
