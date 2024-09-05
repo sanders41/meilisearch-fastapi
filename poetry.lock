@@ -245,6 +245,32 @@ files = [
 ]
 
 [[package]]
+name = "h2"
+version = "4.1.0"
+description = "HTTP/2 State-Machine based protocol implementation"
+optional = false
+python-versions = ">=3.6.1"
+files = [
+    {file = "h2-4.1.0-py3-none-any.whl", hash = "sha256:03a46bcf682256c95b5fd9e9a99c1323584c3eec6440d379b9903d709476bc6d"},
+    {file = "h2-4.1.0.tar.gz", hash = "sha256:a83aca08fbe7aacb79fec788c9c0bac936343560ed9ec18b82a13a12c28d2abb"},
+]
+
+[package.dependencies]
+hpack = ">=4.0,<5"
+hyperframe = ">=6.0,<7"
+
+[[package]]
+name = "hpack"
+version = "4.0.0"
+description = "Pure-Python HPACK header compression"
+optional = false
+python-versions = ">=3.6.1"
+files = [
+    {file = "hpack-4.0.0-py3-none-any.whl", hash = "sha256:84a076fad3dc9a9f8063ccb8041ef100867b1878b25ef0ee63847a5d53818a6c"},
+    {file = "hpack-4.0.0.tar.gz", hash = "sha256:fc41de0c63e687ebffde81187a948221294896f6bdc0ae2312708df339430095"},
+]
+
+[[package]]
 name = "httpcore"
 version = "1.0.5"
 description = "A minimal low-level HTTP client."
@@ -279,6 +305,7 @@ files = [
 [package.dependencies]
 anyio = "*"
 certifi = "*"
+h2 = {version = ">=3,<5", optional = true, markers = "extra == \"http2\""}
 httpcore = "==1.*"
 idna = "*"
 sniffio = "*"
@@ -289,6 +316,17 @@ cli = ["click (==8.*)", "pygments (==2.*)", "rich (>=10,<14)"]
 http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (==1.*)"]
 zstd = ["zstandard (>=0.18.0)"]
+
+[[package]]
+name = "hyperframe"
+version = "6.0.1"
+description = "HTTP/2 framing layer for Python"
+optional = false
+python-versions = ">=3.6.1"
+files = [
+    {file = "hyperframe-6.0.1-py3-none-any.whl", hash = "sha256:0ec6bafd80d8ad2195c4f03aacba3a8265e57bc4cff261e802bf39970ed02a15"},
+    {file = "hyperframe-6.0.1.tar.gz", hash = "sha256:ae510046231dc8e9ecb1a6586f63d2347bf4c8905914aa84ba585ae85f28a914"},
+]
 
 [[package]]
 name = "identify"
@@ -328,20 +366,20 @@ files = [
 
 [[package]]
 name = "meilisearch-python-sdk"
-version = "3.3.0"
+version = "3.4.0"
 description = "A Python client providing both async and sync support for the Meilisearch API"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "meilisearch_python_sdk-3.3.0-py3-none-any.whl", hash = "sha256:b2535e60978a6f7c7a88e49ac5fb7772cba32481de97c46e4e5656134fd67c61"},
-    {file = "meilisearch_python_sdk-3.3.0.tar.gz", hash = "sha256:7659c0a66c11f2f6d4b7e2b71e569b30c7decba8895b37b36f9fb5e07e08193f"},
+    {file = "meilisearch_python_sdk-3.4.0-py3-none-any.whl", hash = "sha256:c1329173b66f11c7661e40b69e3791b4337ff69ba187880badf84a809b418d40"},
+    {file = "meilisearch_python_sdk-3.4.0.tar.gz", hash = "sha256:0aabf133f313c2d4a31c3e9c5f270d08f62a4b7e995755b1bba9a414560fb702"},
 ]
 
 [package.dependencies]
 aiofiles = ">=0.7"
 camel-converter = ">=1.0.0"
 eval-type-backport = {version = ">=0.2.0", markers = "python_version < \"3.10\""}
-httpx = ">=0.17"
+httpx = {version = ">=0.17", extras = ["http2"]}
 pydantic = ">=2.0.0"
 pyjwt = ">=2.3.0"
 
