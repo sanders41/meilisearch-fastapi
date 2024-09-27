@@ -46,17 +46,17 @@ trio = ["trio (>=0.23)"]
 
 [[package]]
 name = "camel-converter"
-version = "3.1.2"
+version = "4.0.0"
 description = "Converts a string from snake case to camel case or camel case to snake case"
 optional = false
-python-versions = "<4.0,>=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "camel_converter-3.1.2-py3-none-any.whl", hash = "sha256:eb390d299f810f22346bd261f936790e201ec7a1219c8d7b275184361fd6f214"},
-    {file = "camel_converter-3.1.2.tar.gz", hash = "sha256:7d067f4738889e0537fe1a9b228786bacdccafd2c0328682bc21f88a3f4a7156"},
+    {file = "camel_converter-4.0.0-py3-none-any.whl", hash = "sha256:723ae481f9fbcbe3bdcbf820da7a80093c515f26d97b6a7ef52b792f362ebe7b"},
+    {file = "camel_converter-4.0.0.tar.gz", hash = "sha256:06a9d357c185749bae9618352ba89b6a7f4ea920122d125d10582045b736c565"},
 ]
 
 [package.extras]
-pydantic = ["pydantic (>=1.8.2)"]
+pydantic = ["pydantic (>=2.0.0)"]
 
 [[package]]
 name = "certifi"
