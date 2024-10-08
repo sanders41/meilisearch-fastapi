@@ -46,13 +46,13 @@ trio = ["trio (>=0.23)"]
 
 [[package]]
 name = "camel-converter"
-version = "4.0.0"
+version = "4.0.1"
 description = "Converts a string from snake case to camel case or camel case to snake case"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "camel_converter-4.0.0-py3-none-any.whl", hash = "sha256:723ae481f9fbcbe3bdcbf820da7a80093c515f26d97b6a7ef52b792f362ebe7b"},
-    {file = "camel_converter-4.0.0.tar.gz", hash = "sha256:06a9d357c185749bae9618352ba89b6a7f4ea920122d125d10582045b736c565"},
+    {file = "camel_converter-4.0.1-py3-none-any.whl", hash = "sha256:0cba7ca1354a29ca2191983deecc9dcf28889f606c28d6ed18ac7d4586b163ac"},
+    {file = "camel_converter-4.0.1.tar.gz", hash = "sha256:401414549ae4ac4073e38cdc4aa6d464dc534fc40aa06ff787bf0960b0c86535"},
 ]
 
 [package.extras]
