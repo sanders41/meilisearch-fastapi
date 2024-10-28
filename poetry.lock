@@ -55,6 +55,9 @@ files = [
     {file = "camel_converter-4.0.1.tar.gz", hash = "sha256:401414549ae4ac4073e38cdc4aa6d464dc534fc40aa06ff787bf0960b0c86535"},
 ]
 
+[package.dependencies]
+pydantic = {version = ">=2.0.0", optional = true, markers = "extra == \"pydantic\""}
+
 [package.extras]
 pydantic = ["pydantic (>=2.0.0)"]
 
@@ -366,18 +369,18 @@ files = [
 
 [[package]]
 name = "meilisearch-python-sdk"
-version = "3.5.1"
+version = "3.6.0"
 description = "A Python client providing both async and sync support for the Meilisearch API"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "meilisearch_python_sdk-3.5.1-py3-none-any.whl", hash = "sha256:2ca02f59be8e90267342fdb3d6c5bb1382b59f50ecfef44e21ce56c85c10031d"},
-    {file = "meilisearch_python_sdk-3.5.1.tar.gz", hash = "sha256:3ca266c5b133a249787f6206bcc3734189ad4a7ebdca56b778bce6e9bd16d33d"},
+    {file = "meilisearch_python_sdk-3.6.0-py3-none-any.whl", hash = "sha256:9a70159b030b4b8e68fcd191f201840a1e1bb1b97e24545b576070d151857015"},
+    {file = "meilisearch_python_sdk-3.6.0.tar.gz", hash = "sha256:a42b38b8eb7359edb16a36436dc2bcf5788802dae46924fdc8f7b8aad8a7e303"},
 ]
 
 [package.dependencies]
 aiofiles = ">=0.7"
-camel-converter = ">=1.0.0"
+camel-converter = {version = ">=1.0.0", extras = ["pydantic"]}
 eval-type-backport = {version = ">=0.2.0", markers = "python_version < \"3.10\""}
 httpx = {version = ">=0.17", extras = ["http2"]}
 pydantic = ">=2.0.0"
