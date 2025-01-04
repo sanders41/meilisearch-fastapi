@@ -1,6 +1,6 @@
 # Meilisearch FastAPI
 
-![CI Status](https://github.com/sanders41/meilisearch-fastapi/workflows/CI/badge.svg?branch=main&event=push)
+[![CI Status](https://github.com/sanders41/meilisearch-fastapi/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/sanders41/meilisearch-fastapi/actions?query=workflow%3ACI+branch%3Amain+event%3Apush)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sanders41/meilisearch-fastapi/main.svg)](https://results.pre-commit.ci/latest/github/sanders41/meilisearch-fastapi/main)
 [![Coverage](https://codecov.io/gh/sanders41/meilisearch-fastapi/branch/main/graphs/badge.svg?branch=main)](https://codecov.io/gh/sanders41/meilisearch-fastapi)
 [![PyPI version](https://badge.fury.io/py/meilisearch-fastapi.svg)](https://badge.fury.io/py/meilisearch-fastapi)
