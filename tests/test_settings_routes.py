@@ -27,6 +27,8 @@ def default_settings():
         "separatorTokens": [],
         "proximityPrecision": "byWord",
         "embedders": None,
+        "facetSearch": True,
+        "prefixSearch": "indexingTime",
     }
 
 
@@ -64,6 +66,8 @@ async def test_settings_update_and_delete(
         "dictionary": ["a"],
         "proximityPrecision": "byWord",
         "embedders": None,
+        "facetSearch": True,
+        "prefixSearch": "indexingTime",
     }
     response = await fastapi_test_client.patch("/settings", json=update_settings)
 
