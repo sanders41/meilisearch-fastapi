@@ -26,7 +26,7 @@ def default_settings():
         "nonSeparatorTokens": [],
         "separatorTokens": [],
         "proximityPrecision": "byWord",
-        "embedders": None,
+        "embedders": {},
         "facetSearch": True,
         "prefixSearch": "indexingTime",
     }
@@ -65,7 +65,7 @@ async def test_settings_update_and_delete(
         "pagination": {"maxTotalHits": 1000},
         "dictionary": ["a"],
         "proximityPrecision": "byWord",
-        "embedders": None,
+        "embedders": {},
         "facetSearch": True,
         "prefixSearch": "indexingTime",
     }
