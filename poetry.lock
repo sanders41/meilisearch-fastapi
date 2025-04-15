@@ -393,14 +393,14 @@ files = [
 
 [[package]]
 name = "meilisearch-python-sdk"
-version = "4.4.0"
+version = "4.5.0"
 description = "A Python client providing both async and sync support for the Meilisearch API"
 optional = false
 python-versions = ">=3.9"
 groups = ["main", "dev"]
 files = [
-    {file = "meilisearch_python_sdk-4.4.0-py3-none-any.whl", hash = "sha256:5a56fddf2ae7fe9ed8b9adad4e8b675c578a5d124aa6080e8183cf64bdfccc71"},
-    {file = "meilisearch_python_sdk-4.4.0.tar.gz", hash = "sha256:bdc0a74fd376136597f894ba0fddf945a98a70ce90058af62f3b684ac390e52b"},
+    {file = "meilisearch_python_sdk-4.5.0-py3-none-any.whl", hash = "sha256:ea81b366178669da7423569bf4da465cf90de713c2ecf68420544b7ba2773b08"},
+    {file = "meilisearch_python_sdk-4.5.0.tar.gz", hash = "sha256:6fc50af95bd2f707301cc4fe1f188eb69392fe99226dda3b133315f64f83ffff"},
 ]
 
 [package.dependencies]
