@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from camel_converter.pydantic_base import CamelBase
 from meilisearch_python_sdk.models.settings import Faceting
+from meilisearch_python_sdk.models.settings import FilterableAttributes as SdkFilterableAttributes
 from meilisearch_python_sdk.models.settings import TypoTolerance as TypoToleranceInfo
 
 
@@ -10,7 +11,7 @@ class FacetingWithUID(Faceting):
 
 
 class FilterableAttributes(CamelBase):
-    filterable_attributes: list[str] | None = None
+    filterable_attributes: list[str] | list[SdkFilterableAttributes] | None = None
 
 
 class FilterableAttributesWithUID(FilterableAttributes):
