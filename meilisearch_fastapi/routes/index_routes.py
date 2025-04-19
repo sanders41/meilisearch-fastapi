@@ -214,7 +214,7 @@ async def get_faceting(uid: str, client: AsyncClient = Depends(meilisearch_clien
 async def get_filterable_attributes(
     uid: str,
     client: AsyncClient = Depends(meilisearch_client),
-) -> FilterableAttributes:
+) -> list[str] | list[FilterableAttributes] | None:
     index = client.index(uid)
     filterable_attributes = await index.get_filterable_attributes()
 
