@@ -23,7 +23,7 @@ include = ["meilisearch_fastapi/py.typed"]
 python = "^3.9"
 eval-type-backport = {version = ">=0.2.0", python = "<3.10"}  # allows pydantic to use pipe instead of Union
 fastapi = ">=0.95.1"
-pydantic = {version = ">=2.0.0", extras = ["dotenv"]}
+pydantic = ">=2.0.0"
 pydantic-settings = ">=2.0.3"
 meilisearch-python-sdk = ">=3.0.0"
 camel-converter = ">=3.0.2"
@@ -37,6 +37,7 @@ pytest-asyncio = "0.26.0"
 pytest-cov = "6.1.1"
 pytest-meilisearch = "0.6.1"
 ruff = "0.11.10"
+uvicorn = "^0.34.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
