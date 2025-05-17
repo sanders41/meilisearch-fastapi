@@ -8,32 +8,32 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class MeilisearchConfig(BaseSettings):
-    meili_http_addr: str
-    meili_https_url: bool = False
-    meilisearch_url: str = "http://localhost:7700"
-    meilisearch_api_key: str | None = Field(None, validation_alias="MEILI_MASTER_KEY")
+    MEILI_HTTP_ADDR: str
+    MEILI_HTTPS_URL: bool = False
+    MEILISEARCH_URL: str = "http://localhost:7700"
+    MEILISEARCH_API_KEY: str | None = Field(None, validation_alias="MEILI_MASTER_KEY")
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="allow"
     )
 
     @model_validator(mode="before")
     def set_url(cls, values: dict[str, Any]) -> dict[str, Any]:
-        if not values.get("meili_http_addr"):
+        if not values.get("MEILI_HTTP_ADDR"):
             raise ValidationError("A MEILI_HTTP_ADDR value is required", MeilisearchConfig)
 
         https = False
 
         if (
-            values.get("meili_https_url") is True
-            or values.get("meili_https_url", "").lower() == "true"
+            values.get("MEILI_HTTPS_URL") is True
+            or values.get("MEILI_HTTPS_URL", "").lower() == "true"
         ):
             https = True
 
         if https:
-            values["meilisearch_url"] = f"https://{values.get('meili_http_addr')}"
+            values["MEILISEARCH_URL"] = f"https://{values.get('MEILI_HTTP_ADDR')}"
             return values
 
-        values["meilisearh_url"] = f"http://{values.get('meili_http_addr')}"
+        values["MEILISEARCH_URL"] = f"http://{values.get('MEILI_HTTP_ADDR')}"
         return values
 
 

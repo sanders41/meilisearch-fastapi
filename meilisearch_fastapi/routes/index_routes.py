@@ -413,7 +413,7 @@ async def update_index(
     if index_update.primary_key is not None:
         payload["primaryKey"] = index_update.primary_key
     response = await client._http_requests.patch(
-        f"{config.meilisearch_url}/indexes/{index_update.uid}", payload
+        f"{config.MEILISEARCH_URL}/indexes/{index_update.uid}", payload
     )
 
     return TaskInfo(**response.json())
