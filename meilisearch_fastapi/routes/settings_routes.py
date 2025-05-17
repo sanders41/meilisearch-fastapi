@@ -26,7 +26,7 @@ async def delete_settings(
     config: MeilisearchConfig = Depends(get_config),
 ) -> TaskInfo:
     async with AsyncClient(
-        url=config.MEILISEARCH_URL, api_key=config.meilisearch_api_key
+        url=config.MEILISEARCH_URL, api_key=config.MEILISEARCH_API_KEY
     ) as client:
         index = client.index(uid)
 
