@@ -56,6 +56,7 @@ def new_typo_tolerance():
     return {
         "enabled": False,
         "disableOnAttributes": ["title"],
+        "disableOnNumbers": False,
         "disableOnWords": ["spiderman"],
         "minWordSizeForTypos": {
             "oneTypo": 10,

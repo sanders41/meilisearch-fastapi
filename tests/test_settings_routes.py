@@ -17,6 +17,7 @@ def default_settings():
         "typoTolerance": {
             "enabled": True,
             "disableOnAttributes": [],
+            "disableOnNumbers": False,
             "disableOnWords": [],
             "minWordSizeForTypos": {"oneTypo": 5, "twoTypos": 9},
         },
