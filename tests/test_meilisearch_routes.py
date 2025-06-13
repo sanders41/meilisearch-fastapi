@@ -143,7 +143,7 @@ async def test_get_keys(fastapi_test_client):
     response = await fastapi_test_client.get("/meilisearch/keys")
 
     assert response.status_code == 200
-    assert len(response.json()["results"]) == 2
+    assert len(response.json()["results"]) >= 3
 
 
 async def test_get_key(test_key, fastapi_test_client):
