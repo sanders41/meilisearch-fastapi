@@ -36,7 +36,7 @@ pytest = "8.4.1"
 pytest-asyncio = "1.0.0"
 pytest-cov = "6.2.1"
 pytest-meilisearch = "0.6.1"
-ruff = "0.12.2"
+ruff = "0.12.3"
 uvicorn = ">=0.34.2,<0.36.0"
 
 [build-system]
