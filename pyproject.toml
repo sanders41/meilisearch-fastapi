@@ -30,7 +30,7 @@ camel-converter = ">=3.0.2"
 
 [tool.poetry.group.dev.dependencies]
 httpx = "0.28.1"
-mypy = "1.16.1"
+mypy = "1.17.0"
 pre-commit = "4.2.0"
 pytest = "8.4.1"
 pytest-asyncio = "1.1.0"
